@@ -1,0 +1,49 @@
+.button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.button--primary {
+  background: linear-gradient(135deg, #646cff 0%, #535bf2 100%);
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.button--primary:hover:not(.button--disabled) {
+  background: linear-gradient(135deg, #535bf2 0%, #4248d4 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 108, 255, 0.4);
+}
+
+.button--secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.87);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.button--secondary:hover:not(.button--disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.button--danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.button--danger:hover:not(.button--disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.button--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,33 @@
+.dashboard-tile {
+    background: linear-gradient(135deg, #1e293b 60%, #64748b 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(30, 41, 59, 0.15);
+    padding: 32px 24px;
+    margin: 16px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    color: #fff;
+    max-width: 320px;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.dashboard-tile:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(30, 41, 59, 0.25);
+}
+
+.dashboard-tile__name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+}
+
+.dashboard-tile__description {
+    font-size: 1rem;
+    opacity: 0.85;
+    margin-bottom: 0;
+}

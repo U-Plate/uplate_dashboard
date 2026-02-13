@@ -1,0 +1,58 @@
+.data-table {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.data-table__header {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.data-table__row {
+  transition: background-color 0.2s ease;
+}
+
+.data-table__row--clickable {
+  cursor: pointer;
+}
+
+.data-table__row--clickable:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.data-table__body .data-table__row:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-table__cell {
+  padding: 1rem;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.data-table__cell--header {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.data-table__cell--actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.data-table__empty {
+  padding: 3rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.1rem;
+}

@@ -304,6 +304,8 @@ Update a food item.
 Delete a food item.
 
 **Body**
+
+Without sizes:
 ```json
 { "key": "boilerfuelkey" }
 ```
@@ -367,6 +369,18 @@ Delete a food item.
 | restaurantId  | string           | yes      |
 | foods         | MenuItemFood[]   | yes      |
 | possibleFoods | MenuItemFood[]   | no       |
+| sizes         | MenuItemSize[]   | no       |
+
+> **Without sizes:** `foods` are the default included foods. `possibleFoods` are optional add-ons. Both default to `[]` if omitted.
+>
+> **With sizes:** When `sizes` is non-empty, each size defines its own `name`, `foods` array, and `possibleFoods` array. The top-level `foods` and `possibleFoods` are typically `[]` in this case. Size names can be any string (e.g., "Small", "Large", "Kids", "Family").
+
+### MenuItemSize
+| Field         | Type           | Required |
+| ------------- | -------------- | -------- |
+| name          | string         | yes      |
+| foods         | MenuItemFood[] | yes      |
+| possibleFoods | MenuItemFood[] | no       |
 | sizes         | MenuItemSize[]   | no       |
 
 > **Without sizes:** `foods` are the default included foods. `possibleFoods` are optional add-ons. Both default to `[]` if omitted.

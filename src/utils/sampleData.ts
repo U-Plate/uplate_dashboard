@@ -258,6 +258,73 @@ export const getSampleFoods = (): Food[] => {
   ];
 };
 
+export const getSampleMenuItems = (): MenuItem[] => {
+  const sampleFoods = getSampleFoods();
+  return [
+    new MenuItem({
+      id: 'menu-item-1',
+      name: 'Healthy Lunch Combo',
+      restaurantId: 'restaurant-1',
+      foods: [
+        { food: sampleFoods.find((f) => f.id === 'food-1')!, quantity: 1 },
+        { food: sampleFoods.find((f) => f.id === 'food-2')!, quantity: 1 },
+      ],
+      possibleFoods: [],
+      sizes: [],
+    }),
+    new MenuItem({
+      id: 'menu-item-2',
+      name: 'Pasta Meal Deal',
+      restaurantId: 'restaurant-2',
+      foods: [
+        { food: sampleFoods.find((f) => f.id === 'food-3')!, quantity: 1 },
+      ],
+      possibleFoods: [
+        { food: sampleFoods.find((f) => f.id === 'food-10')!, quantity: 1 },
+      ],
+      sizes: [],
+    }),
+    new MenuItem({
+      id: 'menu-item-3',
+      name: 'Pizza Feast',
+      restaurantId: 'restaurant-3',
+      foods: [],
+      possibleFoods: [],
+      sizes: [
+        {
+          name: 'Regular',
+          foods: [
+            { food: sampleFoods.find((f) => f.id === 'food-4')!, quantity: 2 },
+          ],
+          possibleFoods: [
+            { food: sampleFoods.find((f) => f.id === 'food-5')!, quantity: 1 },
+          ],
+        },
+        {
+          name: 'Family',
+          foods: [
+            { food: sampleFoods.find((f) => f.id === 'food-4')!, quantity: 4 },
+            { food: sampleFoods.find((f) => f.id === 'food-5')!, quantity: 2 },
+          ],
+          possibleFoods: [],
+        },
+      ],
+    }),
+    new MenuItem({
+      id: 'menu-item-4',
+      name: 'Coffee & Pastry',
+      restaurantId: 'restaurant-5',
+      foods: [
+        { food: sampleFoods.find((f) => f.id === 'food-8')!, quantity: 1 },
+      ],
+      possibleFoods: [
+        { food: sampleFoods.find((f) => f.id === 'food-9')!, quantity: 1 },
+      ],
+      sizes: [],
+    }),
+  ];
+};
+
 /**
  * Initialize all sample data into localStorage
  * Only call this if localStorage is empty

@@ -152,6 +152,43 @@
   white-space: nowrap;
 }
 
+.menu-item-card__sizes-badge {
+  font-size: 0.85rem;
+  color: #646cff;
+  margin: 0.25rem 0 0 0;
+  font-weight: 500;
+}
+
+.menu-item-card__nutrition-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.menu-item-card__size-group {
+  margin-bottom: 1.25rem;
+}
+
+.menu-item-card__size-group:last-child {
+  margin-bottom: 0;
+}
+
+.menu-item-card__size-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #646cff;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.menu-item-card__size-nutrition {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 @media (max-width: 768px) {
   .menu-items-page__header {
     flex-direction: column;

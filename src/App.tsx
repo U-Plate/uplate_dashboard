@@ -12,7 +12,6 @@ import { RestaurantsPage } from './pages/RestaurantsPage';
 import { RestaurantForm } from './pages/RestaurantForm';
 import { RestaurantDetailPage } from './pages/RestaurantDetailPage';
 import { FoodForm } from './pages/FoodForm';
-import { MenuItemForm } from './pages/MenuItemForm';
 
 function App() {
   return (
@@ -30,8 +29,7 @@ function App() {
             <Route path="restaurants/:id" element={<RestaurantDetailPage />} />
             <Route path="restaurants/:id/foods/new" element={<FoodForm />} />
             <Route path="restaurants/:id/foods/:foodId/edit" element={<FoodForm />} />
-            <Route path="restaurants/:id/menu-items/new" element={<MenuItemForm />} />
-            <Route path="restaurants/:id/menu-items/:menuItemId/edit" element={<MenuItemForm />} />
+
           </Route>
         </Routes>
       </BrowserRouter>

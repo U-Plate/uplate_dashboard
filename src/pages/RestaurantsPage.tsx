@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useRestaurants } from '../contexts/RestaurantsContext';
 import { useSections } from '../contexts/SectionsContext';
 import { useFoods } from '../contexts/FoodContext';
-import { useMenuItems } from '../contexts/MenuItemsContext';
 import type { Column } from '../components/DataTable';
 import { DataTable } from '../components/DataTable';
 import { Button } from '../components/Button';
@@ -16,7 +15,6 @@ export const RestaurantsPage: React.FC = () => {
   const { restaurants, deleteRestaurant, moveRestaurantToSection } = useRestaurants();
   const { sections, getSectionById } = useSections();
   const { foods } = useFoods();
-  const { menuItems } = useMenuItems();
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [moveModalOpen, setMoveModalOpen] = useState(false);
@@ -57,10 +55,6 @@ export const RestaurantsPage: React.FC = () => {
     return foods.filter((f) => f.restaurantId === restaurantId).length;
   };
 
-  const getMenuItemCount = (restaurantId: string) => {
-    return menuItems.filter((m) => m.restaurantId === restaurantId).length;
-  };
-
   const filteredRestaurants =
     filterSectionId === 'all'
       ? restaurants
@@ -77,7 +71,10 @@ export const RestaurantsPage: React.FC = () => {
     },
     {
       header: 'Location',
-      accessor: (row) => `${row.location.latitude.toFixed(4)}, ${row.location.longitude.toFixed(4)}`,
+      accessor: (row) =>
+        row.location.latitude != null && row.location.longitude != null
+          ? `${row.location.latitude.toFixed(5)}, ${row.location.longitude.toFixed(5)}`
+          : (row.location.address ?? '—'),
     },
     {
       header: 'Food Items',
@@ -136,15 +133,9 @@ export const RestaurantsPage: React.FC = () => {
       >
         {restaurantToDelete && (
           <p>
-            Are you sure you want to delete <strong>{restaurantToDelete.name}</strong>?
-            <br />
-            <br />
-            This restaurant has:
-            <ul>
-              <li>{getFoodCount(restaurantToDelete.id)} food item(s)</li>
-              <li>{getMenuItemCount(restaurantToDelete.id)} menu item(s)</li>
-            </ul>
-            All associated food items and menu items will also be deleted.
+            Are you sure you want to delete <strong>{restaurantToDelete.name}</strong>? This
+            restaurant has {getFoodCount(restaurantToDelete.id)} food item(s) that will also be
+            deleted.
           </p>
         )}
       </Modal>

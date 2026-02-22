@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food, MenuItem } from '../constants';
+import { Section, Restaurant, Location, Food } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -14,31 +14,31 @@ export const getSampleRestaurants = (): Restaurant[] => {
       id: 'restaurant-1',
       name: 'Campus Café',
       sectionId: 'section-1',
-      location: new Location({ longitude: -122.4194, latitude: 37.7749 }),
+      location: new Location({ address: '100 North Campus Drive' }),
     }),
     new Restaurant({
       id: 'restaurant-2',
       name: 'The Dining Hall',
       sectionId: 'section-1',
-      location: new Location({ longitude: -122.4184, latitude: 37.7739 }),
+      location: new Location({ address: '200 North Campus Drive' }),
     }),
     new Restaurant({
       id: 'restaurant-3',
       name: 'Pizza Place',
       sectionId: 'section-2',
-      location: new Location({ longitude: -122.4174, latitude: 37.7729 }),
+      location: new Location({ address: '300 South Campus Drive' }),
     }),
     new Restaurant({
       id: 'restaurant-4',
       name: 'Healthy Bowls',
       sectionId: 'section-2',
-      location: new Location({ longitude: -122.4164, latitude: 37.7719 }),
+      location: new Location({ address: '400 South Campus Drive' }),
     }),
     new Restaurant({
       id: 'restaurant-5',
       name: 'Coffee Shop',
       sectionId: 'section-3',
-      location: new Location({ longitude: -122.4154, latitude: 37.7709 }),
+      location: new Location({ address: '500 Central Campus Drive' }),
     }),
   ];
 };
@@ -258,55 +258,6 @@ export const getSampleFoods = (): Food[] => {
   ];
 };
 
-export const getSampleMenuItems = (): MenuItem[] => {
-  const sampleFoods = getSampleFoods();
-  return [
-    new MenuItem({
-      id: 'menu-item-1',
-      name: 'Healthy Lunch Combo',
-      restaurantId: 'restaurant-1',
-      foods: [
-        { food: sampleFoods.find((f) => f.id === 'food-1')!, quantity: 1 },
-        { food: sampleFoods.find((f) => f.id === 'food-2')!, quantity: 1 },
-      ],
-      possibleFoods: [],
-    }),
-    new MenuItem({
-      id: 'menu-item-2',
-      name: 'Pasta Meal Deal',
-      restaurantId: 'restaurant-2',
-      foods: [
-        { food: sampleFoods.find((f) => f.id === 'food-3')!, quantity: 1 },
-      ],
-      possibleFoods: [
-        { food: sampleFoods.find((f) => f.id === 'food-10')!, quantity: 1 },
-      ],
-    }),
-    new MenuItem({
-      id: 'menu-item-3',
-      name: 'Pizza Feast',
-      restaurantId: 'restaurant-3',
-      foods: [
-        { food: sampleFoods.find((f) => f.id === 'food-4')!, quantity: 2 },
-      ],
-      possibleFoods: [
-        { food: sampleFoods.find((f) => f.id === 'food-5')!, quantity: 1 },
-      ],
-    }),
-    new MenuItem({
-      id: 'menu-item-4',
-      name: 'Coffee & Pastry',
-      restaurantId: 'restaurant-5',
-      foods: [
-        { food: sampleFoods.find((f) => f.id === 'food-8')!, quantity: 1 },
-      ],
-      possibleFoods: [
-        { food: sampleFoods.find((f) => f.id === 'food-9')!, quantity: 1 },
-      ],
-    }),
-  ];
-};
-
 /**
  * Initialize all sample data into localStorage
  * Only call this if localStorage is empty
@@ -320,8 +271,5 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_foods')) {
     localStorage.setItem('uplate_foods', JSON.stringify(getSampleFoods()));
-  }
-  if (!localStorage.getItem('uplate_menu_items')) {
-    localStorage.setItem('uplate_menu_items', JSON.stringify(getSampleMenuItems()));
   }
 };

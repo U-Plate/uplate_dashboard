@@ -44,6 +44,9 @@ export const SectionsPage: React.FC = () => {
     },
   ];
 
+  const sectionHasRestaurants =
+    sectionToDelete != null && getRestaurantCount(sectionToDelete.id) > 0;
+
   return (
     <div className="sections-page">
       <div className="sections-page__header">
@@ -71,22 +74,23 @@ export const SectionsPage: React.FC = () => {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         title="Delete Section"
-        onConfirm={handleConfirmDelete}
+        onConfirm={sectionHasRestaurants ? undefined : handleConfirmDelete}
         confirmText="Delete"
         confirmVariant="danger"
+        cancelText={sectionHasRestaurants ? 'Close' : 'Cancel'}
       >
         {sectionToDelete && (
-          <p>
-            Are you sure you want to delete <strong>{sectionToDelete.name}</strong>?
-            {getRestaurantCount(sectionToDelete.id) > 0 && (
-              <>
-                <br />
-                <br />
-                This section contains {getRestaurantCount(sectionToDelete.id)} restaurant(s).
-                Deleting this section will remove the section assignment from these restaurants.
-              </>
-            )}
-          </p>
+          sectionHasRestaurants ? (
+            <p>
+              <strong>{sectionToDelete.name}</strong> cannot be deleted because it still has{' '}
+              {getRestaurantCount(sectionToDelete.id)} restaurant(s) assigned to it. Move or
+              delete those restaurants first.
+            </p>
+          ) : (
+            <p>
+              Are you sure you want to delete <strong>{sectionToDelete.name}</strong>?
+            </p>
+          )
         )}
       </Modal>
     </div>

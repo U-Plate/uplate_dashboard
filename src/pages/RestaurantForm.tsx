@@ -4,6 +4,8 @@ import { useRestaurants } from '../contexts/RestaurantsContext';
 import { useSections } from '../contexts/SectionsContext';
 import { FormField } from '../components/FormField';
 import { Button } from '../components/Button';
+import { LocationPicker } from '../components/LocationPicker';
+import '../components/LocationPicker.css';
 import { Location } from '../constants';
 import './RestaurantForm.css';
 
@@ -15,13 +17,11 @@ export const RestaurantForm: React.FC = () => {
 
   const [name, setName] = useState('');
   const [sectionId, setSectionId] = useState('');
-  const [longitude, setLongitude] = useState<number>(0);
-  const [latitude, setLatitude] = useState<number>(0);
+  const [location, setLocation] = useState<Location | null>(null);
   const [errors, setErrors] = useState<{
     name?: string;
     sectionId?: string;
-    longitude?: string;
-    latitude?: string;
+    location?: string;
   }>({});
 
   const isEditMode = !!id;
@@ -32,8 +32,7 @@ export const RestaurantForm: React.FC = () => {
       if (restaurant) {
         setName(restaurant.name);
         setSectionId(restaurant.sectionId);
-        setLongitude(restaurant.location.longitude);
-        setLatitude(restaurant.location.latitude);
+        setLocation(restaurant.location);
       }
     } else if (sections.length > 0 && !sectionId) {
       setSectionId(sections[0].id);
@@ -44,8 +43,7 @@ export const RestaurantForm: React.FC = () => {
     const newErrors: {
       name?: string;
       sectionId?: string;
-      longitude?: string;
-      latitude?: string;
+      location?: string;
     } = {};
 
     if (!name.trim()) {
@@ -56,12 +54,10 @@ export const RestaurantForm: React.FC = () => {
       newErrors.sectionId = 'Section is required';
     }
 
-    if (latitude < -90 || latitude > 90) {
-      newErrors.latitude = 'Latitude must be between -90 and 90';
-    }
-
-    if (longitude < -180 || longitude > 180) {
-      newErrors.longitude = 'Longitude must be between -180 and 180';
+    const hasCoords = location?.latitude != null && location?.longitude != null;
+    const hasAddress = !!location?.address?.trim();
+    if (!hasCoords && !hasAddress) {
+      newErrors.location = 'Please enter an address or pick a location on the map';
     }
 
     setErrors(newErrors);
@@ -78,7 +74,7 @@ export const RestaurantForm: React.FC = () => {
     const restaurantData = {
       name: name.trim(),
       sectionId,
-      location: new Location({ longitude, latitude }),
+      location: location!,
     };
 
     if (isEditMode && id) {
@@ -139,27 +135,11 @@ export const RestaurantForm: React.FC = () => {
           {errors.sectionId && <div className="form-field__error">{errors.sectionId}</div>}
         </div>
 
-        <div className="restaurant-form__location">
-          <FormField
-            label="Latitude"
-            type="number"
-            value={latitude}
-            onChange={(value) => setLatitude(value as number)}
-            error={errors.latitude}
-            required
-            placeholder="e.g., 37.7749"
-          />
-
-          <FormField
-            label="Longitude"
-            type="number"
-            value={longitude}
-            onChange={(value) => setLongitude(value as number)}
-            error={errors.longitude}
-            required
-            placeholder="e.g., -122.4194"
-          />
-        </div>
+        <LocationPicker
+          value={location}
+          onChange={setLocation}
+          error={errors.location}
+        />
 
         <div className="restaurant-form__actions">
           <Button type="button" variant="secondary" onClick={() => navigate('/restaurants')}>

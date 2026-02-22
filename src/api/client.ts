@@ -1,14 +1,16 @@
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from "../config";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
   });
 
   if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`API ${options?.method ?? 'GET'} ${path} failed (${res.status}): ${body}`);
+    const body = await res.text().catch(() => "");
+    throw new Error(
+      `API ${options?.method ?? "GET"} ${path} failed (${res.status}): ${body}`,
+    );
   }
 
   if (res.status === 204) return undefined as T;
@@ -19,13 +21,5 @@ export const api = {
   get: <T>(path: string) => request<T>(path),
 
   post: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'POST', body: JSON.stringify(body) }),
-
-  put: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
-
-  patch: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
-
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+    request<T>(path, { method: "POST", body: JSON.stringify(body) }),
 };

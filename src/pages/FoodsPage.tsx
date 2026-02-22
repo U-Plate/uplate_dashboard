@@ -109,12 +109,7 @@ export const FoodsPage: React.FC = () => {
         confirmVariant="danger"
       >
         {foodToDelete && (
-          <p>
-            Are you sure you want to delete <strong>{foodToDelete.name}</strong>?
-            <br />
-            <br />
-            This food item will be removed from all menu items that include it.
-          </p>
+          <p>Are you sure you want to delete <strong>{foodToDelete.name}</strong>?</p>
         )}
       </Modal>
     </div>

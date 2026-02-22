@@ -95,6 +95,7 @@ export const SectionsProvider: React.FC<{ children: ReactNode }> = ({ children }
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSections = (): SectionsContextType => {
   const context = useContext(SectionsContext);
   if (!context) {

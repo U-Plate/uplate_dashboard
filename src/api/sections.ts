@@ -1,20 +1,32 @@
 import { Section } from '../constants';
 import { api } from './client';
+import { SCHOOL, ADMIN_KEY } from '../config';
 
 export const sectionsApi = {
-  /** GET /api/sections */
-  getAll: () => api.get<Section[]>('/sections'),
+  /** GET /:school/sections */
+  getAll: () => api.get<Section[]>(`/${SCHOOL}/sections`),
 
-  /** GET /api/sections/:id */
-  getById: (id: string) => api.get<Section>(`/sections/${id}`),
+  /** GET /:school/sections/:id */
+  getById: (id: string) => api.get<Section>(`/${SCHOOL}/sections/${id}`),
 
-  /** POST /api/sections  — body: { name } */
-  create: (data: Omit<Section, 'id'>) => api.post<Section>('/sections', data),
+  /** POST /:school/admin/sections/addSection?key=... — body: { name } */
+  create: (data: Omit<Section, 'id'>) =>
+    api.post<Section>(
+      `/${SCHOOL}/admin/sections/addSection?key=${ADMIN_KEY}`,
+      { name: data.name }
+    ),
 
-  /** PUT /api/sections/:id  — body: { name } */
+  /** POST /:school/admin/sections/updateSection?key=... — body: { id, name } */
   update: (id: string, data: Partial<Section>) =>
-    api.put<Section>(`/sections/${id}`, data),
+    api.post<Section>(
+      `/${SCHOOL}/admin/sections/updateSection?key=${ADMIN_KEY}`,
+      { id, name: data.name }
+    ),
 
-  /** DELETE /api/sections/:id */
-  delete: (id: string) => api.delete<void>(`/sections/${id}`),
+  /** POST /:school/admin/sections/deleteSection?key=... — body: { id } */
+  delete: (id: string) =>
+    api.post<{ status: boolean }>(
+      `/${SCHOOL}/admin/sections/deleteSection?key=${ADMIN_KEY}`,
+      { id }
+    ),
 };

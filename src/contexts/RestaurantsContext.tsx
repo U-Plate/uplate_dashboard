@@ -130,6 +130,7 @@ export const RestaurantsProvider: React.FC<{ children: ReactNode }> = ({ childre
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useRestaurants = (): RestaurantsContextType => {
   const context = useContext(RestaurantsContext);
   if (!context) {

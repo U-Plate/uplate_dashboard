@@ -173,6 +173,73 @@
   color: #646cff;
 }
 
+/* Sizes toggle */
+
+.menu-item-form__sizes-toggle {
+  margin-bottom: 0.5rem;
+}
+
+.menu-item-form__sizes-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.87);
+  cursor: pointer;
+}
+
+.menu-item-form__sizes-toggle-label input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Sizes section */
+
+.menu-item-form__sizes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.menu-item-form__sizes-header {
+  margin-bottom: 0;
+}
+
+.menu-item-form__size-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.menu-item-form__size-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.menu-item-form__size-name-input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.menu-item-form__size-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.menu-item-form__size-name-input:focus {
+  outline: none;
+  border-color: #646cff;
+}
+
 .menu-item-form__actions {
   display: flex;
   gap: 1rem;

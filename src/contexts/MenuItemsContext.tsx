@@ -18,7 +18,7 @@ interface MenuItemsContextType {
 
 const MenuItemsContext = createContext<MenuItemsContextType | undefined>(undefined);
 
-// Migrate old data: Food[] → MenuItemFood[], add missing possibleFoods
+// Migrate old data: Food[] → MenuItemFood[], add missing possibleFoods/sizes
 const migrateMenuItems = (items: any[]): MenuItem[] =>
   items.map((item) => ({
     ...item,
@@ -26,6 +26,11 @@ const migrateMenuItems = (items: any[]): MenuItem[] =>
     possibleFoods: (item.possibleFoods ?? []).map((f: any) =>
       f.food ? f : { food: f, quantity: 1 }
     ),
+    sizes: (item.sizes ?? []).map((s: any) => ({
+      ...s,
+      foods: (s.foods ?? []).map((f: any) => (f.food ? f : { food: f, quantity: 1 })),
+      possibleFoods: (s.possibleFoods ?? []).map((f: any) => (f.food ? f : { food: f, quantity: 1 })),
+    })),
   }));
 
 const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

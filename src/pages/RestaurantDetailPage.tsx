@@ -8,8 +8,20 @@ import type { Column } from '../components/DataTable';
 import { DataTable } from '../components/DataTable';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
+import type { MenuItemFood } from '../constants';
 import { Food, MenuItem } from '../constants';
 import './RestaurantDetailPage.css';
+
+const getNutritionTotals = (foods: MenuItemFood[]) =>
+  foods.reduce(
+    (totals, mf) => ({
+      calories: totals.calories + mf.food.calories * mf.quantity,
+      protein: totals.protein + mf.food.protein * mf.quantity,
+      carbs: totals.carbs + mf.food.carbs * mf.quantity,
+      fat: totals.fat + mf.food.fat * mf.quantity,
+    }),
+    { calories: 0, protein: 0, carbs: 0, fat: 0 }
+  );
 
 export const RestaurantDetailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -79,16 +91,13 @@ export const RestaurantDetailPage: React.FC = () => {
     setExpandedMenuItems(newExpanded);
   };
 
-  const getTotalNutrition = (menuItem: MenuItem) => {
-    return menuItem.foods.reduce(
-      (totals, mf) => ({
-        calories: totals.calories + mf.food.calories * mf.quantity,
-        protein: totals.protein + mf.food.protein * mf.quantity,
-        carbs: totals.carbs + mf.food.carbs * mf.quantity,
-        fat: totals.fat + mf.food.fat * mf.quantity,
-      }),
-      { calories: 0, protein: 0, carbs: 0, fat: 0 }
-    );
+  const hasSizes = (menuItem: MenuItem) => menuItem.sizes && menuItem.sizes.length > 0;
+
+  const totalFoodCount = (menuItem: MenuItem) => {
+    if (hasSizes(menuItem)) {
+      return menuItem.sizes.reduce((sum, s) => sum + s.foods.length + (s.possibleFoods?.length || 0), 0);
+    }
+    return menuItem.foods.length + (menuItem.possibleFoods?.length || 0);
   };
 
   const foodColumns: Column<Food>[] = [
@@ -172,7 +181,9 @@ export const RestaurantDetailPage: React.FC = () => {
         ) : (
           <div className="restaurant-detail__menu-items">
             {restaurantMenuItems.map((menuItem) => {
-              const totals = getTotalNutrition(menuItem);
+              const withSizes = hasSizes(menuItem);
+              const primaryFoods = withSizes ? menuItem.sizes[0].foods : menuItem.foods;
+              const totals = getNutritionTotals(primaryFoods);
               const isExpanded = expandedMenuItems.has(menuItem.id);
 
               return (
@@ -180,7 +191,18 @@ export const RestaurantDetailPage: React.FC = () => {
                   <div className="restaurant-detail__menu-card-header">
                     <div className="restaurant-detail__menu-card-info">
                       <h3 className="restaurant-detail__menu-card-name">{menuItem.name}</h3>
+                      {withSizes && (
+                        <p className="restaurant-detail__menu-card-sizes-badge">
+                          {menuItem.sizes.length} size{menuItem.sizes.length !== 1 ? 's' : ''}:{' '}
+                          {menuItem.sizes.map((s) => s.name).join(', ')}
+                        </p>
+                      )}
                       <div className="restaurant-detail__menu-card-nutrition">
+                        {withSizes && (
+                          <span className="restaurant-detail__menu-card-nutrition-label">
+                            {menuItem.sizes[0].name}:
+                          </span>
+                        )}
                         <span>{totals.calories} cal</span>
                         <span>{totals.protein}g protein</span>
                         <span>{totals.carbs}g carbs</span>
@@ -205,34 +227,95 @@ export const RestaurantDetailPage: React.FC = () => {
                         variant="secondary"
                         onClick={() => toggleExpandMenuItem(menuItem.id)}
                       >
-                        {isExpanded ? 'Hide' : 'Show'} Foods ({menuItem.foods.length + (menuItem.possibleFoods?.length || 0)})
+                        {isExpanded ? 'Hide' : 'Show'} Foods ({totalFoodCount(menuItem)})
                       </Button>
                     </div>
                   </div>
 
                   {isExpanded && (
                     <div className="restaurant-detail__menu-card-foods">
-                      <h4 className="restaurant-detail__food-list-heading">Default Foods</h4>
-                      <ul className="restaurant-detail__food-list">
-                        {menuItem.foods.map((mf) => (
-                          <li key={mf.food.id} className="restaurant-detail__food-list-item">
-                            <span className="restaurant-detail__food-list-name">
-                              {mf.food.name}
-                              {mf.quantity > 1 && (
-                                <span className="restaurant-detail__food-list-qty">
-                                  {' '}x{mf.quantity}
+                      {withSizes ? (
+                        menuItem.sizes.map((size, sIdx) => {
+                          const sizeTotals = getNutritionTotals(size.foods);
+                          return (
+                            <div key={sIdx} className="restaurant-detail__size-group">
+                              <h4 className="restaurant-detail__size-group-name">
+                                {size.name}
+                                <span className="restaurant-detail__size-group-nutrition">
+                                  {sizeTotals.calories} cal | {sizeTotals.protein}g protein | {sizeTotals.carbs}g carbs | {sizeTotals.fat}g fat
                                 </span>
+                              </h4>
+                              <ul className="restaurant-detail__food-list">
+                                {size.foods.map((mf) => (
+                                  <li key={mf.food.id} className="restaurant-detail__food-list-item">
+                                    <span className="restaurant-detail__food-list-name">
+                                      {mf.food.name}
+                                      {mf.quantity > 1 && (
+                                        <span className="restaurant-detail__food-list-qty">
+                                          {' '}x{mf.quantity}
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="restaurant-detail__food-list-nutrition">
+                                      {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g
+                                      carbs | {mf.food.fat * mf.quantity}g fat
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                              {size.possibleFoods?.length > 0 && (
+                                <>
+                                  <h4 className="restaurant-detail__food-list-heading restaurant-detail__food-list-heading--possible" style={{ marginTop: '0.5rem' }}>
+                                    Possible Add-ons
+                                  </h4>
+                                  <ul className="restaurant-detail__food-list">
+                                    {size.possibleFoods.map((mf) => (
+                                      <li key={mf.food.id} className="restaurant-detail__food-list-item restaurant-detail__food-list-item--possible">
+                                        <span className="restaurant-detail__food-list-name">
+                                          {mf.food.name}
+                                          {mf.quantity > 1 && (
+                                            <span className="restaurant-detail__food-list-qty">
+                                              {' '}x{mf.quantity}
+                                            </span>
+                                          )}
+                                        </span>
+                                        <span className="restaurant-detail__food-list-nutrition">
+                                          {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g
+                                          carbs | {mf.food.fat * mf.quantity}g fat
+                                        </span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </>
                               )}
-                            </span>
-                            <span className="restaurant-detail__food-list-nutrition">
-                              {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g
-                              carbs | {mf.food.fat * mf.quantity}g fat
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <>
+                          <h4 className="restaurant-detail__food-list-heading">Default Foods</h4>
+                          <ul className="restaurant-detail__food-list">
+                            {menuItem.foods.map((mf) => (
+                              <li key={mf.food.id} className="restaurant-detail__food-list-item">
+                                <span className="restaurant-detail__food-list-name">
+                                  {mf.food.name}
+                                  {mf.quantity > 1 && (
+                                    <span className="restaurant-detail__food-list-qty">
+                                      {' '}x{mf.quantity}
+                                    </span>
+                                  )}
+                                </span>
+                                <span className="restaurant-detail__food-list-nutrition">
+                                  {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g
+                                  carbs | {mf.food.fat * mf.quantity}g fat
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
 
-                      {menuItem.possibleFoods?.length > 0 && (
+                      {!withSizes && menuItem.possibleFoods?.length > 0 && (
                         <>
                           <h4 className="restaurant-detail__food-list-heading restaurant-detail__food-list-heading--possible">
                             Possible Add-ons
@@ -295,7 +378,7 @@ export const RestaurantDetailPage: React.FC = () => {
         {menuItemToDelete && (
           <p>
             Are you sure you want to delete <strong>{menuItemToDelete.name}</strong>? This menu
-            item contains {menuItemToDelete.foods.length} food item(s).
+            item contains {totalFoodCount(menuItemToDelete)} food item(s).
           </p>
         )}
       </Modal>

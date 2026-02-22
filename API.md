@@ -306,12 +306,51 @@ List all menu items. Supports optional query filter.
         },
         "quantity": 1
       }
+    ],
+    "sizes": []
+  },
+  {
+    "id": "menu-item-3",
+    "name": "Pizza Feast",
+    "restaurantId": "restaurant-3",
+    "foods": [],
+    "possibleFoods": [],
+    "sizes": [
+      {
+        "name": "Regular",
+        "foods": [
+          {
+            "food": { "id": "food-4", "name": "Margherita Pizza", "calories": 650 },
+            "quantity": 2
+          }
+        ],
+        "possibleFoods": [
+          {
+            "food": { "id": "food-5", "name": "Pepperoni Pizza", "calories": 750 },
+            "quantity": 1
+          }
+        ]
+      },
+      {
+        "name": "Family",
+        "foods": [
+          {
+            "food": { "id": "food-4", "name": "Margherita Pizza", "calories": 650 },
+            "quantity": 4
+          },
+          {
+            "food": { "id": "food-5", "name": "Pepperoni Pizza", "calories": 750 },
+            "quantity": 2
+          }
+        ],
+        "possibleFoods": []
+      }
     ]
   }
 ]
 ```
 
-> **Note:** `foods` are included by default. `possibleFoods` are optional add-ons that can be added but are not included by default. Both arrays use the `MenuItemFood` format (`{ food, quantity }`).
+> **Note:** `foods` are the default included foods (used when `sizes` is empty). `possibleFoods` at the top level are optional add-ons (used when `sizes` is empty). `sizes` is an optional array where each entry has a custom `name` (any string), its own `foods` array, and its own `possibleFoods` array. When `sizes` is non-empty, the per-size `foods` and `possibleFoods` take precedence over the top-level ones (which are typically `[]`). All food arrays use the `MenuItemFood` format (`{ food, quantity }`).
 
 ### `GET /api/menu-items/:id`
 
@@ -324,6 +363,8 @@ Get a single menu item by ID.
 Create a new menu item.
 
 **Body**
+
+Without sizes:
 ```json
 {
   "name": "Breakfast Special",
@@ -333,24 +374,41 @@ Create a new menu item.
   ],
   "possibleFoods": [
     { "food": { "id": "food-9", "...": "full food object" }, "quantity": 1 }
+  ],
+  "sizes": []
+}
+```
+
+With sizes (size names can be any string):
+```json
+{
+  "name": "Pizza Feast",
+  "restaurantId": "restaurant-3",
+  "foods": [],
+  "possibleFoods": [],
+  "sizes": [
+    {
+      "name": "Regular",
+      "foods": [
+        { "food": { "id": "food-4", "...": "full food object" }, "quantity": 2 }
+      ],
+      "possibleFoods": [
+        { "food": { "id": "food-5", "...": "full food object" }, "quantity": 1 }
+      ]
+    },
+    {
+      "name": "Family",
+      "foods": [
+        { "food": { "id": "food-4", "...": "full food object" }, "quantity": 4 },
+        { "food": { "id": "food-5", "...": "full food object" }, "quantity": 2 }
+      ],
+      "possibleFoods": []
+    }
   ]
 }
 ```
 
-> Your server implementation may alternatively accept a simplified format:
-> ```json
-> {
->   "name": "Breakfast Special",
->   "restaurantId": "restaurant-5",
->   "foods": [
->     { "foodId": "food-8", "quantity": 1 }
->   ],
->   "possibleFoods": [
->     { "foodId": "food-9", "quantity": 1 }
->   ]
-> }
-> ```
-> and resolve the full food objects server-side.
+> Your server implementation may alternatively accept a simplified format using `foodId` instead of the full `food` object, resolving them server-side.
 
 **Response** `201` — created menu item with full food objects
 
@@ -358,14 +416,21 @@ Create a new menu item.
 
 Update a menu item.
 
-**Body** (partial — any fields)
+**Body** (partial — any fields, including `sizes`)
 ```json
 {
   "name": "Updated Combo",
   "foods": [
     { "food": { "id": "food-1", "...": "..." }, "quantity": 3 }
   ],
-  "possibleFoods": []
+  "possibleFoods": [],
+  "sizes": [
+    {
+      "name": "Small",
+      "foods": [{ "food": { "id": "food-1", "...": "..." }, "quantity": 1 }],
+      "possibleFoods": []
+    }
+  ]
 }
 ```
 
@@ -432,8 +497,18 @@ Delete a menu item.
 | restaurantId  | string           | yes      |
 | foods         | MenuItemFood[]   | yes      |
 | possibleFoods | MenuItemFood[]   | no       |
+| sizes         | MenuItemSize[]   | no       |
 
-> `foods` are included by default. `possibleFoods` are optional add-ons that can be selected but aren't included by default. Defaults to `[]` if omitted.
+> **Without sizes:** `foods` are the default included foods. `possibleFoods` are optional add-ons. Both default to `[]` if omitted.
+>
+> **With sizes:** When `sizes` is non-empty, each size defines its own `name`, `foods` array, and `possibleFoods` array. The top-level `foods` and `possibleFoods` are typically `[]` in this case. Size names can be any string (e.g., "Small", "Large", "Kids", "Family").
+
+### MenuItemSize
+| Field         | Type           | Required |
+| ------------- | -------------- | -------- |
+| name          | string         | yes      |
+| foods         | MenuItemFood[] | yes      |
+| possibleFoods | MenuItemFood[] | no       |
 
 ### MenuItemFood
 | Field    | Type   | Required |

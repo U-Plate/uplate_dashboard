@@ -102,18 +102,26 @@ export interface MenuItemFood {
     quantity: number;
 }
 
+export interface MenuItemSize {
+    name: string;
+    foods: MenuItemFood[];
+    possibleFoods: MenuItemFood[];
+}
+
 export class MenuItem {
     id: string;
     name: string;
     restaurantId: string;
     foods: MenuItemFood[];
     possibleFoods: MenuItemFood[];
+    sizes: MenuItemSize[];
 
-    constructor({ id, name, restaurantId, foods, possibleFoods }: MenuItem) {
+    constructor({ id, name, restaurantId, foods, possibleFoods, sizes }: MenuItem) {
         this.id = id;
         this.name = name;
         this.restaurantId = restaurantId;
         this.foods = foods;
         this.possibleFoods = possibleFoods ?? [];
+        this.sizes = sizes ?? [];
     }
 }

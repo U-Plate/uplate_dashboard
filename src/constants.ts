@@ -1,10 +1,12 @@
 export class Location {
-    longitude: number;
-    latitude: number;
+    address?: string;
+    latitude?: number;
+    longitude?: number;
 
-    constructor({ longitude, latitude }: Location) {
-        this.longitude = longitude;
+    constructor({ address, latitude, longitude }: { address?: string; latitude?: number; longitude?: number }) {
+        this.address = address;
         this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
 
@@ -97,23 +99,3 @@ export class Food {
     }
 }
 
-export interface MenuItemFood {
-    food: Food;
-    quantity: number;
-}
-
-export class MenuItem {
-    id: string;
-    name: string;
-    restaurantId: string;
-    foods: MenuItemFood[];
-    possibleFoods: MenuItemFood[];
-
-    constructor({ id, name, restaurantId, foods, possibleFoods }: MenuItem) {
-        this.id = id;
-        this.name = name;
-        this.restaurantId = restaurantId;
-        this.foods = foods;
-        this.possibleFoods = possibleFoods ?? [];
-    }
-}

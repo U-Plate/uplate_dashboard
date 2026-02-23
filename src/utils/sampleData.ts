@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food } from '../constants';
+import { Section, Restaurant, Location, Food, MenuItem } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -338,5 +338,8 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_foods')) {
     localStorage.setItem('uplate_foods', JSON.stringify(getSampleFoods()));
+  }
+  if (!localStorage.getItem('uplate_menu_items')) {
+    localStorage.setItem('uplate_menu_items', JSON.stringify(getSampleMenuItems()));
   }
 };

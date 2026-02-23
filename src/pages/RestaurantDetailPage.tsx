@@ -8,7 +8,8 @@ import { DataTable } from '../components/DataTable';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import type { MenuItemFood } from '../constants';
-import { Food } from '../constants';
+import { Food, MenuItem } from '../constants';
+import { useMenuItems } from '../contexts/MenuItemsContext';
 import './RestaurantDetailPage.css';
 
 const getNutritionTotals = (foods: MenuItemFood[]) =>
@@ -28,9 +29,13 @@ export const RestaurantDetailPage: React.FC = () => {
   const { getRestaurantById } = useRestaurants();
   const { getSectionById } = useSections();
   const { getFoodsByRestaurant, deleteFood } = useFoods();
+  const { menuItems, deleteMenuItem } = useMenuItems();
 
   const [deleteFoodModalOpen, setDeleteFoodModalOpen] = useState(false);
   const [foodToDelete, setFoodToDelete] = useState<Food | null>(null);
+  const [deleteMenuItemModalOpen, setDeleteMenuItemModalOpen] = useState(false);
+  const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItem | null>(null);
+  const [expandedMenuItems, setExpandedMenuItems] = useState<Set<string>>(new Set());
 
   const restaurant = id ? getRestaurantById(id) : undefined;
 
@@ -48,6 +53,7 @@ export const RestaurantDetailPage: React.FC = () => {
 
   const section = getSectionById(restaurant.sectionId);
   const restaurantFoods = getFoodsByRestaurant(restaurant.id);
+  const restaurantMenuItems = menuItems.filter((m) => m.restaurantId === restaurant.id);
 
   const handleDeleteFood = (food: Food) => {
     setFoodToDelete(food);
@@ -176,7 +182,9 @@ export const RestaurantDetailPage: React.FC = () => {
         ) : (
           <div className="restaurant-detail__menu-items">
             {restaurantMenuItems.map((menuItem) => {
-              const totals = getTotalNutrition(menuItem);
+              const withSizes = hasSizes(menuItem);
+              const primaryFoods = withSizes ? menuItem.sizes[0].foods : menuItem.foods;
+              const totals = getNutritionTotals(primaryFoods);
               const isExpanded = expandedMenuItems.has(menuItem.id);
 
               return (

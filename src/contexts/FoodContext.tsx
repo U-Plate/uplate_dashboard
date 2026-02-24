@@ -64,8 +64,10 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const addFood = async (foodData: Omit<Food, 'id'>) => {
     const { restaurantId, ...rest } = foodData;
-    const created = await foodsApi.create(restaurantId, rest);
-    setFoods((prev) => [...prev, created]);
+    await foodsApi.create(restaurantId, rest);
+    // Refetch so local state has the server-assigned ID, not the client-generated one.
+    fetchedRestaurants.current.delete(restaurantId);
+    await fetchFoodsForRestaurant(restaurantId);
   };
 
   const updateFood = async (id: string, updates: Partial<Food>) => {

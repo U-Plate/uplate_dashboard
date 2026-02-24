@@ -304,8 +304,6 @@ Update a food item.
 Delete a food item.
 
 **Body**
-
-Without sizes:
 ```json
 { "key": "boilerfuelkey" }
 ```
@@ -315,7 +313,103 @@ Without sizes:
 { "status": true }
 ```
 
-------------
+---
+
+## Menu Items
+
+### `GET /:school/restaurants/:id/menuItems`
+
+List all menu items for a restaurant.
+
+**Example** `GET /purdue/restaurants/restaurant-1/menuItems`
+
+**Response** `200`
+```json
+[
+  {
+    "id": "menuitem-1",
+    "name": "Caesar Salad Combo",
+    "restaurantId": "restaurant-1",
+    "foods": [
+      { "food": { "id": "food-1", "name": "Caesar Salad" }, "quantity": 1 }
+    ],
+    "possibleFoods": [],
+    "sizes": []
+  }
+]
+```
+
+### `GET /:school/restaurants/:id/menuItems/:menuItemId`
+
+Get a single menu item by ID.
+
+**Response** `200`
+```json
+{
+  "id": "menuitem-1",
+  "name": "Caesar Salad Combo",
+  "restaurantId": "restaurant-1",
+  "foods": [
+    { "food": { "id": "food-1", "name": "Caesar Salad" }, "quantity": 1 }
+  ],
+  "possibleFoods": [],
+  "sizes": []
+}
+```
+
+### `POST /:school/admin/restaurants/:id/newMenuItem`
+
+Create a new menu item.
+
+**Body**
+```json
+{
+  "name": "Turkey Wrap Combo",
+  "foods": [
+    { "food": "food-2", "quantity": 1 }
+  ],
+  "possibleFoods": [
+    { "foodId": "food-3", "quantity": 1, "size": "Small" },
+    { "foodId": "food-3", "quantity": 2, "size": "Large" }
+  ],
+  "key": "boilerfueladmin"
+}
+```
+
+> Size variants are represented as `possibleFoods` entries with an optional `size` field (e.g., `"Small"`, `"Large"`). There is no separate `sizes` array.
+
+**Response** `200`
+```json
+{ "status": true }
+```
+
+### `POST /:school/admin/restaurants/:id/updateMenuItem/:menuItemId`
+
+Update a menu item.
+
+**Body** (partial — any fields)
+```json
+{ "name": "Updated Combo", "key": "boilerfueladmin" }
+```
+
+**Response** `200` — full updated menu item object
+
+### `POST /:school/admin/restaurants/:id/deleteMenuItem/:menuItemId`
+
+Delete a menu item.
+
+**Body**
+```json
+{ "key": "boilerfueladmin" }
+```
+
+**Response** `200`
+```json
+{ "status": true }
+```
+
+---
+
 ## Data Models
 
 ### Section
@@ -362,40 +456,19 @@ Without sizes:
 | ingredients    | string | no       |
 
 ### MenuItem
-| Field         | Type             | Required |
-| ------------- | ---------------- | -------- |
-| id            | string           | auto     |
-| name          | string           | yes      |
-| restaurantId  | string           | yes      |
-| foods         | MenuItemFood[]   | yes      |
-| possibleFoods | MenuItemFood[]   | no       |
-| sizes         | MenuItemSize[]   | no       |
-
-> **Without sizes:** `foods` are the default included foods. `possibleFoods` are optional add-ons. Both default to `[]` if omitted.
->
-> **With sizes:** When `sizes` is non-empty, each size defines its own `name`, `foods` array, and `possibleFoods` array. The top-level `foods` and `possibleFoods` are typically `[]` in this case. Size names can be any string (e.g., "Small", "Large", "Kids", "Family").
-
-### MenuItemSize
 | Field         | Type           | Required |
 | ------------- | -------------- | -------- |
+| id            | string         | auto     |
 | name          | string         | yes      |
+| restaurantId  | string         | yes      |
 | foods         | MenuItemFood[] | yes      |
 | possibleFoods | MenuItemFood[] | no       |
-| sizes         | MenuItemSize[]   | no       |
 
-> **Without sizes:** `foods` are the default included foods. `possibleFoods` are optional add-ons. Both default to `[]` if omitted.
->
-> **With sizes:** When `sizes` is non-empty, each size defines its own `name`, `foods` array, and `possibleFoods` array. The top-level `foods` and `possibleFoods` are typically `[]` in this case. Size names can be any string (e.g., "Small", "Large", "Kids", "Family").
-
-### MenuItemSize
-| Field         | Type           | Required |
-| ------------- | -------------- | -------- |
-| name          | string         | yes      |
-| foods         | MenuItemFood[] | yes      |
-| possibleFoods | MenuItemFood[] | no       |
+> `foods` are the default included foods. `possibleFoods` are optional add-ons or size variants. Both default to `[]` if omitted.
 
 ### MenuItemFood
 | Field    | Type   | Required |
 | -------- | ------ | -------- |
-| food     | Food   | yes      |
+| foodId   | string | yes (food ID) |
 | quantity | number | yes      |
+| size     | string | no — present when this entry represents a size variant (e.g., `"Small"`, `"Large"`) |

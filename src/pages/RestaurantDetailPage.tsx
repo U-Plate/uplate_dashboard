@@ -29,7 +29,7 @@ export const RestaurantDetailPage: React.FC = () => {
   const { getRestaurantById } = useRestaurants();
   const { getSectionById } = useSections();
   const { getFoodsByRestaurant, deleteFood } = useFoods();
-  const { menuItems, deleteMenuItem } = useMenuItems();
+  const { getMenuItemsByRestaurant, deleteMenuItem } = useMenuItems();
 
   const [deleteFoodModalOpen, setDeleteFoodModalOpen] = useState(false);
   const [foodToDelete, setFoodToDelete] = useState<Food | null>(null);
@@ -53,7 +53,7 @@ export const RestaurantDetailPage: React.FC = () => {
 
   const section = getSectionById(restaurant.sectionId);
   const restaurantFoods = getFoodsByRestaurant(restaurant.id);
-  const restaurantMenuItems = menuItems.filter((m) => m.restaurantId === restaurant.id);
+  const restaurantMenuItems = getMenuItemsByRestaurant(restaurant.id);
 
   const handleDeleteFood = (food: Food) => {
     setFoodToDelete(food);
@@ -217,41 +217,66 @@ export const RestaurantDetailPage: React.FC = () => {
                         variant="secondary"
                         onClick={() => toggleExpandMenuItem(menuItem.id)}
                       >
-                        {isExpanded ? 'Hide' : 'Show'} Foods ({menuItem.foods.length + (menuItem.possibleFoods?.length || 0)})
+                        {isExpanded ? 'Hide' : 'Show'} Foods ({totalFoodCount(menuItem)})
                       </Button>
                     </div>
                   </div>
 
                   {isExpanded && (
                     <div className="restaurant-detail__menu-card-foods">
-                      <h4 className="restaurant-detail__food-list-heading">Default Foods</h4>
-                      <ul className="restaurant-detail__food-list">
-                        {menuItem.foods.map((mf) => (
-                          <li key={mf.food.id} className="restaurant-detail__food-list-item">
-                            <span className="restaurant-detail__food-list-name">
-                              {mf.food.name}
-                              {mf.quantity > 1 && (
-                                <span className="restaurant-detail__food-list-qty">
-                                  {' '}x{mf.quantity}
-                                </span>
-                              )}
-                            </span>
-                            <span className="restaurant-detail__food-list-nutrition">
-                              {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g
-                              carbs | {mf.food.fat * mf.quantity}g fat
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {menuItem.possibleFoods?.length > 0 && (
+                      {withSizes ? (
+                        menuItem.sizes.map((size) => (
+                          <div key={size.name}>
+                            <h4 className="restaurant-detail__food-list-heading">{size.name}</h4>
+                            <ul className="restaurant-detail__food-list">
+                              {size.foods.map((mf) => (
+                                <li key={`${size.name}-${mf.food.id}`} className="restaurant-detail__food-list-item">
+                                  <span className="restaurant-detail__food-list-name">
+                                    {mf.food.name}
+                                    {mf.quantity > 1 && (
+                                      <span className="restaurant-detail__food-list-qty">
+                                        {' '}x{mf.quantity}
+                                      </span>
+                                    )}
+                                  </span>
+                                  <span className="restaurant-detail__food-list-nutrition">
+                                    {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g carbs | {mf.food.fat * mf.quantity}g fat
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                            {size.possibleFoods?.length > 0 && (
+                              <>
+                                <h4 className="restaurant-detail__food-list-heading restaurant-detail__food-list-heading--possible">
+                                  Possible Add-ons
+                                </h4>
+                                <ul className="restaurant-detail__food-list">
+                                  {size.possibleFoods.map((mf) => (
+                                    <li key={`${size.name}-possible-${mf.food.id}`} className="restaurant-detail__food-list-item restaurant-detail__food-list-item--possible">
+                                      <span className="restaurant-detail__food-list-name">
+                                        {mf.food.name}
+                                        {mf.quantity > 1 && (
+                                          <span className="restaurant-detail__food-list-qty">
+                                            {' '}x{mf.quantity}
+                                          </span>
+                                        )}
+                                      </span>
+                                      <span className="restaurant-detail__food-list-nutrition">
+                                        {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g carbs | {mf.food.fat * mf.quantity}g fat
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </>
+                            )}
+                          </div>
+                        ))
+                      ) : (
                         <>
-                          <h4 className="restaurant-detail__food-list-heading restaurant-detail__food-list-heading--possible">
-                            Possible Add-ons
-                          </h4>
+                          <h4 className="restaurant-detail__food-list-heading">Default Foods</h4>
                           <ul className="restaurant-detail__food-list">
-                            {menuItem.possibleFoods.map((mf) => (
-                              <li key={mf.food.id} className="restaurant-detail__food-list-item restaurant-detail__food-list-item--possible">
+                            {menuItem.foods.map((mf) => (
+                              <li key={mf.food.id} className="restaurant-detail__food-list-item">
                                 <span className="restaurant-detail__food-list-name">
                                   {mf.food.name}
                                   {mf.quantity > 1 && (
@@ -261,12 +286,35 @@ export const RestaurantDetailPage: React.FC = () => {
                                   )}
                                 </span>
                                 <span className="restaurant-detail__food-list-nutrition">
-                                  {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g
-                                  carbs | {mf.food.fat * mf.quantity}g fat
+                                  {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g carbs | {mf.food.fat * mf.quantity}g fat
                                 </span>
                               </li>
                             ))}
                           </ul>
+                          {menuItem.possibleFoods?.length > 0 && (
+                            <>
+                              <h4 className="restaurant-detail__food-list-heading restaurant-detail__food-list-heading--possible">
+                                Possible Add-ons
+                              </h4>
+                              <ul className="restaurant-detail__food-list">
+                                {menuItem.possibleFoods.map((mf) => (
+                                  <li key={mf.food.id} className="restaurant-detail__food-list-item restaurant-detail__food-list-item--possible">
+                                    <span className="restaurant-detail__food-list-name">
+                                      {mf.food.name}
+                                      {mf.quantity > 1 && (
+                                        <span className="restaurant-detail__food-list-qty">
+                                          {' '}x{mf.quantity}
+                                        </span>
+                                      )}
+                                    </span>
+                                    <span className="restaurant-detail__food-list-nutrition">
+                                      {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g carbs | {mf.food.fat * mf.quantity}g fat
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          )}
                         </>
                       )}
                     </div>

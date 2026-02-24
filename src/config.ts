@@ -10,7 +10,7 @@ export const USE_API = true;
  * Base URL for the API server.
  * Only used when USE_API is true.
  */
-export const API_BASE_URL = "https://restaurants-beta.boilerbites.com";
+export const API_BASE_URL = "http://localhost:8787";
 
 /** School identifier used as the path prefix for all API requests. */
 export const SCHOOL = "purdue";

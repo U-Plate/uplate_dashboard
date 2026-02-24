@@ -2,7 +2,8 @@ import { MenuItem } from "../constants";
 import type { MenuItemFood, MenuItemSize, Food } from "../constants";
 
 import { api } from "./client";
-import { SCHOOL, ADMIN_KEY } from "../config";
+import { SCHOOL } from "../config";
+import { getAdminKey } from "../utils/adminKey";
 import { generateId } from "../utils/idGenerator";
 
 /** Raw shape returned by the API — possibleFoods entries may carry an optional size tag. */
@@ -101,7 +102,7 @@ export const menuItemsApi = {
   ): Promise<MenuItem> => {
     const menuItemId = generateId();
     await api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/newMenuItem?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/newMenuItem?key=${getAdminKey()}`,
       { ...serializeMenuItem(data), id: menuItemId },
     );
     return { id: menuItemId, restaurantId, ...data } as MenuItem;
@@ -110,7 +111,7 @@ export const menuItemsApi = {
   /** POST /:school/admin/restaurants/:restaurantId/updateMenuItem/:menuItemId?key=... */
   update: async (restaurantId: string, menuItemId: string, data: Partial<MenuItem>): Promise<MenuItem> => {
     const raw = await api.post<RawMenuItem>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/updateMenuItem/${menuItemId}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/updateMenuItem/${menuItemId}?key=${getAdminKey()}`,
       serializeMenuItem(data),
     );
     return deserializeMenuItem(raw);
@@ -119,7 +120,7 @@ export const menuItemsApi = {
   /** POST /:school/admin/restaurants/:restaurantId/deleteMenuItem/:menuItemId?key=... */
   delete: (restaurantId: string, menuItemId: string) =>
     api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteMenuItem/${menuItemId}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteMenuItem/${menuItemId}?key=${getAdminKey()}`,
       {},
     ),
 };

@@ -23,3 +23,84 @@
   width: 100%;
   max-width: 1100px;
 }
+
+.dashboard-key-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-key-label {
+  color: #ccc;
+  font-size: 1rem;
+}
+
+.dashboard-key-row {
+  display: flex;
+  gap: 8px;
+}
+
+.dashboard-key-input {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #1e1e1e;
+  color: #fff;
+  font-size: 1rem;
+  width: 260px;
+  outline: none;
+}
+
+.dashboard-key-input:focus {
+  border-color: #888;
+}
+
+.dashboard-key-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  background: #fff;
+  color: #111;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dashboard-key-btn:hover {
+  background: #ddd;
+}
+
+.dashboard-key-btn--secondary {
+  background: #333;
+  color: #fff;
+}
+
+.dashboard-key-btn--secondary:hover {
+  background: #444;
+}
+
+.dashboard-key-actions {
+  margin-top: 24px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dashboard-key-link {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dashboard-key-link:hover {
+  color: #ccc;
+}
+
+.dashboard-key-sep {
+  color: #555;
+  font-size: 0.85rem;
+}

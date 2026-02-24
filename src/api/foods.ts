@@ -1,6 +1,7 @@
 import { Food } from '../constants';
 import { api } from './client';
-import { SCHOOL, ADMIN_KEY } from '../config';
+import { SCHOOL } from '../config';
+import { getAdminKey } from '../utils/adminKey';
 import { generateId } from '../utils/idGenerator';
 
 export const foodsApi = {
@@ -19,7 +20,7 @@ export const foodsApi = {
   ): Promise<Food> => {
     const foodId = generateId();
     await api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/newFood/${foodId}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/newFood/${foodId}?key=${getAdminKey()}`,
       { ...data }
     );
     return { id: foodId, restaurantId, ...data } as Food;
@@ -28,14 +29,14 @@ export const foodsApi = {
   /** POST /:school/admin/restaurants/:restaurantId/updateFood/:foodId?key=... */
   update: (restaurantId: string, foodId: string, data: Partial<Food>) =>
     api.post<Food>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/updateFood/${foodId}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/updateFood/${foodId}?key=${getAdminKey()}`,
       { ...data }
     ),
 
   /** POST /:school/admin/restaurants/:restaurantId/deleteFood/:foodId?key=... */
   delete: (restaurantId: string, foodId: string) =>
     api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteFood/${foodId}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteFood/${foodId}?key=${getAdminKey()}`,
       {}
     ),
 };

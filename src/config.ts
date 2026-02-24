@@ -15,5 +15,3 @@ export const API_BASE_URL = "https://restaurants-beta.boilerbites.com";
 /** School identifier used as the path prefix for all API requests. */
 export const SCHOOL = "purdue";
 
-/** Admin key required by all write/mutation endpoints. */
-export const ADMIN_KEY = "boilerfueladmin";

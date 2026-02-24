@@ -1,6 +1,7 @@
 import { Restaurant, Location } from "../constants";
 import { api } from "./client";
-import { SCHOOL, ADMIN_KEY } from "../config";
+import { SCHOOL } from "../config";
+import { getAdminKey } from "../utils/adminKey";
 
 // The API uses 'section' for sectionId.
 type ApiLocation = { longitude?: number; latitude?: number; address?: string };
@@ -53,7 +54,7 @@ export const restaurantsApi = {
   /** POST /:school/admin/restaurants/createRestaurant?key=... */
   create: async (data: Omit<Restaurant, "id">) => {
     const created = await api.post<ApiRestaurant>(
-      `/${SCHOOL}/admin/restaurants/createRestaurant?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/createRestaurant?key=${getAdminKey()}`,
       {
         name: data.name,
         section: data.sectionId,
@@ -72,7 +73,7 @@ export const restaurantsApi = {
       ...(location ? { location: toApiLocation(location) } : {}),
     };
     const updated = await api.post<ApiRestaurant>(
-      `/${SCHOOL}/admin/restaurants/${id}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/${id}?key=${getAdminKey()}`,
       body,
     );
     return fromApi(updated);
@@ -81,7 +82,7 @@ export const restaurantsApi = {
   /** POST /:school/admin/restaurants/move/:id?key=... — body: { toSection } */
   move: async (id: string, sectionId: string) => {
     const updated = await api.post<ApiRestaurant>(
-      `/${SCHOOL}/admin/restaurants/move/${id}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/move/${id}?key=${getAdminKey()}`,
       { toSection: sectionId },
     );
     return fromApi(updated);
@@ -90,7 +91,7 @@ export const restaurantsApi = {
   /** POST /:school/admin/restaurants/deleteRestaurant/:id */
   delete: (id: string) =>
     api.post<void>(
-      `/${SCHOOL}/admin/restaurants/deleteRestaurant/${id}?key=${ADMIN_KEY}`,
+      `/${SCHOOL}/admin/restaurants/deleteRestaurant/${id}?key=${getAdminKey()}`,
       {},
     ),
 };

@@ -260,6 +260,7 @@ export const RestaurantDetailPage: React.FC = () => {
                                             {' '}x{mf.quantity}
                                           </span>
                                         )}
+                                        <span className="restaurant-detail__optional-badge">optional</span>
                                       </span>
                                       <span className="restaurant-detail__food-list-nutrition">
                                         {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g carbs | {mf.food.fat * mf.quantity}g fat
@@ -306,6 +307,7 @@ export const RestaurantDetailPage: React.FC = () => {
                                           {' '}x{mf.quantity}
                                         </span>
                                       )}
+                                      <span className="restaurant-detail__optional-badge">optional</span>
                                     </span>
                                     <span className="restaurant-detail__food-list-nutrition">
                                       {mf.food.calories * mf.quantity} cal | {mf.food.protein * mf.quantity}g protein | {mf.food.carbs * mf.quantity}g carbs | {mf.food.fat * mf.quantity}g fat

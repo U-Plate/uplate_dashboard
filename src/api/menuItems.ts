@@ -11,6 +11,7 @@ interface RawMenuItemFood {
   food: Food;
   quantity: number;
   size?: string;
+  optional?: boolean;
 }
 
 interface RawMenuItem {
@@ -32,11 +33,13 @@ const serializeFoods = (foods: MenuItemFood[]) =>
 const flattenSizes = (sizes: MenuItemSize[]) =>
   sizes.flatMap((s) => [
     ...s.foods.map((mf) => ({ foodId: mf.food.id, quantity: mf.quantity, size: s.name })),
-    ...(s.possibleFoods ?? []).map((mf) => ({ foodId: mf.food.id, quantity: mf.quantity, size: s.name })),
+    ...(s.possibleFoods ?? []).map((mf) => ({ foodId: mf.food.id, quantity: mf.quantity, size: s.name, optional: true })),
   ]);
 
 const serializeMenuItem = (data: Partial<MenuItem>) => {
-  const basePossibleFoods = data.possibleFoods ? serializeFoods(data.possibleFoods) : [];
+  const basePossibleFoods = data.possibleFoods
+    ? data.possibleFoods.map((mf) => ({ foodId: mf.food.id, quantity: mf.quantity, optional: true }))
+    : [];
   const sizeEntries = data.sizes?.length ? flattenSizes(data.sizes) : [];
 
   return {
@@ -58,16 +61,19 @@ const deserializeMenuItem = (raw: RawMenuItem): MenuItem => {
     .map((pf) => ({ food: pf.food, quantity: pf.quantity }));
 
   const sizeTagged = allPossibleFoods.filter((pf): pf is RawMenuItemFood & { size: string } => !!pf.size);
-  const sizeMap = new Map<string, MenuItemFood[]>();
+  const sizeFoodsMap = new Map<string, MenuItemFood[]>();
+  const sizePossibleFoodsMap = new Map<string, MenuItemFood[]>();
   for (const pf of sizeTagged) {
-    if (!sizeMap.has(pf.size)) sizeMap.set(pf.size, []);
-    sizeMap.get(pf.size)!.push({ food: pf.food, quantity: pf.quantity });
+    const targetMap = pf.optional ? sizePossibleFoodsMap : sizeFoodsMap;
+    if (!targetMap.has(pf.size)) targetMap.set(pf.size, []);
+    targetMap.get(pf.size)!.push({ food: pf.food, quantity: pf.quantity });
   }
 
-  const sizes: MenuItemSize[] = [...sizeMap.entries()].map(([name, foods]) => ({
+  const allSizeNames = new Set([...sizeFoodsMap.keys(), ...sizePossibleFoodsMap.keys()]);
+  const sizes: MenuItemSize[] = [...allSizeNames].map((name) => ({
     name,
-    foods,
-    possibleFoods: [],
+    foods: sizeFoodsMap.get(name) ?? [],
+    possibleFoods: sizePossibleFoodsMap.get(name) ?? [],
   }));
 
   return new MenuItem({

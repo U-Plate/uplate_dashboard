@@ -189,6 +189,20 @@
   opacity: 0.7;
 }
 
+.restaurant-detail__optional-badge {
+  display: inline-block;
+  margin-left: 16px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(100, 108, 255, 0.2);
+  color: #646cff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+
 .restaurant-detail__menu-card-sizes-badge {
   font-size: 0.85rem;
   color: #646cff;

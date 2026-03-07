@@ -134,7 +134,7 @@ export const RestaurantDetailPage: React.FC = () => {
     { header: 'Carbs (g)', accessor: 'carbs' },
     { header: 'Fat (g)', accessor: 'fat' },
     { header: 'Serving Size', accessor: 'servingSize' },
-    { header: 'Labels', accessor: (row) => (row.labels ?? []).join(', ') },
+    { header: 'Labels', accessor: (row) => (Array.isArray(row.labels) ? row.labels : []).join(', ') },
   ];
 
   return (

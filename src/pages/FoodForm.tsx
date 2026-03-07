@@ -66,7 +66,7 @@ export const FoodForm: React.FC = () => {
           iron: food.iron,
           labels: food.labels ?? [],
         });
-        setLabelsInput((food.labels ?? []).join(', '));
+        setLabelsInput((Array.isArray(food.labels) ? food.labels : []).join(', '));
       }
     }
   }, [foodId, isEditMode, getFoodById]);

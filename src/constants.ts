@@ -55,6 +55,7 @@ export class Food {
     caloriesFromFat: number;
     calcium: number;
     iron: number;
+    labels: string[];
 
     constructor({
         name,
@@ -76,6 +77,7 @@ export class Food {
         caloriesFromFat,
         calcium,
         iron,
+        labels,
     }: Food) {
         this.name = name;
         this.id = id;
@@ -96,6 +98,7 @@ export class Food {
         this.calcium = calcium;
         this.iron = iron;
         this.restaurantId = restaurantId;
+        this.labels = labels ?? [];
     }
 }
 

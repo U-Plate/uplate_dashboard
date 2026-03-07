@@ -18,9 +18,13 @@ export const FoodsPage: React.FC = () => {
   const [foodToDelete, setFoodToDelete] = useState<Food | null>(null);
   const [filterRestaurantId, setFilterRestaurantId] = useState('all');
 
-  const handleDeleteClick = (food: Food) => {
-    setFoodToDelete(food);
-    setDeleteModalOpen(true);
+  const handleDeleteClick = (food: Food, e: React.MouseEvent) => {
+    if (e.shiftKey) {
+      deleteFood(food.id);
+    } else {
+      setFoodToDelete(food);
+      setDeleteModalOpen(true);
+    }
   };
 
   const handleConfirmDelete = () => {
@@ -61,6 +65,10 @@ export const FoodsPage: React.FC = () => {
       header: 'Fat (g)',
       accessor: 'fat',
     },
+    {
+      header: 'Labels',
+      accessor: (row) => (row.labels ?? []).join(', '),
+    },
   ];
 
   return (
@@ -92,7 +100,7 @@ export const FoodsPage: React.FC = () => {
             <Button variant="secondary" onClick={() => navigate(`/foods/${row.id}/edit`)}>
               Edit
             </Button>
-            <Button variant="danger" onClick={() => handleDeleteClick(row)}>
+            <Button variant="danger" onClick={(e) => handleDeleteClick(row, e)}>
               Delete
             </Button>
           </div>

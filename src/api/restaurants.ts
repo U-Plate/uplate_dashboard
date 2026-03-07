@@ -24,10 +24,11 @@ function fromApi(r: ApiRestaurant): Restaurant {
 }
 
 function toApiLocation(loc: Location): ApiLocation {
-  if (loc.latitude != null && loc.longitude != null) {
-    return { latitude: loc.latitude, longitude: loc.longitude };
-  }
-  return { address: loc.address };
+  const out: ApiLocation = {};
+  if (loc.latitude != null) out.latitude = loc.latitude;
+  if (loc.longitude != null) out.longitude = loc.longitude;
+  if (loc.address) out.address = loc.address;
+  return out;
 }
 
 export const restaurantsApi = {
@@ -64,7 +65,7 @@ export const restaurantsApi = {
     return fromApi(created);
   },
 
-  /** POST /:school/admin/restaurants/:id?key=... — body: partial fields */
+  /** POST /:school/admin/restaurants/updateRestaurant/:id?key=... — body: partial fields */
   update: async (id: string, data: Partial<Restaurant>) => {
     const { sectionId, location, ...rest } = data;
     const body = {
@@ -73,7 +74,7 @@ export const restaurantsApi = {
       ...(location ? { location: toApiLocation(location) } : {}),
     };
     const updated = await api.post<ApiRestaurant>(
-      `/${SCHOOL}/admin/restaurants/${id}?key=${getAdminKey()}`,
+      `/${SCHOOL}/admin/restaurants/updateRestaurant/${id}?key=${getAdminKey()}`,
       body,
     );
     return fromApi(updated);

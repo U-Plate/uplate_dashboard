@@ -9,12 +9,12 @@ import { restaurantsApi } from '../api/restaurants';
 
 interface RestaurantsContextType {
   restaurants: Restaurant[];
-  addRestaurant: (restaurant: Omit<Restaurant, 'id'>) => void;
-  updateRestaurant: (id: string, updates: Partial<Restaurant>) => void;
-  deleteRestaurant: (id: string) => void;
+  addRestaurant: (restaurant: Omit<Restaurant, 'id'>) => void | Promise<void>;
+  updateRestaurant: (id: string, updates: Partial<Restaurant>) => void | Promise<void>;
+  deleteRestaurant: (id: string) => void | Promise<void>;
   getRestaurantById: (id: string) => Restaurant | undefined;
   getRestaurantsBySection: (sectionId: string) => Restaurant[];
-  moveRestaurantToSection: (restaurantId: string, newSectionId: string) => void;
+  moveRestaurantToSection: (restaurantId: string, newSectionId: string) => void | Promise<void>;
 }
 
 const RestaurantsContext = createContext<RestaurantsContextType | undefined>(undefined);

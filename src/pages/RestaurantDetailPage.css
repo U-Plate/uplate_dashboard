@@ -240,6 +240,38 @@
   color: rgba(255, 255, 255, 0.5);
 }
 
+.restaurant-detail__section-header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.restaurant-detail__import-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: rgba(100, 108, 255, 0.15);
+  border: 1px solid rgba(100, 108, 255, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.87);
+  font-size: 0.95rem;
+}
+
+.restaurant-detail__import-status-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+
+.restaurant-detail__import-status-close:hover {
+  color: rgba(255, 255, 255, 0.87);
+}
+
 @media (max-width: 768px) {
   .restaurant-detail__meta {
     flex-direction: column;

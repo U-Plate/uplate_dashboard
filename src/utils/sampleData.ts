@@ -65,6 +65,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 150,
       iron: 2,
       ingredients: 'Romaine lettuce, Caesar dressing, croutons, parmesan cheese',
+      labels: [],
     }),
     new Food({
       id: 'food-2',
@@ -86,6 +87,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 20,
       iron: 1,
       ingredients: 'Chicken breast, olive oil, herbs, spices',
+      labels: [],
     }),
     new Food({
       id: 'food-3',
@@ -107,6 +109,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 100,
       iron: 3,
       ingredients: 'Pasta, mixed vegetables, olive oil, garlic, parmesan',
+      labels: [],
     }),
     new Food({
       id: 'food-4',
@@ -128,6 +131,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 350,
       iron: 4,
       ingredients: 'Pizza dough, mozzarella, tomato sauce, basil, olive oil',
+      labels: [],
     }),
     new Food({
       id: 'food-5',
@@ -149,6 +153,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 380,
       iron: 5,
       ingredients: 'Pizza dough, mozzarella, tomato sauce, pepperoni',
+      labels: [],
     }),
     new Food({
       id: 'food-6',
@@ -170,6 +175,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 80,
       iron: 4,
       ingredients: 'Quinoa, kale, chickpeas, avocado, tahini dressing',
+      labels: [],
     }),
     new Food({
       id: 'food-7',
@@ -191,6 +197,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 120,
       iron: 2,
       ingredients: 'Acai puree, banana, granola, berries, honey, coconut',
+      labels: [],
     }),
     new Food({
       id: 'food-8',
@@ -212,6 +219,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 180,
       iron: 0,
       ingredients: 'Espresso, steamed milk, milk foam',
+      labels: [],
     }),
     new Food({
       id: 'food-9',
@@ -233,6 +241,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 60,
       iron: 2,
       ingredients: 'Flour, sugar, blueberries, eggs, butter, milk, baking powder',
+      labels: [],
     }),
     new Food({
       id: 'food-10',
@@ -254,6 +263,7 @@ export const getSampleFoods = (): Food[] => {
       calcium: 60,
       iron: 2,
       ingredients: 'Mixed greens, tomatoes, cucumbers, carrots, vinaigrette',
+      labels: [],
     }),
   ];
 };

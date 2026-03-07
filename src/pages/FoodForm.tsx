@@ -33,8 +33,10 @@ export const FoodForm: React.FC = () => {
     cholesterol: 0,
     calcium: 0,
     iron: 0,
+    labels: [] as string[],
   });
 
+  const [labelsInput, setLabelsInput] = useState('');
   const [errors, setErrors] = useState<{ name?: string }>({});
 
   const isEditMode = !!foodId;
@@ -62,7 +64,9 @@ export const FoodForm: React.FC = () => {
           cholesterol: food.cholesterol,
           calcium: food.calcium,
           iron: food.iron,
+          labels: food.labels ?? [],
         });
+        setLabelsInput((food.labels ?? []).join(', '));
       }
     }
   }, [foodId, isEditMode, getFoodById]);
@@ -93,6 +97,10 @@ export const FoodForm: React.FC = () => {
       ...formData,
       restaurantId: restaurantId || '',
       name: formData.name.trim(),
+      labels: labelsInput
+        .split(',')
+        .map((l) => l.trim())
+        .filter(Boolean),
     };
 
     if (isEditMode && foodId) {
@@ -137,6 +145,14 @@ export const FoodForm: React.FC = () => {
             value={formData.servingSize}
             onChange={(value) => updateField('servingSize', value)}
             placeholder="e.g., 300g"
+          />
+
+          <FormField
+            label="Labels"
+            type="text"
+            value={labelsInput}
+            onChange={(value) => setLabelsInput(value as string)}
+            placeholder="e.g., Breakfast, Gluten-Free, Spicy (comma-separated)"
           />
 
           <FormField

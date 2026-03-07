@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRestaurants } from '../contexts/RestaurantsContext';
 import { useSections } from '../contexts/SectionsContext';
@@ -10,6 +10,7 @@ import { Modal } from '../components/Modal';
 import type { MenuItemFood } from '../constants';
 import { Food, MenuItem } from '../constants';
 import { useMenuItems } from '../contexts/MenuItemsContext';
+import { parseCSV, readFileAsText } from '../utils/csvParser';
 import './RestaurantDetailPage.css';
 
 const getNutritionTotals = (foods: MenuItemFood[]) =>
@@ -28,9 +29,11 @@ export const RestaurantDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getRestaurantById } = useRestaurants();
   const { getSectionById } = useSections();
-  const { getFoodsByRestaurant, deleteFood } = useFoods();
+  const { getFoodsByRestaurant, deleteFood, addFood } = useFoods();
   const { getMenuItemsByRestaurant, deleteMenuItem } = useMenuItems();
 
+  const csvInputRef = useRef<HTMLInputElement>(null);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
   const [deleteFoodModalOpen, setDeleteFoodModalOpen] = useState(false);
   const [foodToDelete, setFoodToDelete] = useState<Food | null>(null);
   const [deleteMenuItemModalOpen, setDeleteMenuItemModalOpen] = useState(false);
@@ -55,9 +58,13 @@ export const RestaurantDetailPage: React.FC = () => {
   const restaurantFoods = getFoodsByRestaurant(restaurant.id);
   const restaurantMenuItems = getMenuItemsByRestaurant(restaurant.id);
 
-  const handleDeleteFood = (food: Food) => {
-    setFoodToDelete(food);
-    setDeleteFoodModalOpen(true);
+  const handleDeleteFood = (food: Food, e: React.MouseEvent) => {
+    if (e.shiftKey) {
+      deleteFood(food.id);
+    } else {
+      setFoodToDelete(food);
+      setDeleteFoodModalOpen(true);
+    }
   };
 
   const confirmDeleteFood = () => {
@@ -91,6 +98,26 @@ export const RestaurantDetailPage: React.FC = () => {
     setExpandedMenuItems(newExpanded);
   };
 
+  const handleCSVImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !restaurant) return;
+
+    try {
+      const text = await readFileAsText(file);
+      const parsed = parseCSV(text);
+      let count = 0;
+      for (const foodData of parsed) {
+        await addFood({ ...foodData, restaurantId: restaurant.id });
+        count++;
+      }
+      setImportStatus(`Imported ${count} food item${count !== 1 ? 's' : ''}`);
+    } catch {
+      setImportStatus('Failed to import CSV');
+    }
+
+    if (csvInputRef.current) csvInputRef.current.value = '';
+  };
+
   const hasSizes = (menuItem: MenuItem) => menuItem.sizes && menuItem.sizes.length > 0;
 
   const totalFoodCount = (menuItem: MenuItem) => {
@@ -107,6 +134,7 @@ export const RestaurantDetailPage: React.FC = () => {
     { header: 'Carbs (g)', accessor: 'carbs' },
     { header: 'Fat (g)', accessor: 'fat' },
     { header: 'Serving Size', accessor: 'servingSize' },
+    { header: 'Labels', accessor: (row) => (row.labels ?? []).join(', ') },
   ];
 
   return (
@@ -137,10 +165,34 @@ export const RestaurantDetailPage: React.FC = () => {
           <h2 className="restaurant-detail__section-title">
             Food Items ({restaurantFoods.length})
           </h2>
-          <Button onClick={() => navigate(`/restaurants/${restaurant.id}/foods/new`)}>
-            Add Food Item
-          </Button>
+          <div className="restaurant-detail__section-header-actions">
+            <Button onClick={() => csvInputRef.current?.click()}>
+              Import CSV
+            </Button>
+            <input
+              ref={csvInputRef}
+              type="file"
+              accept=".csv"
+              style={{ display: 'none' }}
+              onChange={handleCSVImport}
+            />
+            <Button onClick={() => navigate(`/restaurants/${restaurant.id}/foods/new`)}>
+              Add Food Item
+            </Button>
+          </div>
         </div>
+
+        {importStatus && (
+          <div className="restaurant-detail__import-status">
+            {importStatus}
+            <button
+              className="restaurant-detail__import-status-close"
+              onClick={() => setImportStatus(null)}
+            >
+              &times;
+            </button>
+          </div>
+        )}
 
         <DataTable
           columns={foodColumns}
@@ -155,7 +207,7 @@ export const RestaurantDetailPage: React.FC = () => {
               >
                 Edit
               </Button>
-              <Button variant="danger" onClick={() => handleDeleteFood(row)}>
+              <Button variant="danger" onClick={(e) => handleDeleteFood(row, e)}>
                 Delete
               </Button>
             </div>

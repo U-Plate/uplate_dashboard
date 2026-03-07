@@ -64,7 +64,7 @@ export const RestaurantForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validate()) {
@@ -78,9 +78,9 @@ export const RestaurantForm: React.FC = () => {
     };
 
     if (isEditMode && id) {
-      updateRestaurant(id, restaurantData);
+      await updateRestaurant(id, restaurantData);
     } else {
-      addRestaurant(restaurantData);
+      await addRestaurant(restaurantData);
     }
 
     navigate('/restaurants');

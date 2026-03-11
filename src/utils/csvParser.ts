@@ -34,6 +34,28 @@ function parseNumeric(value: string): number {
   return isNaN(num) ? 0 : num;
 }
 
+function splitCSVLines(csvText: string): string[] {
+  const lines: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < csvText.length; i++) {
+    const ch = csvText[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      current += ch;
+    } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+      if (ch === '\r' && csvText[i + 1] === '\n') i++;
+      if (current.trim()) lines.push(current);
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) lines.push(current);
+  return lines;
+}
+
 function parseCSVLine(line: string): string[] {
   const fields: string[] = [];
   let current = '';
@@ -60,7 +82,7 @@ function parseCSVLine(line: string): string[] {
 }
 
 export function parseCSV(csvText: string): FoodWithoutIds[] {
-  const lines = csvText.split(/\r?\n/).filter((line) => line.trim());
+  const lines = splitCSVLines(csvText);
   if (lines.length < 2) return [];
 
   const headers = parseCSVLine(lines[0]);

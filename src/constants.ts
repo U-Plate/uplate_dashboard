@@ -98,7 +98,7 @@ export class Food {
         this.calcium = calcium;
         this.iron = iron;
         this.restaurantId = restaurantId;
-        this.labels = labels ?? [];
+        this.labels = typeof labels === 'string' ? JSON.parse(labels) : (labels ?? []);
     }
 }
 

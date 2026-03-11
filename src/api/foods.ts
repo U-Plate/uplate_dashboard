@@ -21,7 +21,7 @@ export const foodsApi = {
     const foodId = generateId();
     await api.post<{ status: boolean }>(
       `/${SCHOOL}/admin/restaurants/${restaurantId}/newFood/${foodId}?key=${getAdminKey()}`,
-      { ...data }
+      { ...data, labels: JSON.stringify(data.labels ?? []) }
     );
     return { id: foodId, restaurantId, ...data } as Food;
   },
@@ -30,7 +30,7 @@ export const foodsApi = {
   update: (restaurantId: string, foodId: string, data: Partial<Food>) =>
     api.post<Food>(
       `/${SCHOOL}/admin/restaurants/${restaurantId}/updateFood/${foodId}?key=${getAdminKey()}`,
-      { ...data }
+      { ...data, ...(data.labels !== undefined ? { labels: JSON.stringify(data.labels) } : {}) }
     ),
 
   /** POST /:school/admin/restaurants/:restaurantId/deleteFood/:foodId?key=... */

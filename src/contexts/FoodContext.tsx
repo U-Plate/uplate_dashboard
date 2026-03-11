@@ -1,15 +1,21 @@
-import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-import type { ReactNode } from 'react';
-import { Food } from '../constants';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { generateId } from '../utils/idGenerator';
-import { getSampleFoods } from '../utils/sampleData';
-import { USE_API } from '../config';
-import { foodsApi } from '../api/foods';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
+import type { ReactNode } from "react";
+import { Food } from "../constants";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { generateId } from "../utils/idGenerator";
+import { getSampleFoods } from "../utils/sampleData";
+import { USE_API } from "../config";
+import { foodsApi } from "../api/foods";
 
 interface FoodContextType {
   foods: Food[];
-  addFood: (food: Omit<Food, 'id'>) => void;
+  addFood: (food: Omit<Food, "id">) => void;
   updateFood: (id: string, updates: Partial<Food>) => void;
   deleteFood: (id: string) => void;
   getFoodById: (id: string) => Food | undefined;
@@ -19,15 +25,20 @@ interface FoodContextType {
 const FoodContext = createContext<FoodContextType | undefined>(undefined);
 
 const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [foods, setFoods] = useLocalStorage<Food[]>('uplate_foods', getSampleFoods());
+  const [foods, setFoods] = useLocalStorage<Food[]>(
+    "uplate_foods",
+    getSampleFoods(),
+  );
 
-  const addFood = (foodData: Omit<Food, 'id'>) => {
+  const addFood = (foodData: Omit<Food, "id">) => {
     const newFood = new Food({ id: generateId(), ...foodData });
     setFoods([...foods, newFood]);
   };
 
   const updateFood = (id: string, updates: Partial<Food>) => {
-    setFoods(foods.map((f) => (f.id === id ? new Food({ ...f, ...updates }) : f)));
+    setFoods(
+      foods.map((f) => (f.id === id ? new Food({ ...f, ...updates }) : f)),
+    );
   };
 
   const deleteFood = (id: string) => {
@@ -41,7 +52,14 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <FoodContext.Provider
-      value={{ foods, addFood, updateFood, deleteFood, getFoodById, getFoodsByRestaurant }}
+      value={{
+        foods,
+        addFood,
+        updateFood,
+        deleteFood,
+        getFoodById,
+        getFoodsByRestaurant,
+      }}
     >
       {children}
     </FoodContext.Provider>
@@ -62,7 +80,7 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     ]);
   }, []);
 
-  const addFood = async (foodData: Omit<Food, 'id'>) => {
+  const addFood = async (foodData: Omit<Food, "id">) => {
     const { restaurantId, ...rest } = foodData;
     await foodsApi.create(restaurantId, rest);
     // Refetch so local state has the server-assigned ID, not the client-generated one.
@@ -95,19 +113,28 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       }
       return foods.filter((f) => f.restaurantId === restaurantId);
     },
-    [foods, fetchFoodsForRestaurant]
+    [foods, fetchFoodsForRestaurant],
   );
 
   return (
     <FoodContext.Provider
-      value={{ foods, addFood, updateFood, deleteFood, getFoodById, getFoodsByRestaurant }}
+      value={{
+        foods,
+        addFood,
+        updateFood,
+        deleteFood,
+        getFoodById,
+        getFoodsByRestaurant,
+      }}
     >
       {children}
     </FoodContext.Provider>
   );
 };
 
-export const FoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const FoodProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   return USE_API ? (
     <ApiFoodProvider>{children}</ApiFoodProvider>
   ) : (
@@ -119,7 +146,7 @@ export const FoodProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useFoods = (): FoodContextType => {
   const context = useContext(FoodContext);
   if (!context) {
-    throw new Error('useFoods must be used within a FoodProvider');
+    throw new Error("useFoods must be used within a FoodProvider");
   }
   return context;
 };

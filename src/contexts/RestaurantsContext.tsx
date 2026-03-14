@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { Restaurant } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -70,15 +70,13 @@ const LocalRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children 
 
 const ApiRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-
-  const fetchRestaurants = useCallback(async () => {
-    const data = await restaurantsApi.getAll();
-    setRestaurants(data);
-  }, []);
+  const fetched = useRef(false);
 
   useEffect(() => {
-    fetchRestaurants();
-  }, [fetchRestaurants]);
+    if (fetched.current) return;
+    fetched.current = true;
+    restaurantsApi.getAll().then(setRestaurants);
+  }, []);
 
   const addRestaurant = async (data: Omit<Restaurant, 'id'>) => {
     const created = await restaurantsApi.create(data);

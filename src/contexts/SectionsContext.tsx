@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { Section } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -51,15 +51,13 @@ const LocalSectionsProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
 const ApiSectionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [sections, setSections] = useState<Section[]>([]);
-
-  const fetchSections = useCallback(async () => {
-    const data = await sectionsApi.getAll();
-    setSections(data);
-  }, []);
+  const fetched = useRef(false);
 
   useEffect(() => {
-    fetchSections();
-  }, [fetchSections]);
+    if (fetched.current) return;
+    fetched.current = true;
+    sectionsApi.getAll().then(setSections);
+  }, []);
 
   const addSection = async (sectionData: Omit<Section, 'id'>) => {
     const created = await sectionsApi.create(sectionData);

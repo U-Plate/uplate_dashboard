@@ -20,6 +20,8 @@ interface FoodContextType {
   deleteFood: (id: string) => void;
   getFoodById: (id: string) => Food | undefined;
   getFoodsByRestaurant: (restaurantId: string) => Food[];
+  /** Fetch and cache foods for a restaurant. Returns the foods once loaded. */
+  ensureFoodsLoaded: (restaurantId: string) => Promise<Food[]>;
 }
 
 const FoodContext = createContext<FoodContextType | undefined>(undefined);
@@ -50,6 +52,9 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const getFoodsByRestaurant = (restaurantId: string) =>
     foods.filter((f) => f.restaurantId === restaurantId);
 
+  const ensureFoodsLoaded = async (restaurantId: string) =>
+    foods.filter((f) => f.restaurantId === restaurantId);
+
   return (
     <FoodContext.Provider
       value={{
@@ -59,6 +64,7 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         deleteFood,
         getFoodById,
         getFoodsByRestaurant,
+        ensureFoodsLoaded,
       }}
     >
       {children}
@@ -69,16 +75,28 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [foods, setFoods] = useState<Food[]>([]);
   const fetchedRestaurants = useRef<Set<string>>(new Set());
+  const inFlightFetches = useRef<Map<string, Promise<Food[]>>>(new Map());
 
-  const fetchFoodsForRestaurant = useCallback(async (restaurantId: string) => {
-    if (fetchedRestaurants.current.has(restaurantId)) return;
-    fetchedRestaurants.current.add(restaurantId);
-    const data = await foodsApi.getByRestaurant(restaurantId);
-    setFoods((prev) => [
-      ...prev.filter((f) => f.restaurantId !== restaurantId),
-      ...data,
-    ]);
-  }, []);
+  const fetchFoodsForRestaurant = useCallback(async (restaurantId: string): Promise<Food[]> => {
+    if (fetchedRestaurants.current.has(restaurantId)) {
+      return foods.filter((f) => f.restaurantId === restaurantId);
+    }
+    // Deduplicate concurrent requests for the same restaurant
+    const existing = inFlightFetches.current.get(restaurantId);
+    if (existing) return existing;
+
+    const promise = foodsApi.getByRestaurant(restaurantId).then((data) => {
+      fetchedRestaurants.current.add(restaurantId);
+      inFlightFetches.current.delete(restaurantId);
+      setFoods((prev) => [
+        ...prev.filter((f) => f.restaurantId !== restaurantId),
+        ...data,
+      ]);
+      return data;
+    });
+    inFlightFetches.current.set(restaurantId, promise);
+    return promise;
+  }, [foods]);
 
   const addFood = async (foodData: Omit<Food, "id">) => {
     const { restaurantId, ...rest } = foodData;
@@ -116,6 +134,11 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     [foods, fetchFoodsForRestaurant],
   );
 
+  const ensureFoodsLoaded = useCallback(
+    (restaurantId: string) => fetchFoodsForRestaurant(restaurantId),
+    [fetchFoodsForRestaurant],
+  );
+
   return (
     <FoodContext.Provider
       value={{
@@ -125,6 +148,7 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         deleteFood,
         getFoodById,
         getFoodsByRestaurant,
+        ensureFoodsLoaded,
       }}
     >
       {children}

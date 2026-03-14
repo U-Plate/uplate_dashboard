@@ -6,6 +6,7 @@ import { generateId } from '../utils/idGenerator';
 import { getSampleMenuItems } from '../utils/sampleData';
 import { USE_API } from '../config';
 import { menuItemsApi } from '../api/menuItems';
+import { useFoods } from './FoodContext';
 
 interface MenuItemsContextType {
   menuItems: MenuItem[];
@@ -63,16 +64,33 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
 const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const fetchedRestaurants = useRef<Set<string>>(new Set());
+  const { foods, ensureFoodsLoaded } = useFoods();
+
+  /** Build a foodId → Food lookup map, ensuring foods are loaded first. */
+  const buildFoodMap = useCallback(async (restaurantId: string): Promise<Map<string, Food>> => {
+    const restaurantFoods = await ensureFoodsLoaded(restaurantId);
+    const map = new Map<string, Food>();
+    for (const f of restaurantFoods) {
+      map.set(f.id, f);
+    }
+    // Also include all already-known foods in case of cross-restaurant references
+    for (const f of foods) {
+      if (!map.has(f.id)) map.set(f.id, f);
+    }
+    return map;
+  }, [foods, ensureFoodsLoaded]);
 
   const fetchMenuItemsForRestaurant = useCallback(async (restaurantId: string) => {
     if (fetchedRestaurants.current.has(restaurantId)) return;
     fetchedRestaurants.current.add(restaurantId);
-    const data = await menuItemsApi.getByRestaurant(restaurantId);
+    const rawItems = await menuItemsApi.getByRestaurant(restaurantId);
+    const foodMap = await buildFoodMap(restaurantId);
+    const resolved = rawItems.map((raw) => menuItemsApi.deserializeMenuItem(raw, foodMap));
     setMenuItems((prev) => [
       ...prev.filter((m) => m.restaurantId !== restaurantId),
-      ...data,
+      ...resolved,
     ]);
-  }, []);
+  }, [buildFoodMap]);
 
   const addMenuItem = async (data: Omit<MenuItem, 'id'>) => {
     const { restaurantId, ...rest } = data;
@@ -85,7 +103,9 @@ const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const updateMenuItem = async (id: string, updates: Partial<MenuItem>) => {
     const existing = menuItems.find((m) => m.id === id);
     if (!existing) return;
-    const updated = await menuItemsApi.update(existing.restaurantId, id, updates);
+    const raw = await menuItemsApi.update(existing.restaurantId, id, updates);
+    const foodMap = await buildFoodMap(existing.restaurantId);
+    const updated = menuItemsApi.deserializeMenuItem(raw, foodMap);
     setMenuItems((prev) => prev.map((m) => (m.id === id ? updated : m)));
   };
 

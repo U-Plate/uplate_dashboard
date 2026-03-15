@@ -157,7 +157,7 @@ async function main() {
       finalRows.push({ ...uniqueRows[0], food: displayName });
     } else {
       // Multiple different nutritions for same name+size — prepend full product name
-      for (const row of uniqueRows) {
+      for (const row of rows) {
         finalRows.push({
           ...row,
           food: `${row.productName} ${displayName}`,

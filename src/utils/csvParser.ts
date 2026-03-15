@@ -31,7 +31,7 @@ const NUMERIC_FIELDS = new Set<string>([
 function parseNumeric(value: string): number {
   const stripped = value.replace(/[g|mg|kcal|%]/gi, '').trim();
   const num = parseFloat(stripped);
-  return isNaN(num) ? 0 : num;
+  return isNaN(num) ? -1 : num;
 }
 
 function splitCSVLines(csvText: string): string[] {
@@ -97,21 +97,21 @@ export function parseCSV(csvText: string): FoodWithoutIds[] {
     const food: Record<string, unknown> = {
       name: '',
       quantity: 1,
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-      sugar: 0,
+      calories: -1,
+      protein: -1,
+      carbs: -1,
+      fat: -1,
+      sugar: -1,
       ingredients: '',
       servingSize: '',
-      saturatedFat: 0,
-      addedSugars: 0,
-      sodium: 0,
-      dietaryFiber: 0,
-      cholesterol: 0,
-      caloriesFromFat: 0,
-      calcium: 0,
-      iron: 0,
+      saturatedFat: -1,
+      addedSugars: -1,
+      sodium: -1,
+      dietaryFiber: -1,
+      cholesterol: -1,
+      caloriesFromFat: -1,
+      calcium: -1,
+      iron: -1,
       labels: [],
     };
 

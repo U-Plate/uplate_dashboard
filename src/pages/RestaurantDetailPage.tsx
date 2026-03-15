@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRestaurants } from '../contexts/RestaurantsContext';
 import { useSections } from '../contexts/SectionsContext';
@@ -29,7 +29,7 @@ export const RestaurantDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getRestaurantById } = useRestaurants();
   const { getSectionById } = useSections();
-  const { getFoodsByRestaurant, deleteFood, addFood } = useFoods();
+  const { getFoodsByRestaurant, deleteFood, addFood, updateFood } = useFoods();
   const { getMenuItemsByRestaurant, deleteMenuItem } = useMenuItems();
 
   const csvInputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +38,36 @@ export const RestaurantDetailPage: React.FC = () => {
   const [foodToDelete, setFoodToDelete] = useState<Food | null>(null);
   const [deleteMenuItemModalOpen, setDeleteMenuItemModalOpen] = useState(false);
   const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItem | null>(null);
+  const [deleteAllFoodsModalOpen, setDeleteAllFoodsModalOpen] = useState(false);
+  const [migrateModalOpen, setMigrateModalOpen] = useState(false);
+  const [migrateNutrient, setMigrateNutrient] = useState('');
   const [expandedMenuItems, setExpandedMenuItems] = useState<Set<string>>(new Set());
+  const [foodItemsCollapsed, setFoodItemsCollapsed] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey && e.key === 'o') {
+        e.preventDefault();
+        if (id) {
+          window.scrollTo(0, 0);
+          navigate(`/restaurants/${id}/menu-items/new`);
+        }
+      }
+      if (e.metaKey && e.key === '0') {
+        e.preventDefault();
+        if (id) {
+          window.scrollTo(0, 0);
+          navigate(`/restaurants/${id}/menu-items/quick-add`);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [id, navigate]);
 
   const restaurant = id ? getRestaurantById(id) : undefined;
 
@@ -86,6 +115,38 @@ export const RestaurantDetailPage: React.FC = () => {
       setDeleteMenuItemModalOpen(false);
       setMenuItemToDelete(null);
     }
+  };
+
+  const confirmDeleteAllFoods = () => {
+    for (const food of restaurantFoods) {
+      deleteFood(food.id);
+    }
+    setDeleteAllFoodsModalOpen(false);
+  };
+
+  const NUTRIENT_OPTIONS = [
+    { key: 'calories', label: 'Calories' },
+    { key: 'caloriesFromFat', label: 'Calories from Fat' },
+    { key: 'protein', label: 'Protein' },
+    { key: 'carbs', label: 'Carbs' },
+    { key: 'fat', label: 'Fat' },
+    { key: 'saturatedFat', label: 'Saturated Fat' },
+    { key: 'sugar', label: 'Sugar' },
+    { key: 'addedSugars', label: 'Added Sugars' },
+    { key: 'sodium', label: 'Sodium' },
+    { key: 'dietaryFiber', label: 'Dietary Fiber' },
+    { key: 'cholesterol', label: 'Cholesterol' },
+    { key: 'calcium', label: 'Calcium' },
+    { key: 'iron', label: 'Iron' },
+  ];
+
+  const confirmMigrate = () => {
+    if (!migrateNutrient) return;
+    for (const food of restaurantFoods) {
+      updateFood(food.id, { [migrateNutrient]: -1 });
+    }
+    setMigrateModalOpen(false);
+    setMigrateNutrient('');
   };
 
   const toggleExpandMenuItem = (menuItemId: string) => {
@@ -162,58 +223,78 @@ export const RestaurantDetailPage: React.FC = () => {
       {/* Food Items Section */}
       <div className="restaurant-detail__section">
         <div className="restaurant-detail__section-header">
-          <h2 className="restaurant-detail__section-title">
+          <h2
+            className="restaurant-detail__section-title restaurant-detail__section-title--collapsible"
+            onClick={() => setFoodItemsCollapsed(!foodItemsCollapsed)}
+          >
+            <span className={`restaurant-detail__collapse-arrow ${foodItemsCollapsed ? 'restaurant-detail__collapse-arrow--collapsed' : ''}`}>&#9662;</span>
             Food Items ({restaurantFoods.length})
           </h2>
-          <div className="restaurant-detail__section-header-actions">
-            <Button onClick={() => csvInputRef.current?.click()}>
-              Import CSV
-            </Button>
-            <input
-              ref={csvInputRef}
-              type="file"
-              accept=".csv"
-              style={{ display: 'none' }}
-              onChange={handleCSVImport}
-            />
-            <Button onClick={() => navigate(`/restaurants/${restaurant.id}/foods/new`)}>
-              Add Food Item
-            </Button>
-          </div>
-        </div>
-
-        {importStatus && (
-          <div className="restaurant-detail__import-status">
-            {importStatus}
-            <button
-              className="restaurant-detail__import-status-close"
-              onClick={() => setImportStatus(null)}
-            >
-              &times;
-            </button>
-          </div>
-        )}
-
-        <DataTable
-          columns={foodColumns}
-          data={restaurantFoods}
-          actions={(row) => (
-            <div className="restaurant-detail__actions">
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  navigate(`/restaurants/${restaurant.id}/foods/${row.id}/edit`)
-                }
-              >
-                Edit
+          {!foodItemsCollapsed && (
+            <div className="restaurant-detail__section-header-actions">
+              <Button onClick={() => csvInputRef.current?.click()}>
+                Import CSV
               </Button>
-              <Button variant="danger" onClick={(e) => handleDeleteFood(row, e)}>
-                Delete
+              <input
+                ref={csvInputRef}
+                type="file"
+                accept=".csv"
+                style={{ display: 'none' }}
+                onChange={handleCSVImport}
+              />
+              <Button onClick={() => navigate(`/restaurants/${restaurant.id}/foods/new`)}>
+                Add Food Item
               </Button>
+              {restaurantFoods.length > 0 && (
+                <>
+                  <Button onClick={() => setMigrateModalOpen(true)}>
+                    Migrate Nutrient
+                  </Button>
+                  <Button variant="danger" onClick={() => setDeleteAllFoodsModalOpen(true)}>
+                    Delete All Foods
+                  </Button>
+                </>
+              )}
             </div>
           )}
-          emptyMessage="No food items yet. Add your first food item for this restaurant."
-        />
+        </div>
+
+        {!foodItemsCollapsed && (
+          <>
+            {importStatus && (
+              <div className="restaurant-detail__import-status">
+                {importStatus}
+                <button
+                  className="restaurant-detail__import-status-close"
+                  onClick={() => setImportStatus(null)}
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+
+            <DataTable
+              columns={foodColumns}
+              data={restaurantFoods}
+              actions={(row) => (
+                <div className="restaurant-detail__actions">
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      navigate(`/restaurants/${restaurant.id}/foods/${row.id}/edit`)
+                    }
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="danger" onClick={(e) => handleDeleteFood(row, e)}>
+                    Delete
+                  </Button>
+                </div>
+              )}
+              emptyMessage="No food items yet. Add your first food item for this restaurant."
+            />
+          </>
+        )}
       </div>
 
       {/* Menu Items Section */}
@@ -222,6 +303,9 @@ export const RestaurantDetailPage: React.FC = () => {
           <h2 className="restaurant-detail__section-title">
             Menu Items ({restaurantMenuItems.length})
           </h2>
+          <Button onClick={() => navigate(`/restaurants/${restaurant.id}/menu-items/quick-add`)}>
+            Quick Add Menu Item
+          </Button>
           <Button onClick={() => navigate(`/restaurants/${restaurant.id}/menu-items/new`)}>
             Add Menu Item
           </Button>
@@ -392,6 +476,48 @@ export const RestaurantDetailPage: React.FC = () => {
         {foodToDelete && (
           <p>Are you sure you want to delete <strong>{foodToDelete.name}</strong>?</p>
         )}
+      </Modal>
+
+      {/* Delete All Foods Modal */}
+      <Modal
+        isOpen={deleteAllFoodsModalOpen}
+        onClose={() => setDeleteAllFoodsModalOpen(false)}
+        title="Delete All Food Items"
+        onConfirm={confirmDeleteAllFoods}
+        confirmText="Delete All"
+        confirmVariant="danger"
+      >
+        <p>
+          Are you sure you want to delete all <strong>{restaurantFoods.length}</strong> food
+          item{restaurantFoods.length !== 1 ? 's' : ''} from this restaurant? This action cannot be
+          undone.
+        </p>
+      </Modal>
+
+      {/* Migrate Nutrient Modal */}
+      <Modal
+        isOpen={migrateModalOpen}
+        onClose={() => { setMigrateModalOpen(false); setMigrateNutrient(''); }}
+        title="Migrate Nutrient to -1"
+        onConfirm={confirmMigrate}
+        confirmText="Migrate"
+        confirmVariant="danger"
+      >
+        <p>
+          Select a nutrient to set to <strong>-1</strong> for all{' '}
+          <strong>{restaurantFoods.length}</strong> food item
+          {restaurantFoods.length !== 1 ? 's' : ''} in this restaurant.
+        </p>
+        <select
+          value={migrateNutrient}
+          onChange={(e) => setMigrateNutrient(e.target.value)}
+          style={{ width: '100%', padding: '8px', marginTop: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+        >
+          <option value="">Select a nutrient...</option>
+          {NUTRIENT_OPTIONS.map((opt) => (
+            <option key={opt.key} value={opt.key}>{opt.label}</option>
+          ))}
+        </select>
       </Modal>
 
       {/* Delete Menu Item Modal */}

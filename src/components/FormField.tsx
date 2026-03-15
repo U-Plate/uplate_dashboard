@@ -23,7 +23,9 @@ export const FormField: React.FC<FormFieldProps> = ({
   const inputClassName = `form-field__input${error ? ' form-field__input--error' : ''}`;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const newValue = type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
+    const newValue = type === 'number'
+      ? (e.target.value === '' || e.target.value === '-' ? e.target.value : parseFloat(e.target.value))
+      : e.target.value;
     onChange(newValue);
   };
 

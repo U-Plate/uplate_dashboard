@@ -53,6 +53,10 @@ export const MenuItemForm: React.FC = () => {
   const [possibleFoods, setPossibleFoods] = useState<FoodSelection[]>([]);
   const [sizes, setSizes] = useState<SizeFormData[]>([]);
   const [errors, setErrors] = useState<{ name?: string }>({});
+  const [foodSearch, setFoodSearch] = useState('');
+  const [possibleFoodSearch, setPossibleFoodSearch] = useState('');
+  const [sizeFoodSearches, setSizeFoodSearches] = useState<Record<number, string>>({});
+  const [sizePossibleFoodSearches, setSizePossibleFoodSearches] = useState<Record<number, string>>({});
 
   const isEditMode = !!menuItemId;
 
@@ -127,14 +131,14 @@ export const MenuItemForm: React.FC = () => {
 
   const updateFoodQuantity = (foodId: string, quantity: number) => {
     setFoods(
-      foods.map((f) => (f.foodId === foodId ? { ...f, quantity: Math.max(1, quantity) } : f))
+      foods.map((f) => (f.foodId === foodId ? { ...f, quantity: Math.max(0.01, quantity) } : f))
     );
   };
 
   const updatePossibleFoodQuantity = (foodId: string, quantity: number) => {
     setPossibleFoods(
       possibleFoods.map((f) =>
-        f.foodId === foodId ? { ...f, quantity: Math.max(1, quantity) } : f
+        f.foodId === foodId ? { ...f, quantity: Math.max(0.01, quantity) } : f
       )
     );
   };
@@ -193,7 +197,7 @@ export const MenuItemForm: React.FC = () => {
           ? {
               ...s,
               foods: s.foods.map((f) =>
-                f.foodId === foodId ? { ...f, quantity: Math.max(1, quantity) } : f
+                f.foodId === foodId ? { ...f, quantity: Math.max(0.01, quantity) } : f
               ),
             }
           : s
@@ -212,7 +216,7 @@ export const MenuItemForm: React.FC = () => {
           ? {
               ...s,
               possibleFoods: s.possibleFoods.map((f) =>
-                f.foodId === foodId ? { ...f, quantity: Math.max(1, quantity) } : f
+                f.foodId === foodId ? { ...f, quantity: Math.max(0.01, quantity) } : f
               ),
             }
           : s
@@ -229,7 +233,7 @@ export const MenuItemForm: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -249,9 +253,9 @@ export const MenuItemForm: React.FC = () => {
       };
 
       if (isEditMode && menuItemId) {
-        updateMenuItem(menuItemId, data);
+        await updateMenuItem(menuItemId, data);
       } else {
-        addMenuItem(data);
+        await addMenuItem(data);
       }
     } else {
       const data = {
@@ -263,9 +267,9 @@ export const MenuItemForm: React.FC = () => {
       };
 
       if (isEditMode && menuItemId) {
-        updateMenuItem(menuItemId, data);
+        await updateMenuItem(menuItemId, data);
       } else {
-        addMenuItem(data);
+        await addMenuItem(data);
       }
     }
 
@@ -273,6 +277,22 @@ export const MenuItemForm: React.FC = () => {
   };
 
   const goBack = () => navigate(`/restaurants/${restaurantId}`);
+
+  const filterFoods = (query: string) => {
+    const q = query.toLowerCase().trim();
+    if (!q) return restaurantFoods;
+    return restaurantFoods.filter((f) => f.name.toLowerCase().includes(q));
+  };
+
+  const renderSearchInput = (value: string, onChange: (v: string) => void) => (
+    <input
+      type="text"
+      className="menu-item-form__food-search"
+      placeholder="Search foods..."
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  );
 
   const renderFoodCheckbox = (
     food: Food,
@@ -301,8 +321,9 @@ export const MenuItemForm: React.FC = () => {
             type="number"
             className="menu-item-form__food-quantity-input"
             value={quantity}
-            onChange={(e) => onQuantityChange(parseInt(e.target.value) || 1)}
-            min={1}
+            onChange={(e) => onQuantityChange(parseFloat(e.target.value) || 0.01)}
+            min={0.01}
+            step="any"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
@@ -376,8 +397,9 @@ export const MenuItemForm: React.FC = () => {
             <p className="menu-item-form__section-hint">
               These foods are included by default in this menu item.
             </p>
+            {renderSearchInput(foodSearch, setFoodSearch)}
             <div className="menu-item-form__food-list">
-              {restaurantFoods.map((food) => {
+              {filterFoods(foodSearch).map((food) => {
                 const sel = foods.find((f) => f.foodId === food.id);
                 const isPossible = selectedPossibleIds.has(food.id);
                 return renderFoodCheckbox(
@@ -400,8 +422,9 @@ export const MenuItemForm: React.FC = () => {
             <p className="menu-item-form__section-hint">
               Optional add-ons the customer can choose from.
             </p>
+            {renderSearchInput(possibleFoodSearch, setPossibleFoodSearch)}
             <div className="menu-item-form__food-list">
-              {restaurantFoods.map((food) => {
+              {filterFoods(possibleFoodSearch).map((food) => {
                 const sel = possibleFoods.find((f) => f.foodId === food.id);
                 const isDefault = selectedFoodIds.has(food.id);
                 return renderFoodCheckbox(
@@ -450,8 +473,11 @@ export const MenuItemForm: React.FC = () => {
                       ({size.foods.length} selected)
                     </span>
                   </h4>
+                  {renderSearchInput(sizeFoodSearches[sizeIdx] ?? '', (v) =>
+                    setSizeFoodSearches((prev) => ({ ...prev, [sizeIdx]: v }))
+                  )}
                   <div className="menu-item-form__food-list">
-                    {restaurantFoods.map((food) => {
+                    {filterFoods(sizeFoodSearches[sizeIdx] ?? '').map((food) => {
                       const sel = size.foods.find((f) => f.foodId === food.id);
                       return renderFoodCheckbox(
                         food,
@@ -470,8 +496,11 @@ export const MenuItemForm: React.FC = () => {
                       ({size.possibleFoods.length} selected)
                     </span>
                   </h4>
+                  {renderSearchInput(sizePossibleFoodSearches[sizeIdx] ?? '', (v) =>
+                    setSizePossibleFoodSearches((prev) => ({ ...prev, [sizeIdx]: v }))
+                  )}
                   <div className="menu-item-form__food-list">
-                    {restaurantFoods.map((food) => {
+                    {filterFoods(sizePossibleFoodSearches[sizeIdx] ?? '').map((food) => {
                       const sel = size.possibleFoods.find((f) => f.foodId === food.id);
                       return renderFoodCheckbox(
                         food,

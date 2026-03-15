@@ -10,9 +10,9 @@ import { useFoods } from './FoodContext';
 
 interface MenuItemsContextType {
   menuItems: MenuItem[];
-  addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => void;
-  updateMenuItem: (id: string, updates: Partial<MenuItem>) => void;
-  deleteMenuItem: (id: string) => void;
+  addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => void | Promise<void>;
+  updateMenuItem: (id: string, updates: Partial<MenuItem>) => void | Promise<void>;
+  deleteMenuItem: (id: string) => void | Promise<void>;
   getMenuItemById: (id: string) => MenuItem | undefined;
   getMenuItemsByRestaurant: (restaurantId: string) => MenuItem[];
 }

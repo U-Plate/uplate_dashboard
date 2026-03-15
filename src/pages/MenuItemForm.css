@@ -32,6 +32,28 @@
   font-weight: 600;
 }
 
+.menu-item-form__food-search {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.87);
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
+}
+
+.menu-item-form__food-search::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.menu-item-form__food-search:focus {
+  outline: none;
+  border-color: #646cff;
+}
+
 .menu-item-form__food-list {
   display: flex;
   flex-direction: column;

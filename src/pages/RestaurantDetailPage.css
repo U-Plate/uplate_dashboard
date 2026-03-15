@@ -60,6 +60,28 @@
   margin: 0;
 }
 
+.restaurant-detail__section-title--collapsible {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.restaurant-detail__section-title--collapsible:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+.restaurant-detail__collapse-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 0.85em;
+}
+
+.restaurant-detail__collapse-arrow--collapsed {
+  transform: rotate(-90deg);
+}
+
 .restaurant-detail__actions {
   display: flex;
   gap: 0.5rem;

@@ -12,8 +12,13 @@ import { fromApiPayload } from "./foods";
 interface RawMenuItemFoodEntry {
   food: ApiFoodPayload;
   quantity: number;
-  size?: string;
-  optional?: boolean;
+}
+
+/** Raw shape of a size entry in the API response. */
+interface RawMenuItemSize {
+  name: string;
+  foods: RawMenuItemFoodEntry[];
+  possibleFoods: RawMenuItemFoodEntry[];
 }
 
 /** Raw shape returned by the API — foods/possibleFoods contain embedded Food objects. */
@@ -24,6 +29,7 @@ interface RawMenuItem {
   school?: string;
   foods: RawMenuItemFoodEntry[];
   possibleFoods: RawMenuItemFoodEntry[];
+  sizes: RawMenuItemSize[];
 }
 
 /** Replaces full Food objects with their IDs for API transport. Server expects `foodId` as the key. */
@@ -31,39 +37,25 @@ const serializeFoods = (menuFoods: MenuItemFood[]) =>
   menuFoods.map((mf) => ({ foodId: mf.food.id, quantity: mf.quantity }));
 
 /**
- * Flattens sizes into possibleFoods entries, each tagged with a `size` string.
- * The DB has no sizes column, so sizes are represented as possibleFoods with a size field.
+ * Serializes sizes into the dedicated sizes field.
+ * foods/possibleFoods are only used at the top level when there are no sizes.
  */
-const flattenSizes = (sizes: MenuItemSize[]) =>
-  sizes.flatMap((s) => [
-    ...s.foods.map((mf) => ({
-      foodId: mf.food.id,
-      quantity: mf.quantity,
-      size: s.name,
-    })),
-    ...(s.possibleFoods ?? []).map((mf) => ({
-      foodId: mf.food.id,
-      quantity: mf.quantity,
-      size: s.name,
-      optional: true,
-    })),
-  ]);
+const serializeSizes = (sizes: MenuItemSize[]) =>
+  sizes.map((s) => ({
+    name: s.name,
+    foods: serializeFoods(s.foods),
+    possibleFoods: serializeFoods(s.possibleFoods ?? []),
+  }));
 
 const serializeMenuItem = (data: Partial<MenuItem>) => {
-  const basePossibleFoods = data.possibleFoods
-    ? data.possibleFoods.map((mf) => ({
-        foodId: mf.food.id,
-        quantity: mf.quantity,
-        optional: true,
-      }))
-    : [];
-  const sizeEntries = data.sizes?.length ? flattenSizes(data.sizes) : [];
+  const hasSizes = data.sizes && data.sizes.length > 0;
 
   return {
     ...data,
-    ...(data.foods && { foods: serializeFoods(data.foods) }),
-    possibleFoods: [...basePossibleFoods, ...sizeEntries],
-    sizes: undefined,
+    foods: !hasSizes && data.foods ? serializeFoods(data.foods) : [],
+    possibleFoods:
+      !hasSizes && data.possibleFoods ? serializeFoods(data.possibleFoods) : [],
+    sizes: hasSizes ? serializeSizes(data.sizes!) : [],
   };
 };
 
@@ -77,44 +69,25 @@ function toMenuItemFood(entry: RawMenuItemFoodEntry): MenuItemFood {
 
 /**
  * Deserializes a raw menu item from the API into a proper MenuItem.
- * Foods are embedded directly in the response, so no separate food map is needed.
- * Size-tagged possibleFoods are grouped back into the sizes array.
+ * Sizes are read from the dedicated sizes field.
+ * foods/possibleFoods at the top level are only used when there are no sizes.
  */
 export function deserializeMenuItem(raw: RawMenuItem): MenuItem {
-  const foods: MenuItemFood[] = (raw.foods ?? []).map(toMenuItemFood);
-
-  const regularPossibleFoods: MenuItemFood[] = [];
-  const sizeFoodsMap = new Map<string, MenuItemFood[]>();
-  const sizePossibleFoodsMap = new Map<string, MenuItemFood[]>();
-
-  for (const entry of raw.possibleFoods ?? []) {
-    const resolved = toMenuItemFood(entry);
-
-    if (!entry.size) {
-      regularPossibleFoods.push(resolved);
-    } else {
-      const targetMap = entry.optional ? sizePossibleFoodsMap : sizeFoodsMap;
-      if (!targetMap.has(entry.size)) targetMap.set(entry.size, []);
-      targetMap.get(entry.size)!.push(resolved);
-    }
-  }
-
-  const allSizeNames = new Set([
-    ...sizeFoodsMap.keys(),
-    ...sizePossibleFoodsMap.keys(),
-  ]);
-  const sizes: MenuItemSize[] = [...allSizeNames].map((name) => ({
-    name,
-    foods: sizeFoodsMap.get(name) ?? [],
-    possibleFoods: sizePossibleFoodsMap.get(name) ?? [],
+  const sizes: MenuItemSize[] = (raw.sizes ?? []).map((s) => ({
+    name: s.name,
+    foods: (s.foods ?? []).map(toMenuItemFood),
+    possibleFoods: (s.possibleFoods ?? []).map(toMenuItemFood),
   }));
+
+  const foods: MenuItemFood[] = (raw.foods ?? []).map(toMenuItemFood);
+  const possibleFoods: MenuItemFood[] = (raw.possibleFoods ?? []).map(toMenuItemFood);
 
   return new MenuItem({
     id: raw.id,
     name: raw.name,
     restaurantId: raw.restaurantId,
     foods,
-    possibleFoods: regularPossibleFoods,
+    possibleFoods,
     sizes,
   });
 }
@@ -122,13 +95,18 @@ export function deserializeMenuItem(raw: RawMenuItem): MenuItem {
 /** Extract all unique Food objects from a list of raw menu items. */
 export function extractFoodsFromMenuItems(rawItems: RawMenuItem[]): Food[] {
   const foodMap = new Map<string, Food>();
+  const addEntry = (entry: RawMenuItemFoodEntry) => {
+    if (entry.food && !foodMap.has(entry.food.id)) {
+      foodMap.set(entry.food.id, fromApiPayload(entry.food));
+    }
+  };
   for (const item of rawItems) {
-    for (const entry of [
-      ...(item.foods ?? []),
-      ...(item.possibleFoods ?? []),
-    ]) {
-      if (entry.food && !foodMap.has(entry.food.id)) {
-        foodMap.set(entry.food.id, fromApiPayload(entry.food));
+    for (const entry of [...(item.foods ?? []), ...(item.possibleFoods ?? [])]) {
+      addEntry(entry);
+    }
+    for (const size of item.sizes ?? []) {
+      for (const entry of [...(size.foods ?? []), ...(size.possibleFoods ?? [])]) {
+        addEntry(entry);
       }
     }
   }

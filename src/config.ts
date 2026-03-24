@@ -5,15 +5,15 @@
  * Set USE_API to false to use browser localStorage (default).
  */
 export const USE_API = true;
-const TEST_LOCAL = false;
+const TEST_LOCAL = true;
 
 /**
  * Base URL for the API server.
  * Only used when USE_API is true.
  */
 export const API_BASE_URL = TEST_LOCAL
-    ? "http://localhost:8787"
-    : "https://restaurants-beta.boilerbites.com";
+  ? "http://localhost:8787"
+  : "https://restaurants-beta.boilerbites.com";
 
 /** School identifier used as the path prefix for all API requests. */
 export const SCHOOL = "purdue";

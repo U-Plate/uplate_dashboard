@@ -16,6 +16,7 @@ import { foodsApi } from "../api/foods";
 interface FoodContextType {
   foods: Food[];
   addFood: (food: Omit<Food, "id">) => void;
+  addFoods: (foods: Omit<Food, "id">[]) => Promise<void>;
   updateFood: (id: string, updates: Partial<Food>) => void;
   deleteFood: (id: string) => void;
   getFoodById: (id: string) => Food | undefined;
@@ -35,6 +36,11 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const addFood = (foodData: Omit<Food, "id">) => {
     const newFood = new Food({ id: generateId(), ...foodData });
     setFoods([...foods, newFood]);
+  };
+
+  const addFoods = async (foodsData: Omit<Food, "id">[]) => {
+    const newFoods = foodsData.map((fd) => new Food({ id: generateId(), ...fd }));
+    setFoods([...foods, ...newFoods]);
   };
 
   const updateFood = (id: string, updates: Partial<Food>) => {
@@ -60,6 +66,7 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         foods,
         addFood,
+        addFoods,
         updateFood,
         deleteFood,
         getFoodById,
@@ -106,6 +113,16 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     await fetchFoodsForRestaurant(restaurantId);
   };
 
+  const addFoods = async (foodsData: Omit<Food, "id">[]) => {
+    if (foodsData.length === 0) return;
+    const restaurantId = foodsData[0].restaurantId;
+    await Promise.all(
+      foodsData.map(({ restaurantId: rid, ...rest }) => foodsApi.create(rid, rest))
+    );
+    fetchedRestaurants.current.delete(restaurantId);
+    await fetchFoodsForRestaurant(restaurantId);
+  };
+
   const updateFood = async (id: string, updates: Partial<Food>) => {
     const existing = foods.find((f) => f.id === id);
     if (!existing) return;
@@ -144,6 +161,7 @@ const ApiFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         foods,
         addFood,
+        addFoods,
         updateFood,
         deleteFood,
         getFoodById,

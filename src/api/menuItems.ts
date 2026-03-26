@@ -151,6 +151,13 @@ export const menuItemsApi = {
       {},
     ),
 
+  /** POST /:school/admin/restaurants/:restaurantId/deleteAllMenuItems?key=... */
+  deleteAll: (restaurantId: string) =>
+    api.post<{ status: boolean }>(
+      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteAllMenuItems?key=${getAdminKey()}`,
+      {},
+    ),
+
   /** Exported for the context to use when resolving menu items. */
   deserializeMenuItem,
   /** Extract unique Food objects from raw menu item responses. */

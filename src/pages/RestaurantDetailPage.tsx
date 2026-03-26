@@ -29,8 +29,8 @@ export const RestaurantDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getRestaurantById } = useRestaurants();
   const { getSectionById } = useSections();
-  const { getFoodsByRestaurant, deleteFood, addFood, updateFood } = useFoods();
-  const { getMenuItemsByRestaurant, deleteMenuItem } = useMenuItems();
+  const { getFoodsByRestaurant, deleteFood, addFoods, updateFood } = useFoods();
+  const { getMenuItemsByRestaurant, deleteMenuItem, deleteAllMenuItems } = useMenuItems();
 
   const csvInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
@@ -38,6 +38,7 @@ export const RestaurantDetailPage: React.FC = () => {
   const [foodToDelete, setFoodToDelete] = useState<Food | null>(null);
   const [deleteMenuItemModalOpen, setDeleteMenuItemModalOpen] = useState(false);
   const [menuItemToDelete, setMenuItemToDelete] = useState<MenuItem | null>(null);
+  const [deleteAllMenuItemsModalOpen, setDeleteAllMenuItemsModalOpen] = useState(false);
   const [deleteAllFoodsModalOpen, setDeleteAllFoodsModalOpen] = useState(false);
   const [migrateModalOpen, setMigrateModalOpen] = useState(false);
   const [migrateNutrient, setMigrateNutrient] = useState('');
@@ -117,6 +118,11 @@ export const RestaurantDetailPage: React.FC = () => {
     }
   };
 
+  const confirmDeleteAllMenuItems = () => {
+    deleteAllMenuItems(restaurant.id);
+    setDeleteAllMenuItemsModalOpen(false);
+  };
+
   const confirmDeleteAllFoods = () => {
     for (const food of restaurantFoods) {
       deleteFood(food.id);
@@ -166,12 +172,8 @@ export const RestaurantDetailPage: React.FC = () => {
     try {
       const text = await readFileAsText(file);
       const parsed = parseCSV(text);
-      let count = 0;
-      for (const foodData of parsed) {
-        await addFood({ ...foodData, restaurantId: restaurant.id });
-        count++;
-      }
-      setImportStatus(`Imported ${count} food item${count !== 1 ? 's' : ''}`);
+      await addFoods(parsed.map((foodData) => ({ ...foodData, restaurantId: restaurant.id })));
+      setImportStatus(`Imported ${parsed.length} food item${parsed.length !== 1 ? 's' : ''}`);
     } catch {
       setImportStatus('Failed to import CSV');
     }
@@ -309,6 +311,11 @@ export const RestaurantDetailPage: React.FC = () => {
           <Button onClick={() => navigate(`/restaurants/${restaurant.id}/menu-items/new`)}>
             Add Menu Item
           </Button>
+          {restaurantMenuItems.length > 0 && (
+            <Button variant="danger" onClick={() => setDeleteAllMenuItemsModalOpen(true)}>
+              Delete All Menu Items
+            </Button>
+          )}
         </div>
 
         {restaurantMenuItems.length === 0 ? (
@@ -518,6 +525,22 @@ export const RestaurantDetailPage: React.FC = () => {
             <option key={opt.key} value={opt.key}>{opt.label}</option>
           ))}
         </select>
+      </Modal>
+
+      {/* Delete All Menu Items Modal */}
+      <Modal
+        isOpen={deleteAllMenuItemsModalOpen}
+        onClose={() => setDeleteAllMenuItemsModalOpen(false)}
+        title="Delete All Menu Items"
+        onConfirm={confirmDeleteAllMenuItems}
+        confirmText="Delete All"
+        confirmVariant="danger"
+      >
+        <p>
+          Are you sure you want to delete all <strong>{restaurantMenuItems.length}</strong> menu
+          item{restaurantMenuItems.length !== 1 ? 's' : ''} from this restaurant? This action cannot be
+          undone.
+        </p>
       </Modal>
 
       {/* Delete Menu Item Modal */}

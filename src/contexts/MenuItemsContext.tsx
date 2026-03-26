@@ -13,6 +13,7 @@ interface MenuItemsContextType {
   addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => void | Promise<void>;
   updateMenuItem: (id: string, updates: Partial<MenuItem>) => void | Promise<void>;
   deleteMenuItem: (id: string) => void | Promise<void>;
+  deleteAllMenuItems: (restaurantId: string) => void | Promise<void>;
   getMenuItemById: (id: string) => MenuItem | undefined;
   getMenuItemsByRestaurant: (restaurantId: string) => MenuItem[];
 }
@@ -40,6 +41,10 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
     setMenuItems(menuItems.filter((m) => m.id !== id));
   };
 
+  const deleteAllMenuItems = (restaurantId: string) => {
+    setMenuItems(menuItems.filter((m) => m.restaurantId !== restaurantId));
+  };
+
   const getMenuItemById = (id: string) => menuItems.find((m) => m.id === id);
 
   const getMenuItemsByRestaurant = (restaurantId: string) =>
@@ -52,6 +57,7 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
         addMenuItem,
         updateMenuItem,
         deleteMenuItem,
+        deleteAllMenuItems,
         getMenuItemById,
         getMenuItemsByRestaurant,
       }}
@@ -116,6 +122,12 @@ const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setMenuItems((prev) => prev.filter((m) => m.id !== id));
   };
 
+  const deleteAllMenuItems = async (restaurantId: string) => {
+    await menuItemsApi.deleteAll(restaurantId);
+    fetchedRestaurants.current.delete(restaurantId);
+    setMenuItems((prev) => prev.filter((m) => m.restaurantId !== restaurantId));
+  };
+
   const getMenuItemById = (id: string) => menuItems.find((m) => m.id === id);
 
   const getMenuItemsByRestaurant = useCallback(
@@ -137,6 +149,7 @@ const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         addMenuItem,
         updateMenuItem,
         deleteMenuItem,
+        deleteAllMenuItems,
         getMenuItemById,
         getMenuItemsByRestaurant,
       }}

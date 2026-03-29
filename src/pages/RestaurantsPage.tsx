@@ -80,6 +80,10 @@ export const RestaurantsPage: React.FC = () => {
       header: 'Food Items',
       accessor: (row) => getFoodCount(row.id),
     },
+    {
+      header: 'Hidden',
+      accessor: (row) => (row.hidden ? 'Yes' : 'No'),
+    },
   ];
 
   return (

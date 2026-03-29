@@ -18,6 +18,7 @@ export const RestaurantForm: React.FC = () => {
   const [name, setName] = useState('');
   const [sectionId, setSectionId] = useState('');
   const [location, setLocation] = useState<Location | null>(null);
+  const [hidden, setHidden] = useState(false);
   const [errors, setErrors] = useState<{
     name?: string;
     sectionId?: string;
@@ -33,6 +34,7 @@ export const RestaurantForm: React.FC = () => {
         setName(restaurant.name);
         setSectionId(restaurant.sectionId);
         setLocation(restaurant.location);
+        setHidden(restaurant.hidden);
       }
     } else if (sections.length > 0 && !sectionId) {
       setSectionId(sections[0].id);
@@ -75,6 +77,7 @@ export const RestaurantForm: React.FC = () => {
       name: name.trim(),
       sectionId,
       location: location!,
+      hidden,
     };
 
     if (isEditMode && id) {
@@ -140,6 +143,20 @@ export const RestaurantForm: React.FC = () => {
           onChange={setLocation}
           error={errors.location}
         />
+
+        <div className="form-field">
+          <label className="form-field__label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="checkbox"
+              checked={hidden}
+              onChange={(e) => setHidden(e.target.checked)}
+            />
+            Hidden
+          </label>
+          <div className="form-field__hint" style={{ color: '#666', fontSize: '0.85rem' }}>
+            Hidden restaurants are not visible to users in the app.
+          </div>
+        </div>
 
         <div className="restaurant-form__actions">
           <Button type="button" variant="secondary" onClick={() => navigate('/restaurants')}>

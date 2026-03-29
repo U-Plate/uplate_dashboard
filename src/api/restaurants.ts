@@ -34,13 +34,17 @@ function toApiLocation(loc: Location): ApiLocation {
 export const restaurantsApi = {
   /** GET /:school/restaurants */
   getAll: async () => {
-    const data = await api.get<ApiRestaurant[]>(`/${SCHOOL}/restaurants`);
+    const data = await api.get<ApiRestaurant[]>(
+      `/${SCHOOL}/restaurants?key=${getAdminKey()}`,
+    );
     return data.map(fromApi);
   },
 
   /** GET /:school/restaurants/:id */
   getById: async (id: string) => {
-    const data = await api.get<ApiRestaurant>(`/${SCHOOL}/restaurants/${id}`);
+    const data = await api.get<ApiRestaurant>(
+      `/${SCHOOL}/restaurants/${id}?key=${getAdminKey()}`,
+    );
     return fromApi(data);
   },
 
@@ -60,6 +64,7 @@ export const restaurantsApi = {
         name: data.name,
         section: data.sectionId,
         location: toApiLocation(data.location),
+        hidden: data.hidden,
       },
     );
     return fromApi(created);

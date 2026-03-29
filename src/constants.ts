@@ -15,12 +15,14 @@ export class Restaurant {
     name: string;
     location: Location;
     sectionId: string;
+    hidden: boolean;
 
-    constructor({ id, name, location, sectionId }: Restaurant) {
+    constructor({ id, name, location, sectionId, hidden }: Restaurant) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.sectionId = sectionId;
+        this.hidden = hidden ?? false;
     }
 
 }

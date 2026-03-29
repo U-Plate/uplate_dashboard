@@ -8,9 +8,11 @@ type ApiLocation = { longitude?: number; latitude?: number; address?: string };
 type ApiRestaurant = Omit<Restaurant, "sectionId" | "location"> & {
   section: string;
   location: ApiLocation;
+  // only returned for admin routes
 };
 
 function fromApi(r: ApiRestaurant): Restaurant {
+  console.log("Parsing restaurant from API:", r);
   const { section, location, ...rest } = r;
   return {
     ...rest,

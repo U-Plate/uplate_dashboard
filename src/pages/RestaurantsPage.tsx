@@ -89,21 +89,28 @@ export const RestaurantsPage: React.FC = () => {
   return (
     <div className="restaurants-page">
       <div className="restaurants-page__header">
-        <h1 className="restaurants-page__title">Restaurants</h1>
+        <div className="restaurants-page__heading">
+          <p className="restaurants-page__eyebrow">Manage</p>
+          <h1 className="restaurants-page__title">Restaurants</h1>
+          <p className="restaurants-page__subtitle">
+            Browse restaurants, edit menus, and add new locations.
+          </p>
+        </div>
         <div className="restaurants-page__header-actions">
           <select
             className="restaurants-page__filter"
             value={filterSectionId}
             onChange={(e) => setFilterSectionId(e.target.value)}
+            aria-label="Filter by section"
           >
-            <option value="all">All Sections</option>
+            <option value="all">All sections</option>
             {sections.map((section) => (
               <option key={section.id} value={section.id}>
                 {section.name}
               </option>
             ))}
           </select>
-          <Button onClick={() => navigate('/restaurants/new')}>Create New Restaurant</Button>
+          <Button onClick={() => navigate('/restaurants/new')}>+ New restaurant</Button>
         </div>
       </div>
 

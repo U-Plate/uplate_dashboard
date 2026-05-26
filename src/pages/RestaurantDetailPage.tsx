@@ -223,7 +223,7 @@ export const RestaurantDetailPage: React.FC = () => {
       </div>
 
       {/* Food Items Section */}
-      <div className="restaurant-detail__section">
+      <div className="restaurant-detail__panel">
         <div className="restaurant-detail__section-header">
           <h2
             className="restaurant-detail__section-title restaurant-detail__section-title--collapsible"
@@ -300,7 +300,7 @@ export const RestaurantDetailPage: React.FC = () => {
       </div>
 
       {/* Menu Items Section */}
-      <div className="restaurant-detail__section">
+      <div className="restaurant-detail__panel">
         <div className="restaurant-detail__section-header">
           <h2 className="restaurant-detail__section-title">
             Menu Items ({restaurantMenuItems.length})
@@ -516,9 +516,9 @@ export const RestaurantDetailPage: React.FC = () => {
           {restaurantFoods.length !== 1 ? 's' : ''} in this restaurant.
         </p>
         <select
+          className="restaurant-detail__migrate-select"
           value={migrateNutrient}
           onChange={(e) => setMigrateNutrient(e.target.value)}
-          style={{ width: '100%', padding: '8px', marginTop: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
         >
           <option value="">Select a nutrient...</option>
           {NUTRIENT_OPTIONS.map((opt) => (

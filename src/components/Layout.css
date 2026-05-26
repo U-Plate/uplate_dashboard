@@ -2,12 +2,19 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--color-bg-gradient);
 }
 
 .layout__main {
   flex: 1;
-  max-width: 1280px;
   width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2.5rem 2rem 4rem;
+}
+
+@media (max-width: 768px) {
+  .layout__main {
+    padding: 1.5rem 1rem 3rem;
+  }
 }

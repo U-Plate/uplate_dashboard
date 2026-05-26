@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardTile from '../components/DashboardTile';
+import { useSections } from '../contexts/SectionsContext';
+import { useRestaurants } from '../contexts/RestaurantsContext';
 import { hasAdminKey, setAdminKey, clearAdminKey } from '../utils/adminKey';
 import './Dashboard.css';
 
@@ -9,6 +11,8 @@ export const Dashboard: React.FC = () => {
   const [keySet, setKeySet] = useState(() => hasAdminKey());
   const [input, setInput] = useState('');
   const [showChange, setShowChange] = useState(false);
+  const { sections } = useSections();
+  const { restaurants } = useRestaurants();
 
   const handleKeySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,56 +31,96 @@ export const Dashboard: React.FC = () => {
 
   if (!keySet || showChange) {
     return (
-      <div className="dashboard-page">
-        <h1 className="dashboard-title">UPlate Dashboard</h1>
-        <form className="dashboard-key-form" onSubmit={handleKeySubmit}>
-          <label className="dashboard-key-label" htmlFor="admin-key">
-            {showChange ? 'Enter a new admin key' : 'Enter admin key to continue'}
-          </label>
-          <div className="dashboard-key-row">
+      <div className="dashboard-page dashboard-page--locked">
+        <div className="dashboard-lock-card">
+          <div className="dashboard-lock-card__badge" aria-hidden="true">UP</div>
+          <h1 className="dashboard-lock-card__title">Welcome to UPlate</h1>
+          <p className="dashboard-lock-card__subtitle">
+            {showChange ? 'Enter a new admin key to continue.' : 'Enter your admin key to access the dashboard.'}
+          </p>
+          <form className="dashboard-key-form" onSubmit={handleKeySubmit}>
+            <label className="dashboard-key-label" htmlFor="admin-key">
+              Admin key
+            </label>
             <input
               id="admin-key"
               type="password"
               className="dashboard-key-input"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Admin key"
+              placeholder="Enter admin key"
               autoFocus
             />
-            <button type="submit" className="dashboard-key-btn">
-              {showChange ? 'Update' : 'Unlock'}
-            </button>
-            {showChange && (
-              <button type="button" className="dashboard-key-btn dashboard-key-btn--secondary" onClick={() => setShowChange(false)}>
-                Cancel
+            <div className="dashboard-key-row">
+              <button type="submit" className="dashboard-key-btn">
+                {showChange ? 'Update key' : 'Unlock dashboard'}
               </button>
-            )}
-          </div>
-        </form>
+              {showChange && (
+                <button
+                  type="button"
+                  className="dashboard-key-btn dashboard-key-btn--secondary"
+                  onClick={() => setShowChange(false)}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="dashboard-page">
-      <h1 className="dashboard-title">UPlate Dashboard</h1>
-      <div className="dashboard-tiles">
+      <header className="dashboard-hero">
+        <div className="dashboard-hero__copy">
+          <p className="dashboard-hero__eyebrow">Dashboard</p>
+          <h1 className="dashboard-hero__title">Welcome back</h1>
+          <p className="dashboard-hero__subtitle">
+            Manage campus sections, restaurants, and menus from one place.
+          </p>
+        </div>
+        <div className="dashboard-hero__stats">
+          <div className="dashboard-stat">
+            <span className="dashboard-stat__value">{sections.length}</span>
+            <span className="dashboard-stat__label">Sections</span>
+          </div>
+          <div className="dashboard-stat">
+            <span className="dashboard-stat__value">{restaurants.length}</span>
+            <span className="dashboard-stat__label">Restaurants</span>
+          </div>
+        </div>
+      </header>
+
+      <section className="dashboard-tiles" aria-label="Manage">
         <DashboardTile
           name="Sections"
-          description="Manage campus sections and areas."
+          description="Group restaurants by campus areas, dining halls, or zones."
           onClick={() => navigate('/sections')}
+          icon={<span>&#x25A6;</span>}
+          meta={`${sections.length} total`}
         />
         <DashboardTile
           name="Restaurants"
-          description="Manage restaurants and their locations."
+          description="Browse, edit, and add restaurants along with their menus."
           onClick={() => navigate('/restaurants')}
+          icon={<span>&#x2691;</span>}
+          meta={`${restaurants.length} total`}
         />
-      </div>
-      <div className="dashboard-key-actions">
-        <button className="dashboard-key-link" onClick={() => setShowChange(true)}>Change key</button>
-        <span className="dashboard-key-sep">·</span>
-        <button className="dashboard-key-link" onClick={handleClearKey}>Clear key</button>
-      </div>
+      </section>
+
+      <footer className="dashboard-footer">
+        <div className="dashboard-key-actions">
+          <button className="dashboard-key-link" onClick={() => setShowChange(true)}>
+            Change admin key
+          </button>
+          <span className="dashboard-key-sep">·</span>
+          <button className="dashboard-key-link" onClick={handleClearKey}>
+            Sign out
+          </button>
+        </div>
+      </footer>
     </div>
   );
 };

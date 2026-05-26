@@ -50,8 +50,14 @@ export const SectionsPage: React.FC = () => {
   return (
     <div className="sections-page">
       <div className="sections-page__header">
-        <h1 className="sections-page__title">Sections</h1>
-        <Button onClick={() => navigate('/sections/new')}>Create New Section</Button>
+        <div className="sections-page__heading">
+          <p className="sections-page__eyebrow">Manage</p>
+          <h1 className="sections-page__title">Sections</h1>
+          <p className="sections-page__subtitle">
+            Group restaurants by campus area or dining zone.
+          </p>
+        </div>
+        <Button onClick={() => navigate('/sections/new')}>+ New section</Button>
       </div>
 
       <DataTable

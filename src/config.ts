@@ -13,7 +13,7 @@ const TEST_LOCAL = false;
  */
 export const API_BASE_URL = TEST_LOCAL
     ? "http://localhost:8787"
-    : "https://restaurants-beta.boilerbites.com";
+    : "https://boilerbites.com";
 
 /** School identifier used as the path prefix for all API requests. */
 export const SCHOOL = "purdue";

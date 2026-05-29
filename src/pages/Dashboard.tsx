@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardTile from '../components/DashboardTile';
 import { useSections } from '../contexts/SectionsContext';
 import { useRestaurants } from '../contexts/RestaurantsContext';
+import { useFeedback } from '../contexts/FeedbackContext';
 import { hasAdminKey, setAdminKey, clearAdminKey } from '../utils/adminKey';
 import './Dashboard.css';
 
@@ -13,6 +14,8 @@ export const Dashboard: React.FC = () => {
   const [showChange, setShowChange] = useState(false);
   const { sections } = useSections();
   const { restaurants } = useRestaurants();
+  const { feedback } = useFeedback();
+  const unhandledCount = feedback.filter((f) => !f.handled).length;
 
   const handleKeySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +93,12 @@ export const Dashboard: React.FC = () => {
             <span className="dashboard-stat__value">{restaurants.length}</span>
             <span className="dashboard-stat__label">Restaurants</span>
           </div>
+          <div
+            className={`dashboard-stat${unhandledCount > 0 ? ' dashboard-stat--alert' : ''}`}
+          >
+            <span className="dashboard-stat__value">{unhandledCount}</span>
+            <span className="dashboard-stat__label">Unhandled feedback</span>
+          </div>
         </div>
       </header>
 
@@ -107,6 +116,17 @@ export const Dashboard: React.FC = () => {
           onClick={() => navigate('/restaurants')}
           icon={<span>&#x2691;</span>}
           meta={`${restaurants.length} total`}
+        />
+        <DashboardTile
+          name="Feedback"
+          description="Triage incoming feedback from students and partners."
+          onClick={() => navigate('/feedback')}
+          icon={<span>&#x2709;</span>}
+          meta={
+            unhandledCount === 0
+              ? `${feedback.length} total · all handled`
+              : `${unhandledCount} unhandled · ${feedback.length} total`
+          }
         />
       </section>
 

@@ -14,6 +14,7 @@ import { RestaurantDetailPage } from './pages/RestaurantDetailPage';
 import { FoodForm } from './pages/FoodForm';
 import { MenuItemForm } from './pages/MenuItemForm';
 import { QuickMenuItemForm } from './pages/QuickMenuItemForm';
+import { FeedbackPage } from './pages/FeedbackPage';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="restaurants/:id/menu-items/new" element={<MenuItemForm />} />
             <Route path="restaurants/:id/menu-items/quick-add" element={<QuickMenuItemForm />} />
             <Route path="restaurants/:id/menu-items/:menuItemId/edit" element={<MenuItemForm />} />
+            <Route path="feedback" element={<FeedbackPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,8 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useFeedback } from '../contexts/FeedbackContext';
 import './Navigation.css';
 
 export const Navigation: React.FC = () => {
+  const { feedback } = useFeedback();
+  const unhandledCount = feedback.filter((f) => !f.handled).length;
+
   return (
     <nav className="navigation">
       <div className="navigation__container">
@@ -39,6 +43,24 @@ export const Navigation: React.FC = () => {
               }
             >
               Restaurants
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/feedback"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              <span>Feedback</span>
+              {unhandledCount > 0 && (
+                <span
+                  className="navigation__badge"
+                  aria-label={`${unhandledCount} unhandled`}
+                >
+                  {unhandledCount > 99 ? '99+' : unhandledCount}
+                </span>
+              )}
             </NavLink>
           </li>
         </ul>

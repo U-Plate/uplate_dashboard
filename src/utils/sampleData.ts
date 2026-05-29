@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food, MenuItem } from '../constants';
+import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -335,6 +335,131 @@ export const getSampleMenuItems = (): MenuItem[] => {
   ];
 };
 
+export const getSampleFeedback = (): Feedback[] => {
+  const daysAgo = (n: number): string => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString();
+  };
+
+  return [
+    new Feedback({
+      id: 'feedback-1',
+      schoolId: 'purdue',
+      type: FeedbackType.Bug,
+      message:
+        'The calorie count on the Chicken Caesar wrap at Campus Cafe is showing 0 instead of the actual value. Tried both on web and mobile.',
+      timestampString: daysAgo(1),
+      email: 'jordan.lee@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-2',
+      schoolId: 'purdue',
+      type: FeedbackType.Suggestion,
+      message:
+        'Would love a way to filter foods by allergen, especially nuts and dairy. Right now I have to open every item to check.',
+      timestampString: daysAgo(2),
+      email: 'priya.shah@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-3',
+      schoolId: 'purdue',
+      type: FeedbackType.Question,
+      message: 'Are the macros listed for a single serving or the whole container?',
+      timestampString: daysAgo(3),
+      email: 'mhassan@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-4',
+      schoolId: 'purdue',
+      type: FeedbackType.Compliment,
+      message:
+        'Just wanted to say the new menu item view is so much faster than before. Thanks for the work, it makes meal planning actually doable.',
+      timestampString: daysAgo(4),
+      email: 'rivera.a@purdue.edu',
+      handled: true,
+    }),
+    new Feedback({
+      id: 'feedback-5',
+      schoolId: 'purdue',
+      type: FeedbackType.Bug,
+      message:
+        'App crashes when I try to add the Pizza Place build-your-own pizza to my plate with more than four toppings selected.',
+      timestampString: daysAgo(5),
+      email: 'tnguyen@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-6',
+      schoolId: 'purdue',
+      type: FeedbackType.Other,
+      message:
+        'Healthy Bowls should be listed under South Campus, not Central. It moved last semester.',
+      timestampString: daysAgo(7),
+      email: 'kchen@purdue.edu',
+      handled: true,
+    }),
+    new Feedback({
+      id: 'feedback-7',
+      schoolId: 'purdue',
+      type: FeedbackType.Suggestion,
+      message: 'Dark mode would be huge for late-night study breaks.',
+      timestampString: daysAgo(9),
+      email: 'student-anon@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-8',
+      schoolId: 'purdue',
+      type: FeedbackType.Bug,
+      message: 'Sodium values for the Coffee Shop pastries seem doubled. The cinnamon roll lists 1480mg.',
+      timestampString: daysAgo(12),
+      email: 'lwilliams@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-9',
+      schoolId: 'purdue',
+      type: FeedbackType.Question,
+      message: 'Do the totals account for the dressing if I pick a salad?',
+      timestampString: daysAgo(14),
+      email: 'omar.kim@purdue.edu',
+      handled: true,
+    }),
+    new Feedback({
+      id: 'feedback-10',
+      schoolId: 'purdue',
+      type: FeedbackType.Compliment,
+      message: 'Love the new filter chips. Genuinely useful.',
+      timestampString: daysAgo(16),
+      email: 'sjohnson@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-11',
+      schoolId: 'purdue',
+      type: FeedbackType.Suggestion,
+      message:
+        'It would be great if menu items showed up in search even when a restaurant is closed for the day.',
+      timestampString: daysAgo(20),
+      email: 'evan.park@purdue.edu',
+      handled: false,
+    }),
+    new Feedback({
+      id: 'feedback-12',
+      schoolId: 'purdue',
+      type: FeedbackType.Other,
+      message: 'How do I delete my account?',
+      timestampString: daysAgo(28),
+      email: 'jaylenfoster@purdue.edu',
+      handled: true,
+    }),
+  ];
+};
+
 /**
  * Initialize all sample data into localStorage
  * Only call this if localStorage is empty
@@ -351,5 +476,8 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_menu_items')) {
     localStorage.setItem('uplate_menu_items', JSON.stringify(getSampleMenuItems()));
+  }
+  if (!localStorage.getItem('uplate_feedback')) {
+    localStorage.setItem('uplate_feedback', JSON.stringify(getSampleFeedback()));
   }
 };

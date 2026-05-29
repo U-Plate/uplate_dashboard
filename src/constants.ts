@@ -132,3 +132,32 @@ export class MenuItem {
         this.sizes = sizes ?? [];
     }
 }
+
+export const FeedbackType = {
+    Bug: "Bug",
+    Suggestion: "Suggestion",
+    Other: "Other",
+    Compliment: "Compliment",
+    Question: "Question",
+} as const;
+export type FeedbackType = typeof FeedbackType[keyof typeof FeedbackType];
+
+export class Feedback {
+    id: string;
+    schoolId: string;
+    type: FeedbackType;
+    message: string;
+    timestampString: string;
+    email: string;
+    handled: boolean;
+
+    constructor({ id, schoolId, type, message, timestampString, email, handled }: Feedback) {
+        this.id = id;
+        this.schoolId = schoolId;
+        this.type = type;
+        this.message = message;
+        this.timestampString = timestampString;
+        this.email = email;
+        this.handled = handled ?? false;
+    }
+}

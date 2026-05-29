@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-26T00:00:00.000Z",
+  "title": "Design System: UPlate Dashboard",
+  "extensions": {
+    "colorMeta": {
+      "primary-400": {
+        "role": "primary",
+        "displayName": "Lifted Blue",
+        "canonical": "oklch(72% 0.06 254)",
+        "tonalRamp": [
+          "#1a2540",
+          "#26375a",
+          "#3a4f78",
+          "#44608d",
+          "#5b7bad",
+          "#7596c5",
+          "#94b0da",
+          "#aac6ea"
+        ]
+      },
+      "primary-700": {
+        "role": "primary",
+        "displayName": "Deep Blue",
+        "canonical": "oklch(43% 0.08 254)",
+        "tonalRamp": [
+          "#1a2540",
+          "#26375a",
+          "#3a4f78",
+          "#44608d",
+          "#5b7bad",
+          "#7596c5",
+          "#94b0da",
+          "#c5dcf7"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(22% 0.04 254)",
+        "tonalRamp": [
+          "#1f2a44",
+          "#2d3a55",
+          "#3d4c69",
+          "#5a6a8a",
+          "#8595b5",
+          "#aab6cf",
+          "#c8d2e2",
+          "#e7eef8"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Page Atmosphere",
+        "canonical": "oklch(97.5% 0.012 254)",
+        "tonalRamp": [
+          "#1f2a44",
+          "#44608d",
+          "#7596c5",
+          "#aac6ea",
+          "#c5dcf7",
+          "#dcedff",
+          "#e9f1fc",
+          "#f3f8ff"
+        ]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Danger Red",
+        "canonical": "oklch(60% 0.18 25)",
+        "tonalRamp": [
+          "#3a0f0e",
+          "#601a18",
+          "#8b2a26",
+          "#b03a36",
+          "#d9534f",
+          "#e88481",
+          "#f3c5c5",
+          "#fdecec"
+        ]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "Confirm Green",
+        "canonical": "oklch(63% 0.12 160)",
+        "tonalRamp": [
+          "#0e2a1d",
+          "#194433",
+          "#27664b",
+          "#308861",
+          "#3fa57a",
+          "#75c5a3",
+          "#b9e1cd",
+          "#e6f6ee"
+        ]
+      },
+      "warning": {
+        "role": "secondary",
+        "displayName": "Amber Warning",
+        "canonical": "oklch(64% 0.13 65)",
+        "tonalRamp": [
+          "#3a2410",
+          "#5f3b1c",
+          "#8a5828",
+          "#a87132",
+          "#c98a3b",
+          "#deac6c",
+          "#edd2a3",
+          "#fbf1de"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero titles on landing surfaces. One per surface, never two."
+      },
+      "headline": {
+        "displayName": "Page Headline",
+        "purpose": "Page-level h1 for index pages (Restaurants, Sections, Foods)."
+      },
+      "title": {
+        "displayName": "Card Title",
+        "purpose": "Card-level titles, including DashboardTile name and modal title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Primary paragraph copy and input text. Capped at 65–75ch for prose."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Table cells, tile descriptions, modal body prose. Default UI body in dense contexts."
+      },
+      "label": {
+        "displayName": "Form Label",
+        "purpose": "Form-field labels above inputs."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow",
+        "purpose": "Small uppercase rail above titles and inside section headers, table column labels, stat labels, tile metadata."
+      },
+      "data": {
+        "displayName": "Data Value",
+        "purpose": "Large numeric values in stat tiles. Only place display weight meets display size outside hero."
+      }
+    },
+    "shadows": [
+      { "name": "shadow-sm", "value": "0 1px 2px rgba(31, 42, 68, 0.05)", "purpose": "Cards, data tables, stat tiles at rest. The 'is a surface' hint." },
+      { "name": "shadow-md", "value": "0 4px 14px rgba(94, 128, 178, 0.12)", "purpose": "Hover state on tiles, lock card at rest, lifted primary button." },
+      { "name": "shadow-lg", "value": "0 18px 40px rgba(64, 96, 144, 0.18)", "purpose": "Modals only. The single biggest lift in the system." },
+      { "name": "shadow-focus", "value": "0 0 0 4px rgba(148, 176, 218, 0.35)", "purpose": "Focus-visible glow ring on inputs, buttons, links." }
+    ],
+    "motion": [
+      { "name": "transition-base", "value": "180ms ease", "purpose": "Default transition for color, background, border, shadow, and transform." },
+      { "name": "modal-fade", "value": "0.2s ease", "purpose": "Modal overlay fade-in." },
+      { "name": "modal-slide-up", "value": "0.25s ease", "purpose": "Modal content slide-up entrance." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "600px" },
+      { "name": "md", "value": "720px" },
+      { "name": "lg", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Filled, color-anchored primary action. Used for the dominant action on any surface.",
+      "html": "<button class=\"ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem 1.15rem; font-size: 0.92rem; font-weight: 600; color: #ffffff; background: #94b0da; border: 1px solid transparent; border-radius: 10px; box-shadow: 0 1px 2px rgba(94, 128, 178, 0.25); cursor: pointer; transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease; } .ds-btn-primary:hover { background: #7596c5; box-shadow: 0 4px 12px rgba(94, 128, 178, 0.3); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(148, 176, 218, 0.35); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White-surface, deep-blue-text variant for non-dominant actions. Hover fills with the lightest primary tint.",
+      "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem 1.15rem; font-size: 0.92rem; font-weight: 600; color: #44608d; background: #ffffff; border: 1px solid #c2d1ea; border-radius: 10px; cursor: pointer; transition: background 180ms ease, border-color 180ms ease; } .ds-btn-secondary:hover { background: #dcedff; border-color: #aac6ea; } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(148, 176, 218, 0.35); }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Outlined destructive action on white. Filled red is reserved for confirmation modals.",
+      "html": "<button class=\"ds-btn-danger\">Delete restaurant</button>",
+      "css": ".ds-btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem 1.15rem; font-size: 0.92rem; font-weight: 600; color: #d9534f; background: #ffffff; border: 1px solid #f3c5c5; border-radius: 10px; cursor: pointer; transition: background 180ms ease, border-color 180ms ease, color 180ms ease; } .ds-btn-danger:hover { background: #fdecec; border-color: #d9534f; color: #b03a36; } .ds-btn-danger:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(217, 83, 79, 0.22); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard form-field input. Strong border on white. Focus uses the glow ring, not a 2px stroke shift.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field__label\">Restaurant name</span><input class=\"ds-field__input\" type=\"text\" placeholder=\"Campus Cafe\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 0.4rem; } .ds-field__label { font-size: 0.88rem; font-weight: 600; color: #1f2a44; letter-spacing: 0.005em; } .ds-field__input { padding: 0.65rem 0.85rem; font-size: 0.95rem; color: #1f2a44; background: #ffffff; border: 1px solid #c2d1ea; border-radius: 10px; transition: border-color 180ms ease, box-shadow 180ms ease; } .ds-field__input::placeholder { color: #8595b5; } .ds-field__input:hover:not(:focus) { border-color: #aac6ea; } .ds-field__input:focus { outline: none; border-color: #94b0da; box-shadow: 0 0 0 4px rgba(148, 176, 218, 0.35); }"
+    },
+    {
+      "name": "DashboardTile",
+      "kind": "card",
+      "refersTo": "card-tile",
+      "description": "Signature entry-point card. 22px radius, three-column grid (icon panel, title + description, chevron). Hover lifts the tile and slides the chevron.",
+      "html": "<button class=\"ds-tile\"><span class=\"ds-tile__icon\" aria-hidden=\"true\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\"/><path d=\"M3 12h18\"/><path d=\"M12 3v18\"/></svg></span><span class=\"ds-tile__body\"><span class=\"ds-tile__name\">Restaurants</span><span class=\"ds-tile__description\">Browse, edit, and add restaurants along with their menus.</span><span class=\"ds-tile__meta\">12 total</span></span><span class=\"ds-tile__chevron\" aria-hidden=\"true\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"9 18 15 12 9 6\"/></svg></span></button>",
+      "css": ".ds-tile { appearance: none; text-align: left; background: #ffffff; border: 1px solid #dbe6f5; border-radius: 22px; box-shadow: 0 1px 2px rgba(31, 42, 68, 0.05); padding: 1.75rem; cursor: pointer; color: #1f2a44; width: 100%; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease; font-family: inherit; } .ds-tile:hover { transform: translateY(-3px); box-shadow: 0 4px 14px rgba(94, 128, 178, 0.12); border-color: #aac6ea; } .ds-tile:focus-visible { outline: none; box-shadow: 0 0 0 4px rgba(148, 176, 218, 0.35), 0 4px 14px rgba(94, 128, 178, 0.12); border-color: #94b0da; } .ds-tile__icon { width: 56px; height: 56px; border-radius: 16px; background: #dcedff; color: #44608d; display: flex; align-items: center; justify-content: center; flex-shrink: 0; } .ds-tile__body { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; } .ds-tile__name { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; color: #1f2a44; } .ds-tile__description { font-size: 0.95rem; color: #5a6a8a; line-height: 1.45; } .ds-tile__meta { margin-top: 0.5rem; font-size: 0.82rem; font-weight: 600; color: #44608d; text-transform: uppercase; letter-spacing: 0.06em; } .ds-tile__chevron { color: #94b0da; transition: transform 180ms ease, color 180ms ease; display: inline-flex; } .ds-tile:hover .ds-tile__chevron { color: #5b7bad; transform: translateX(4px); }"
+    },
+    {
+      "name": "Active Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Pill-shaped nav rail. Default links are muted ink on a primary-50 background; the active link fills with the primary anchor.",
+      "html": "<nav class=\"ds-nav\"><ul class=\"ds-nav__list\"><li><a class=\"ds-nav__link\" href=\"#\">Dashboard</a></li><li><a class=\"ds-nav__link ds-nav__link--active\" href=\"#\">Restaurants</a></li><li><a class=\"ds-nav__link\" href=\"#\">Sections</a></li></ul></nav>",
+      "css": ".ds-nav { display: flex; } .ds-nav__list { display: flex; list-style: none; margin: 0; padding: 0.4rem; gap: 0.25rem; background: #f4f8ff; border: 1px solid #e7eef8; border-radius: 999px; } .ds-nav__list li { margin: 0; } .ds-nav__link { display: block; padding: 0.55rem 1.1rem; color: #5a6a8a; text-decoration: none; font-weight: 600; font-size: 0.92rem; border-radius: 999px; transition: color 180ms ease, background 180ms ease; } .ds-nav__link:hover { color: #44608d; background: rgba(220, 237, 255, 0.7); } .ds-nav__link--active, .ds-nav__link--active:hover { color: #ffffff; background: #94b0da; box-shadow: 0 2px 6px rgba(94, 128, 178, 0.25); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Operator's Console",
+    "overview": "UPlate Dashboard is the back office for a campus nutrition app. The interface is operated by a small internal team that spends hours at a time entering and reconciling restaurant menus and roughly fifteen-field nutrition records per food. The system is built like a piece of equipment, not like a product page: tight typographic hierarchy, predictable structure, visible state, with one or two committed choices that give it identity. It rewards familiarity. The tool should disappear into the task.\n\nThe current snapshot is the system as it exists today: a temperate pastel-blue admin shell built on Inter, with white card surfaces lifted over a soft blue gradient. Pleasant and explicitly not the destination. PRODUCT.md names 'Generic SaaS blue plus soft gradient cards' as an anti-reference. The identity is now headed toward Linear-level composure paired with the color and motion presence of Arc and Framer dashboards. Forward visual work should bias toward stronger hue commitment, denser type, and fewer decorative surfaces than this snapshot shows.\n\nThe system rejects four neighbors by name: university CMS gray-on-gray enterprise; neon dark-mode terminal dashboards; marketing-page energy; and consumer food-delivery softness.",
+    "keyCharacteristics": [
+      "Light theme on a faint blue-tinted background. No dark-mode counterpart today.",
+      "Single typeface (Inter) carrying every role from display to caption.",
+      "Curved, not pillowed: medium and large radii (10–22px) on surfaces; pill radius reserved for nav and badges.",
+      "Two-tone neutral system: white content surfaces floating on a tinted page atmosphere.",
+      "Forms and tables are first-class. The Dashboard tile grid is a thin entry surface, not the product.",
+      "Density is moderate today; the redesign brief allows it to increase."
+    ],
+    "rules": [
+      { "name": "The Atmosphere Rule", "body": "The page background is never pure white. The viewport carries the bg gradient at all times so that white surfaces float on a tinted field. Removing the tint flattens the system into default Bootstrap admin.", "section": "colors" },
+      { "name": "The Two-Border Rule", "body": "Borders come in exactly two weights, border (cards, dividers) and border-strong (inputs, secondary buttons). A third weight or a tinted side-stripe accent is forbidden.", "section": "colors" },
+      { "name": "The Hue Commitment Rule", "body": "Per PRODUCT.md, the redesign moves toward an identity hue and away from the current undersaturated blues. Until a new anchor is chosen, treat primary-400 as a stand-in, not a target. Do not generate new surfaces that lean further into this exact muted blue.", "section": "colors" },
+      { "name": "The One Family Rule", "body": "Inter carries every role. No second display face, no monospace counterpart, no serif accent. Hierarchy comes from scale and weight; never a font swap.", "section": "typography" },
+      { "name": "The Negative Tracking Rule", "body": "Sizes above 1.2rem use negative tracking (-0.01em minimum, -0.02em at 2rem+). Default Inter at display sizes reads loose and consumer. Tighten it.", "section": "typography" },
+      { "name": "The Uppercase Eyebrow Rule", "body": "Uppercase plus 0.06–0.1em tracking is the only place uppercase is permitted. Section eyebrows, table column labels, stat labels, tile metadata. Never on body, button, or input text.", "section": "typography" },
+      { "name": "The Tinted Shadow Rule", "body": "Every shadow is tinted toward the primary hue, never pure black-on-transparency. Black shadows on this tinted background read as dirty.", "section": "elevation" },
+      { "name": "The State-Driven Lift Rule", "body": "Surfaces sit at shadow-sm at rest and lift only on hover, focus, or temporary state (modal, dropdown). No surface is born at shadow-md. Elevation is not decoration.", "section": "elevation" },
+      { "name": "The Glow-Ring Rule", "body": "Focus uses shadow-focus, not a 2px stroke shift. The ring sits outside the element so it stacks cleanly over hover backgrounds.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the background tinted (bg or the full bg-gradient). White-on-white surfaces lose the cool atmosphere that distinguishes this from default Bootstrap admin.",
+      "Do use Inter for everything: display, body, button labels, table data. One family, two-step weight contrast (600 vs. 700–800 for emphasis).",
+      "Do apply negative tracking (-0.01em to -0.02em) on every type role above 1.2rem.",
+      "Do lead destructive actions with a danger-outlined button on white. Filled red is reserved for confirmation modals where the action is the only path forward.",
+      "Do tint shadows toward the primary hue. Black shadows on this tinted background read as dirty.",
+      "Do lift on state, not at rest. Surfaces born at shadow-md over-decorate the page.",
+      "Do route focus through shadow-focus (the 4px glow ring), not a stroke shift. Keyboard navigation is a first-class affordance per PRODUCT.md.",
+      "Do keep the nav as a single horizontal pill rail. A second column or sidebar is out of scope until the catalog grows enough to need a tree."
+    ],
+    "donts": [
+      "Don't ship anything that reads as generic SaaS blue plus soft gradient cards (PRODUCT.md anti-reference). The current snapshot already sails near this line; further pastel-on-pastel layering pushes it over.",
+      "Don't introduce university CMS gray-on-gray density (PRODUCT.md anti-reference). Density yes, institutional drabness no.",
+      "Don't introduce a neon dark-mode terminal counterpart (PRODUCT.md anti-reference). If dark mode is added later, it is calm and tonal, never neon.",
+      "Don't import marketing-page energy (PRODUCT.md anti-reference): no gradient headlines, no scroll-driven reveals, no hero animation, no oversized rounded CTAs.",
+      "Don't use the hero-metric template (sweeping gradient banner with a row of big-number tiles). The Dashboard hero stops at two stat tiles; do not balloon it into a six-up grid.",
+      "Don't use side-stripe borders (border-left greater than 1px as a colored accent on cards, list items, alerts). Rewrite as a full border, a background tint, or a leading icon.",
+      "Don't apply gradient text (background-clip: text with a gradient). One solid color; emphasis through weight or size.",
+      "Don't decorate with glassmorphism. The navigation already uses a single intentional 12px backdrop blur; do not multiply it onto cards or modals.",
+      "Don't add identical card grids. The DashboardTile pattern is for two-to-four entry points, not for paginated content.",
+      "Don't introduce a second typeface. The One Family Rule is non-negotiable; bring contrast through size and weight.",
+      "Don't raise body or button text above their fixed rem sizes via clamp(). Fixed scale only; fluid type does not serve admin density.",
+      "Don't reach for a modal as the first thought. Modals are for confirmations and form context, not for inline editing."
+    ]
+  }
+}

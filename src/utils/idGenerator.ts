@@ -2,6 +2,6 @@
  * Generates a unique ID for new entities
  * Combines timestamp with random string for uniqueness
  */
-export const generateId = (): string => {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+export const generateId = (): number => {
+  return Date.now() + Math.floor(Math.random() * 1000);
 };

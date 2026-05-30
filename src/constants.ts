@@ -10,6 +10,43 @@ export class Location {
     }
 }
 
+export class Contest {
+    id: number;
+    title: string;
+    startDate: Date;
+    endDate: Date;
+    description: string;
+
+    constructor({ id, title, startDate, endDate, description }: Contest) {
+        this.id = id;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+    }
+}
+
+export class ContestParticipant {
+    contestId: number;
+    id: number;
+    contestantEmail: string;
+    daysUsedApp: number;
+    dayJoined: Date;
+    school: string;
+    joinState: 'JustWebsite' | 'DownloadedApp';
+    
+    constructor({ id, contestantEmail, daysUsedApp, dayJoined, school, contestId, joinState}: ContestParticipant) {  
+        this.id = id;
+        this.contestantEmail = contestantEmail;
+        this.daysUsedApp = daysUsedApp;
+        this.dayJoined = dayJoined;
+        this.school = school;
+        this.contestId = contestId;
+        this.joinState = joinState;
+    }
+}
+
+
 export class Restaurant {
     id: string;
     name: string;

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { Restaurant } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -26,7 +26,7 @@ const LocalRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children 
   );
 
   const addRestaurant = (data: Omit<Restaurant, 'id'>) => {
-    const newRestaurant = new Restaurant({ id: generateId(), ...data });
+    const newRestaurant = new Restaurant({ id: generateId().toString(), ...data });
     setRestaurants([...restaurants, newRestaurant]);
   };
 

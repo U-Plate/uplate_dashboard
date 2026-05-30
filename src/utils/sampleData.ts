@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType } from '../constants';
+import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, Contest, ContestParticipant } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -15,30 +15,35 @@ export const getSampleRestaurants = (): Restaurant[] => {
       name: 'Campus Café',
       sectionId: 'section-1',
       location: new Location({ address: '100 North Campus Drive' }),
+      hidden: false,
     }),
     new Restaurant({
       id: 'restaurant-2',
       name: 'The Dining Hall',
       sectionId: 'section-1',
       location: new Location({ address: '200 North Campus Drive' }),
+      hidden: false,
     }),
     new Restaurant({
       id: 'restaurant-3',
       name: 'Pizza Place',
       sectionId: 'section-2',
       location: new Location({ address: '300 South Campus Drive' }),
+      hidden: false,
     }),
     new Restaurant({
       id: 'restaurant-4',
       name: 'Healthy Bowls',
       sectionId: 'section-2',
       location: new Location({ address: '400 South Campus Drive' }),
+      hidden: false,
     }),
     new Restaurant({
       id: 'restaurant-5',
       name: 'Coffee Shop',
       sectionId: 'section-3',
       location: new Location({ address: '500 Central Campus Drive' }),
+      hidden: false,
     }),
   ];
 };
@@ -460,6 +465,88 @@ export const getSampleFeedback = (): Feedback[] => {
   ];
 };
 
+export const getSampleContests = (): Contest[] => {
+  return [
+    new Contest({
+      id: 1,
+      title: 'Healthy Eating Challenge',
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      description:
+        'Track your meals for a week and earn points for choosing healthier options. Top scorers win a free meal at any campus restaurant!',
+    }),
+    new Contest({
+      id: 2,
+      title: 'Vegan Victory',
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      description:
+        'Go vegan for two weeks and share your meals in the app to earn badges and be entered into a raffle for a gift card.',
+    }),
+    new Contest({
+      id: 3,
+      title: 'Salad Show Down',
+      startDate: new Date(),
+      endDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      description:
+        'Try a different salad from the menu each day for a week. Post photos and reviews to earn points and win a salad bar party for you and your friends.',
+    }),
+  ];
+};
+
+export const getSampleContestParticipants = (): ContestParticipant[] => {
+  return [
+    new ContestParticipant({
+      id: 1,
+      contestId: 1,
+      contestantEmail: 'nkemm@gmail.com',
+      daysUsedApp: 5,
+      dayJoined: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      school: 'purdue',
+    }),
+    new ContestParticipant({
+      id: 2,
+      contestId: 1,
+      contestantEmail: 'bill@gmail.com',
+      daysUsedApp: 3,
+      dayJoined: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      school: 'purdue',
+    }),
+    new ContestParticipant({
+      id: 3,
+      contestId: 2,
+      contestantEmail: 'sam@gmail.com',
+      daysUsedApp: 1,
+      dayJoined: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      school: 'purdue',
+    }),
+    new ContestParticipant({
+      id: 4,
+      contestId: 2,
+      contestantEmail: 'sma@gmail.com',
+      daysUsedApp: 0,
+      dayJoined: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      school: 'purdue',
+    }),
+    new ContestParticipant({
+      id: 5,
+      contestId: 3,
+      contestantEmail: 'kill@gmail.com',
+      daysUsedApp: 2,
+      dayJoined: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      school: 'purdue',
+    }),
+    new ContestParticipant({
+      id: 6,
+      contestId: 3,
+      contestantEmail: 'bob@gmail.com',
+      daysUsedApp: 4,
+      dayJoined: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      school: 'purdue',
+    }),
+  ];
+}
+
 /**
  * Initialize all sample data into localStorage
  * Only call this if localStorage is empty
@@ -479,5 +566,13 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_feedback')) {
     localStorage.setItem('uplate_feedback', JSON.stringify(getSampleFeedback()));
+  }
+
+  if (!localStorage.getItem('uplate_contests')) {
+    localStorage.setItem('uplate_contests', JSON.stringify(getSampleContests()));
+  }
+
+  if (!localStorage.getItem('uplate_contest_participants')) {
+    localStorage.setItem('uplate_contest_participants', JSON.stringify(getSampleContestParticipants()));
   }
 };

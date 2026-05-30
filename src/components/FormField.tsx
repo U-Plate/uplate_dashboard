@@ -3,7 +3,7 @@ import './FormField.css';
 
 interface FormFieldProps {
   label: string;
-  type: 'text' | 'number' | 'textarea';
+   type: 'text' | 'number' | 'textarea' | 'date';
   value: string | number;
   onChange: (value: string | number) => void;
   error?: string;

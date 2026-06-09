@@ -1,0 +1,310 @@
+.broadcast {
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.broadcast__header {
+  margin-bottom: 1.5rem;
+}
+
+.broadcast__eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary-600);
+  margin: 0 0 0.5rem;
+}
+
+.broadcast__title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.broadcast__subtitle {
+  margin: 0.4rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  max-width: 60ch;
+}
+
+.broadcast__form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Recipient mode selector */
+.broadcast__modes {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 1.25rem;
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.broadcast__mode {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+.broadcast__mode:hover:not(.broadcast__mode--active):not(:disabled) {
+  color: var(--color-primary-700);
+}
+
+.broadcast__mode--active {
+  background: var(--color-surface);
+  color: var(--color-primary-700);
+  box-shadow: var(--shadow-sm);
+}
+
+.broadcast__mode:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Email chip input */
+.broadcast__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.55rem;
+  min-height: 46px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  cursor: text;
+  transition: border-color var(--transition), box-shadow var(--transition),
+    background var(--transition);
+}
+
+.broadcast__chips:focus-within {
+  border-color: var(--color-primary-400);
+  box-shadow: var(--shadow-focus);
+}
+
+.broadcast__chips--error {
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+.broadcast__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.25rem 0.2rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-primary-700);
+  background: var(--color-primary-100);
+  border-radius: var(--radius-pill);
+}
+
+.broadcast__chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-primary-700);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.broadcast__chip-remove:hover:not(:disabled) {
+  background: var(--color-primary-200);
+}
+
+.broadcast__chip-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.3rem 0.25rem;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.broadcast__chip-input::placeholder {
+  color: var(--color-text-soft);
+}
+
+/* Blast-radius indicator: full border + tint + leading icon (no side-stripe). */
+.broadcast__scope {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--color-primary-50);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.broadcast__scope-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  border-radius: var(--radius-md);
+}
+
+.broadcast__scope-text {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.broadcast__scope-text strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.broadcast__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--color-danger-soft);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  color: var(--color-danger-dark);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.broadcast__alert-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-pill);
+}
+
+.broadcast__textarea {
+  min-height: 220px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.broadcast__hint {
+  font-size: 0.82rem;
+  color: var(--color-text-soft);
+}
+
+.broadcast__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-divider);
+}
+
+/* Success state */
+.broadcast__result {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.broadcast__result-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-success);
+  background: var(--color-success-soft);
+  border-radius: var(--radius-pill);
+}
+
+.broadcast__result-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.broadcast__result-text {
+  margin: 0.5rem auto 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  max-width: 46ch;
+}
+
+.broadcast__result-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 768px) {
+  .broadcast__title {
+    font-size: 1.6rem;
+  }
+
+  .broadcast__form {
+    padding: 1.5rem;
+  }
+
+  .broadcast__textarea {
+    min-height: 180px;
+  }
+
+  .broadcast__actions,
+  .broadcast__result-actions {
+    flex-direction: column-reverse;
+  }
+
+  .broadcast__actions .button,
+  .broadcast__result-actions .button {
+    width: 100%;
+  }
+
+  .broadcast__result {
+    padding: 2.5rem 1.5rem;
+  }
+}

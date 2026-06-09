@@ -73,6 +73,16 @@ export const Navigation: React.FC = () => {
               )}
             </NavLink>
           </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/broadcast"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              Broadcast
+            </NavLink>
+          </li>
         </ul>
       </div>
     </nav>

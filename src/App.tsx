@@ -18,6 +18,7 @@ import { FeedbackPage } from './pages/FeedbackPage';
 import { ContestsPage } from './pages/ContestsPage';
 import { ContestForm } from './pages/ContestForm';
 import { ContestPage } from './pages/ContestPage';
+import { BroadcastPage } from './pages/BroadcastPage';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="restaurants/:id/menu-items/quick-add" element={<QuickMenuItemForm />} />
             <Route path="restaurants/:id/menu-items/:menuItemId/edit" element={<MenuItemForm />} />
             <Route path="feedback" element={<FeedbackPage />} />
+            <Route path="broadcast" element={<BroadcastPage />} />
              <Route path="contests" element={<ContestsPage />} />
              <Route path="contests/new" element={<ContestForm />} />
              <Route path="contests/:id" element={<ContestPage />} />

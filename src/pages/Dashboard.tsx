@@ -128,6 +128,13 @@ export const Dashboard: React.FC = () => {
               : `${unhandledCount} unhandled · ${feedback.length} total`
           }
         />
+        <DashboardTile
+          name="Broadcast"
+          description="Compose and send an email to every UPlate user."
+          onClick={() => navigate('/broadcast')}
+          icon={<span>&#x2708;</span>}
+          meta="Email all users"
+        />
       </section>
 
       <footer className="dashboard-footer">

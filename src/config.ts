@@ -5,7 +5,7 @@
  * Set USE_API to false to use browser localStorage (default).
  */
 export const USE_API = true;
-const TEST_LOCAL = false;
+const TEST_LOCAL = true;
 
 /**
  * Base URL for the API server.

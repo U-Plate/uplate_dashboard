@@ -5,12 +5,12 @@
  * Set USE_API to false to use browser localStorage (default).
  */
 export const USE_API = true;
-const TEST_LOCAL = true;
+const TEST_LOCAL = false;
 
 /**
  * Base URL for the API server.
  * Only used when USE_API is true.
- */
+ */ 
 export const API_BASE_URL = TEST_LOCAL
     ? "http://localhost:8787"
     : "https://boilerbites.com";

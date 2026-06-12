@@ -1,0 +1,133 @@
+.rte {
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.rte:focus-within {
+  border-color: var(--color-primary-400);
+  box-shadow: var(--shadow-focus);
+}
+
+.rte--error {
+  border-color: var(--color-danger);
+}
+
+.rte--error:focus-within {
+  box-shadow: none;
+}
+
+.rte--disabled {
+  opacity: 0.6;
+}
+
+.rte__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 0.4rem 0.5rem;
+  background: var(--color-primary-50);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rte__tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 30px;
+  padding: 0 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.rte__tool:hover:not(:disabled) {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.rte__tool:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.rte__tool u {
+  text-decoration: underline;
+}
+
+.rte__divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 0.25rem;
+  background: var(--color-border);
+}
+
+.rte__editor {
+  min-height: 220px;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  outline: none;
+  overflow-y: auto;
+}
+
+.rte__editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-soft);
+  pointer-events: none;
+}
+
+/* Match the rough rendering of the sent email so the editor previews well. */
+.rte__editor h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.6rem 0 0.4rem;
+}
+
+.rte__editor h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0.3rem;
+}
+
+.rte__editor p {
+  margin: 0 0 0.6rem;
+}
+
+.rte__editor a {
+  color: var(--color-primary-600);
+  text-decoration: underline;
+}
+
+.rte__editor ul,
+.rte__editor ol {
+  margin: 0 0 0.6rem;
+  padding-left: 1.4rem;
+}
+
+.rte__link-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.rte__link-fields .form-field__input {
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 768px) {
+  .rte__editor {
+    min-height: 180px;
+  }
+}

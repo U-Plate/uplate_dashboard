@@ -12,6 +12,9 @@ export const broadcastApi = {
   /**
    * POST /:school/email/send?key=... — body: { subject, body, emails? }
    *
+   * `body` is HTML produced by the broadcast rich-text editor; the backend
+   * sanitizes and normalizes it into email-client-safe markup before sending.
+   *
    * When `emails` is omitted (or empty), the email goes to every subscribed
    * user for the school. When provided, it is sent only to those addresses.
    */

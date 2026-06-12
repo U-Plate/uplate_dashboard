@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
+import { RichTextEditor, htmlToPlainText } from '../components/RichTextEditor';
 import { broadcastApi } from '../api/broadcast';
 import './BroadcastPage.css';
 
@@ -87,7 +88,7 @@ export const BroadcastPage: React.FC = () => {
   const validate = (finalRecipients: string[]): boolean => {
     const next: { subject?: string; message?: string; recipients?: string } = {};
     if (!subject.trim()) next.subject = 'Subject is required';
-    if (!message.trim()) next.message = 'Message is required';
+    if (!htmlToPlainText(message).trim()) next.message = 'Message is required';
     if (mode === 'specific' && finalRecipients.length === 0) {
       next.recipients = 'Add at least one recipient';
     }
@@ -117,7 +118,7 @@ export const BroadcastPage: React.FC = () => {
     try {
       await broadcastApi.send(
         subject.trim(),
-        message.trim(),
+        message,
         mode === 'specific' ? recipients : undefined,
       );
       setStatus('success');
@@ -290,22 +291,24 @@ export const BroadcastPage: React.FC = () => {
         </div>
 
         <div className="form-field">
-          <label className="form-field__label" htmlFor="broadcast-message">
+          <label className="form-field__label" id="broadcast-message-label">
             Message
             <span className="form-field__required"> *</span>
           </label>
-          <textarea
-            id="broadcast-message"
-            className={`form-field__input broadcast__textarea${errors.message ? ' form-field__input--error' : ''}`}
+          <RichTextEditor
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Write the body of the email…"
+            onChange={setMessage}
             disabled={sending}
+            error={!!errors.message}
+            placeholder="Write the body of the email…"
+            ariaLabelledBy="broadcast-message-label"
           />
           {errors.message ? (
             <div className="form-field__error">{errors.message}</div>
           ) : (
-            <div className="broadcast__hint">Plain text. Sent as the email body.</div>
+            <div className="broadcast__hint">
+              Use the toolbar to format — bold, underline, headings, indenting, and links are supported.
+            </div>
           )}
         </div>
 

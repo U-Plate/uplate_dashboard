@@ -12,7 +12,6 @@ type ApiRestaurant = Omit<Restaurant, "sectionId" | "location"> & {
 };
 
 function fromApi(r: ApiRestaurant): Restaurant {
-  console.log("Parsing restaurant from API:", r);
   const { section, location, ...rest } = r;
   return {
     ...rest,

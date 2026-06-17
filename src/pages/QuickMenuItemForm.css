@@ -146,7 +146,7 @@
 
 .quick-menu-form__resolved-item--found {
   background: var(--color-success-soft);
-  color: #1d6a4a;
+  color: var(--color-success-dark);
   border-color: rgba(63, 165, 122, 0.25);
 }
 

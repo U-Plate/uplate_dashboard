@@ -30,8 +30,10 @@
 
   --color-success: #3fa57a;
   --color-success-soft: #e6f6ee;
+  --color-success-dark: #1f6b4e;
   --color-warning: #c98a3b;
   --color-warning-soft: #fbf1de;
+  --color-warning-dark: #6b4314;
 
   --shadow-sm: 0 1px 2px rgba(31, 42, 68, 0.05);
   --shadow-md: 0 4px 14px rgba(94, 128, 178, 0.12);
@@ -121,4 +123,17 @@ select:focus-visible {
 ::selection {
   background: var(--color-primary-200);
   color: var(--color-text);
+}
+
+/* Honor reduced-motion app-wide: keep functional state changes instant,
+   disable decorative animation and smooth scroll. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -94,8 +94,6 @@ const ApiContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const getContestById = (id: number) => {
-    console.log("Getting contest by ID:", id);
-    console.log("Current contests in state:", contests);
     return contests.find((r) => r.id === id); };
 
   const getParticipants = async (contestId: number) => {

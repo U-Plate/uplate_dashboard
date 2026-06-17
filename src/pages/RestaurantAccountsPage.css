@@ -1,0 +1,195 @@
+.restaurant-accounts-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.restaurant-accounts-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.restaurant-accounts-page__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.restaurant-accounts-page__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--color-primary-600);
+}
+
+.restaurant-accounts-page__title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.restaurant-accounts-page__subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.restaurant-accounts-page__header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.restaurant-accounts-page__actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.restaurant-accounts-page__empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.restaurant-accounts-page__error {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger-dark);
+  font-size: 0.9rem;
+}
+
+/* ── Create form ─────────────────────────────────────────────── */
+.restaurant-accounts-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.restaurant-accounts-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.restaurant-accounts-page__field input {
+  padding: 0.6rem 0.9rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+}
+
+.restaurant-accounts-page__field input:focus {
+  outline: none;
+  border-color: var(--color-primary-400);
+  box-shadow: var(--shadow-focus);
+}
+
+/* ── Codes modal ─────────────────────────────────────────────── */
+.restaurant-accounts-page__codes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.restaurant-accounts-page__codes-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.restaurant-accounts-page__codes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.restaurant-accounts-page__codes-table th {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.restaurant-accounts-page__codes-table td {
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.ra-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--color-surface-muted);
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.ra-muted {
+  color: var(--color-text-muted);
+}
+
+.ra-activated {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ra-activated__date {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Badges ──────────────────────────────────────────────────── */
+.ra-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+}
+
+.ra-badge--active,
+.ra-badge--activated {
+  background: var(--color-success-soft);
+  color: var(--color-success-dark);
+}
+
+.ra-badge--disabled,
+.ra-badge--revoked {
+  background: var(--color-danger-soft);
+  color: var(--color-danger-dark);
+}
+
+.ra-badge--consumed {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.ra-badge--expired {
+  background: var(--color-divider);
+  color: var(--color-text-muted);
+}

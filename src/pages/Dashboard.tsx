@@ -4,6 +4,7 @@ import DashboardTile from '../components/DashboardTile';
 import { useSections } from '../contexts/SectionsContext';
 import { useRestaurants } from '../contexts/RestaurantsContext';
 import { useFeedback } from '../contexts/FeedbackContext';
+import { useContests } from '../contexts/ContestsContext';
 import { hasAdminKey, setAdminKey, clearAdminKey } from '../utils/adminKey';
 import './Dashboard.css';
 
@@ -15,7 +16,14 @@ export const Dashboard: React.FC = () => {
   const { sections } = useSections();
   const { restaurants } = useRestaurants();
   const { feedback } = useFeedback();
+  const { contests } = useContests();
   const unhandledCount = feedback.filter((f) => !f.handled).length;
+  const now = Date.now();
+  const activeContests = contests.filter(
+    (c) =>
+      new Date(c.startDate).getTime() <= now &&
+      new Date(c.endDate).getTime() >= now
+  ).length;
 
   const handleKeySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +124,24 @@ export const Dashboard: React.FC = () => {
           onClick={() => navigate('/restaurants')}
           icon={<span>&#x2691;</span>}
           meta={`${restaurants.length} total`}
+        />
+        <DashboardTile
+          name="Restaurant Accounts"
+          description="Manage partner login accounts and their access codes."
+          onClick={() => navigate('/restaurant-accounts')}
+          icon={<span>&#x26BF;</span>}
+          meta="Logins & access codes"
+        />
+        <DashboardTile
+          name="Contests"
+          description="Create giveaways and track participant entries."
+          onClick={() => navigate('/contests')}
+          icon={<span>&#x2605;</span>}
+          meta={
+            activeContests > 0
+              ? `${activeContests} active · ${contests.length} total`
+              : `${contests.length} total`
+          }
         />
         <DashboardTile
           name="Feedback"

@@ -13,7 +13,7 @@
 
 /* Hero */
 .dashboard-hero {
-  background: linear-gradient(135deg, var(--color-primary-100) 0%, #ffffff 100%);
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-surface) 100%);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: 2.25rem 2.25rem;

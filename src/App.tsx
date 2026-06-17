@@ -19,6 +19,7 @@ import { ContestsPage } from './pages/ContestsPage';
 import { ContestForm } from './pages/ContestForm';
 import { ContestPage } from './pages/ContestPage';
 import { BroadcastPage } from './pages/BroadcastPage';
+import { RestaurantAccountsPage } from './pages/RestaurantAccountsPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="sections/new" element={<SectionForm />} />
             <Route path="sections/:id/edit" element={<SectionForm />} />
             <Route path="restaurants" element={<RestaurantsPage />} />
+            <Route path="restaurant-accounts" element={<RestaurantAccountsPage />} />
             <Route path="restaurants/new" element={<RestaurantForm />} />
             <Route path="restaurants/:id/edit" element={<RestaurantForm />} />
             <Route path="restaurants/:id" element={<RestaurantDetailPage />} />

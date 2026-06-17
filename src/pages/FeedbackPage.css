@@ -137,7 +137,7 @@
 }
 
 .feedback-chip--bug.feedback-chip--active {
-  background: #fdecec;
+  background: var(--color-danger-soft);
   border-color: var(--color-danger);
   color: var(--color-danger-dark);
 }
@@ -159,9 +159,9 @@
 }
 
 .feedback-chip--question.feedback-chip--active {
-  background: #fbf1de;
+  background: var(--color-warning-soft);
   border-color: var(--color-warning);
-  color: #6b4314;
+  color: var(--color-warning-dark);
 }
 .feedback-chip--question.feedback-chip--active .feedback-chip__count {
   background: var(--color-warning);
@@ -172,7 +172,7 @@
 .feedback-chip--compliment.feedback-chip--active {
   background: var(--color-success-soft);
   border-color: var(--color-success);
-  color: #1f6b4e;
+  color: var(--color-success-dark);
 }
 .feedback-chip--compliment.feedback-chip--active .feedback-chip__count {
   background: var(--color-success);
@@ -491,13 +491,13 @@
 }
 
 .feedback-pill--question {
-  background: #fbf1de;
-  color: #6b4314;
+  background: var(--color-warning-soft);
+  color: var(--color-warning-dark);
 }
 
 .feedback-pill--compliment {
   background: var(--color-success-soft);
-  color: #1f6b4e;
+  color: var(--color-success-dark);
 }
 
 .feedback-pill--other {
@@ -592,7 +592,7 @@
 
 .feedback-status--handled {
   background: var(--color-success-soft);
-  color: #1f6b4e;
+  color: var(--color-success-dark);
 }
 
 .feedback-detail__actions {

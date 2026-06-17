@@ -307,7 +307,7 @@ export const BroadcastPage: React.FC = () => {
             <div className="form-field__error">{errors.message}</div>
           ) : (
             <div className="broadcast__hint">
-              Use the toolbar to format — bold, underline, headings, indenting, and links are supported.
+              Use the toolbar to format: bold, underline, headings, indenting, and links are supported.
             </div>
           )}
         </div>

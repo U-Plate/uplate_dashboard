@@ -25,7 +25,6 @@ type ApiContestParticipant = Omit<ContestParticipant, "dayJoined"> & {
 };
 
 function fromApi(r: ApiContest): Contest {
-  console.log("Parsing contest from API:", r);
   const { startDate, endDate, id, ...rest } = r;
   return {
     ...rest,
@@ -96,7 +95,6 @@ export const contestsApi = {
     const data = await api.get<ApiContestParticipant[]>(
       `/contests/participants/${contestId}?key=${getAdminKey()}`,
     );
-    console.log("Fetched participants from API:", data);
     return data.map((p) => ({
       ...p,
       

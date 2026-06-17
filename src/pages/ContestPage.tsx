@@ -39,7 +39,6 @@ export const ContestPage: React.FC = () => {
           const data = await getParticipants(parseInt(id));
           setParticipants(data);
           const contestData = getContestById(parseInt(id));
-          console.log("Fetched contest data:", contestData);
           setContest(contestData);
         }
       }
@@ -201,7 +200,7 @@ const handleCopyLink = () => {
             label="Must Have Downloaded App"
             type="checkbox"
             value={hasToDownloadApp ? "true" : "false"}
-            onChange={(value) => { console.log(value);setHasToDownloadApp(value === "true")}}
+            onChange={(value) => setHasToDownloadApp(value === "true")}
           />
 
         </div>  

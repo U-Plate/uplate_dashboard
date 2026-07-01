@@ -161,6 +161,13 @@ export const Dashboard: React.FC = () => {
           icon={<span>&#x2708;</span>}
           meta="Email all users"
         />
+        <DashboardTile
+          name="Photo Review"
+          description="Approve pending photos straight from your storage bucket."
+          onClick={() => navigate('/photo-review')}
+          icon={<span>&#x25A3;</span>}
+          meta="Moderate uploads"
+        />
       </section>
 
       <footer className="dashboard-footer">

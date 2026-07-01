@@ -138,6 +138,16 @@ export const Navigation: React.FC = () => {
               Broadcast
             </NavLink>
           </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/photo-review"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              Photo Review
+            </NavLink>
+          </li>
         </ul>
       </div>
     </nav>

@@ -4,7 +4,22 @@ import { SCHOOL } from "../config";
 import { getAdminKey } from "../utils/adminKey";
 import { generateId } from "../utils/idGenerator";
 export { fromApiPayload };
-export type { ApiFoodPayload };
+export type { ApiFoodPayload, FoodDetail };
+
+/**
+ * Flat food record returned by `GET /:school?foodIds=id1,id2`. Unlike the
+ * per-restaurant endpoints, this response keeps nutrition fields at the top
+ * level and is keyed only by food id.
+ */
+interface FoodDetail {
+  id: string;
+  name: string;
+  ingredients: string;
+  labels: string | string[];
+  servingSize?: string;
+  calories?: number;
+  [key: string]: unknown;
+}
 
 /**
  * Nutritional fact field keys that get nested inside `nutritionFacts` for API
@@ -74,6 +89,13 @@ export const foodsApi = {
       `/${SCHOOL}/restaurants/${restaurantId}/foods`,
     );
     return data.map(fromApiPayload);
+  },
+
+  /** GET /:school?foodIds=id1,id2 — flat food details keyed by id. */
+  getByIds: async (foodIds: string[]): Promise<FoodDetail[]> => {
+    if (foodIds.length === 0) return [];
+    const query = encodeURIComponent(foodIds.join(","));
+    return api.get<FoodDetail[]>(`/${SCHOOL}?foodIds=${query}`);
   },
 
   /** GET /:school/restaurants/:restaurantId/foods/:foodId */

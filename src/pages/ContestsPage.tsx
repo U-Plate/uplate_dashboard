@@ -7,6 +7,7 @@ import { Modal } from '../components/Modal';
 import { Contest } from '../constants';
 import './ContestsPage.css';
 import { useContests } from '../contexts/ContestsContext';
+import { buildContestLink } from '../utils/contestLinks';
 
 export const ContestsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export const ContestsPage: React.FC = () => {
 
   const handleCopyContestLink = (contest: Contest) => {
   if (contest) {
-    const link = `https://contest.u-plate.com/${contest.id}`;
+    const link = buildContestLink(contest.id);
     navigator.clipboard.writeText(link)
       .then(() => alert('Contest link copied to clipboard!'))
       .catch(() => alert('Failed to copy link. Please try again.'));
@@ -43,6 +44,10 @@ export const ContestsPage: React.FC = () => {
       accessor: 'title',
     },
     {
+      header: 'Type',
+      accessor: (row) => (row.type === 'referral' ? 'Referral' : 'Marketing'),
+    },
+    {
       header: 'Start Date',
       accessor: (row) => new Date(row.startDate).toLocaleDateString(),
     },
@@ -51,7 +56,7 @@ export const ContestsPage: React.FC = () => {
       accessor: (row) =>
         new Date(row.endDate).toLocaleDateString(),
     },
-    
+
   ];
 
   return (
@@ -76,13 +81,15 @@ export const ContestsPage: React.FC = () => {
         onRowClick={(row) => navigate(`/contests/${row.id}`)}
         actions={(row) => (
           <div className="contests-page__actions">
-           <Button onClick={() => handleCopyContestLink(row)}>
-              Copy Join Link
-            </Button>
+           {row.type !== 'referral' && (
+             <Button onClick={() => handleCopyContestLink(row)}>
+                Copy Join Link
+              </Button>
+           )}
             <Button variant="danger" onClick={() => handleDeleteClick(row)}>
               Delete
             </Button>
-            
+
           </div>
         )}
         emptyMessage="No contest found. Create your first contest to get started."

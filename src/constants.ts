@@ -10,19 +10,23 @@ export class Location {
     }
 }
 
+export type ContestType = 'marketing' | 'referral';
+
 export class Contest {
     id: number;
     title: string;
     startDate: Date;
     endDate: Date;
     description: string;
+    type: ContestType;
 
-    constructor({ id, title, startDate, endDate, description }: Contest) {
+    constructor({ id, title, startDate, endDate, description, type }: Omit<Contest, 'type'> & { type?: ContestType }) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+        this.type = type ?? 'marketing';
     }
 }
 
@@ -34,8 +38,9 @@ export class ContestParticipant {
     dayJoined: Date;
     school: string;
     joinState: 'JustWebsite' | 'DownloadedApp';
-    
-    constructor({ id, contestantEmail, daysUsedApp, dayJoined, school, contestId, joinState}: ContestParticipant) {  
+    referredByEmail: string | null;
+
+    constructor({ id, contestantEmail, daysUsedApp, dayJoined, school, contestId, joinState, referredByEmail}: Omit<ContestParticipant, 'referredByEmail'> & { referredByEmail?: string | null }) {
         this.id = id;
         this.contestantEmail = contestantEmail;
         this.daysUsedApp = daysUsedApp;
@@ -43,6 +48,25 @@ export class ContestParticipant {
         this.school = school;
         this.contestId = contestId;
         this.joinState = joinState;
+        this.referredByEmail = referredByEmail ?? null;
+    }
+}
+
+export class ContestReferrer {
+    id?: string;
+    contestId: number;
+    email: string;
+    name: string;
+    createdAt: Date;
+    referralCount: number;
+
+    constructor({ contestId, email, name, createdAt, referralCount }: Omit<ContestReferrer, 'id'>) {
+        this.id = email;
+        this.contestId = contestId;
+        this.email = email;
+        this.name = name;
+        this.createdAt = createdAt;
+        this.referralCount = referralCount;
     }
 }
 

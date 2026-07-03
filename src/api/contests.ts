@@ -1,4 +1,4 @@
-import { Contest, ContestParticipant } from "../constants";
+import { Contest, ContestParticipant, ContestReferrer } from "../constants";
 import { api } from "./client";
 import { getAdminKey } from "../utils/adminKey";
 
@@ -23,6 +23,17 @@ type ApiContest = Omit<Contest, "startDate" | "endDate"> & {
 type ApiContestParticipant = Omit<ContestParticipant, "dayJoined"> & {
   dayJoined: string;
 };
+
+type ApiContestReferrer = Omit<ContestReferrer, "createdAt"> & {
+  createdAt: string;
+};
+
+function referrerFromApi(r: ApiContestReferrer): ContestReferrer {
+  return new ContestReferrer({
+    ...r,
+    createdAt: new Date(r.createdAt),
+  });
+}
 
 function fromApi(r: ApiContest): Contest {
   const { startDate, endDate, id, ...rest } = r;
@@ -97,8 +108,15 @@ export const contestsApi = {
     );
     return data.map((p) => ({
       ...p,
-      
+
       dayJoined: parseApiDateStringToLocal(p.dayJoined),
     } as ContestParticipant));
+  },
+
+  getReferrers: async (contestId: number) => {
+    const data = await api.get<ApiContestReferrer[]>(
+      `/contests/referrers/${contestId}?key=${getAdminKey()}`,
+    );
+    return data.map(referrerFromApi);
   }
 };

@@ -6,6 +6,7 @@ import { Button } from '../components/Button';
 
 import './ContestForm.css';
 import { useContests } from '../contexts/ContestsContext';
+import type { ContestType } from '../constants';
 
 export const ContestForm: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export const ContestForm: React.FC = () => {
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [type, setType] = useState<ContestType>('marketing');
   const [errors, setErrors] = useState<{
     name?: string;
   }>({});
@@ -30,8 +32,9 @@ export const ContestForm: React.FC = () => {
         setDescription(contest.description);
         setStartDate(contest.startDate.toISOString().slice(0, 16));
         setEndDate(contest.endDate.toISOString().slice(0, 16));
+        setType(contest.type ?? 'marketing');
       }
-    } 
+    }
   }, [id, isEditMode, getContestById]);
 
   const validate = (): boolean => {
@@ -79,6 +82,7 @@ export const ContestForm: React.FC = () => {
       description: description.trim(),
       startDate: new Date(startDate),
       endDate: new Date(endDate),
+      type,
     };
 
     if (isEditMode && id) {
@@ -117,6 +121,20 @@ export const ContestForm: React.FC = () => {
           error={errors.name}
           required
         />
+        <div className="form-field">
+          <label className="form-field__label">
+            Contest Type
+            <span className="form-field__required"> *</span>
+          </label>
+          <select
+            className="form-field__input"
+            value={type}
+            onChange={(e) => setType(e.target.value as ContestType)}
+          >
+            <option value="marketing">Marketing</option>
+            <option value="referral">Referral</option>
+          </select>
+        </div>
         <FormField
           label="Start Date"
           type="date"

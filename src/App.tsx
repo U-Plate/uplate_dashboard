@@ -20,6 +20,7 @@ import { ContestForm } from './pages/ContestForm';
 import { ContestPage } from './pages/ContestPage';
 import { BroadcastPage } from './pages/BroadcastPage';
 import { RestaurantAccountsPage } from './pages/RestaurantAccountsPage';
+import { PhotoReviewPage } from './pages/PhotoReviewPage';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
              <Route path="contests" element={<ContestsPage />} />
              <Route path="contests/new" element={<ContestForm />} />
              <Route path="contests/:id" element={<ContestPage />} />
+            <Route path="photo-review" element={<PhotoReviewPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

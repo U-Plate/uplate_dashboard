@@ -1,11 +1,18 @@
 const CONTEST_BASE_URL = 'https://contest.u-plate.com/';
 
 /** Builds a contest join link, optionally attributed to a referrer. */
-export function buildContestLink(contestId: number, referredByEmail?: string): string {
+export function buildContestLink(
+  contestId: number,
+  referredByEmail?: string,
+  referrerName?: string,
+): string {
   const url = new URL(CONTEST_BASE_URL);
   url.searchParams.set('contestId', String(contestId));
   if (referredByEmail) {
     url.searchParams.set('referredBy', referredByEmail);
+  }
+  if (referrerName) {
+    url.searchParams.set('ref', referrerName);
   }
   return url.toString();
 }

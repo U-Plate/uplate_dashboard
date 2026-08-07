@@ -113,7 +113,7 @@ const handleCopyLink = () => {
 
 const handleCopyReferralLink = (referrer: ContestReferrer) => {
   if (contest) {
-    const link = buildContestLink(contest.id, referrer.email);
+    const link = buildContestLink(contest.id, referrer.email, referrer.name);
     navigator.clipboard.writeText(link)
       .then(() => alert('Referral link copied to clipboard!'))
       .catch(() => alert('Failed to copy link. Please try again.'));

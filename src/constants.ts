@@ -57,14 +57,16 @@ export class ContestReferrer {
     contestId: number;
     email: string;
     name: string;
+    instagramHandle: string | null;
     createdAt: Date;
     referralCount: number;
 
-    constructor({ contestId, email, name, createdAt, referralCount }: Omit<ContestReferrer, 'id'>) {
+    constructor({ contestId, email, name, instagramHandle, createdAt, referralCount }: Omit<ContestReferrer, 'id'>) {
         this.id = email;
         this.contestId = contestId;
         this.email = email;
         this.name = name;
+        this.instagramHandle = instagramHandle ?? null;
         this.createdAt = createdAt;
         this.referralCount = referralCount;
     }

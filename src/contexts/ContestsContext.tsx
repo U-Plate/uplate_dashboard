@@ -16,6 +16,7 @@ interface ContestsContextType {
   getContestById: (id: number) => Contest | undefined;
   getParticipants: (contestId: number) => Promise<ContestParticipant[]>;
   getReferrers: (contestId: number) => Promise<ContestReferrer[]>;
+  deleteReferrer: (contestId: number, email: string) => void | Promise<void>;
 
 }
 
@@ -55,6 +56,8 @@ const LocalContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return [];
   }
 
+  const deleteReferrer = async () => {};
+
 
   return (
     <ContestsContext.Provider
@@ -66,6 +69,7 @@ const LocalContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         getContestById,
         getParticipants,
         getReferrers,
+        deleteReferrer,
 
       }}
     >
@@ -110,6 +114,10 @@ const ApiContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return await contestsApi.getReferrers(contestId);
   }
 
+  const deleteReferrer = async (contestId: number, email: string) => {
+    await contestsApi.deleteReferrer(contestId, email);
+  }
+
   return (
     <ContestsContext.Provider
       value={{
@@ -120,6 +128,7 @@ const ApiContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         getContestById,
         getParticipants,
         getReferrers,
+        deleteReferrer,
       }}
     >
       {children}

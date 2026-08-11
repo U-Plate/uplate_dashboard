@@ -118,5 +118,12 @@ export const contestsApi = {
       `/contests/referrers/${contestId}?key=${getAdminKey()}`,
     );
     return data.map(referrerFromApi);
-  }
+  },
+
+  /** POST /contests/deleteReferrer/:contestId?email=...&key=... */
+  deleteReferrer: (contestId: number, email: string) =>
+    api.post<void>(
+      `/contests/deleteReferrer/${contestId}?email=${encodeURIComponent(email)}&key=${getAdminKey()}`,
+      {},
+    ),
 };

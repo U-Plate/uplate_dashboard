@@ -13,7 +13,7 @@ import { buildContestLink, buildReferrerSignupLink } from '../utils/contestLinks
 
 export const ContestPage: React.FC = () => {
   const navigate = useNavigate();
-  const { getParticipants, getReferrers, getContestById, updateContest, deleteContest } = useContests();
+  const { getParticipants, getReferrers, getContestById, updateContest, deleteContest, deleteReferrer } = useContests();
   const { id } = useParams<{ id: string }>();
   const [participants, setParticipants] = useState<ContestParticipant[]>([]);
   const [referrers, setReferrers] = useState<ContestReferrer[]>([]);
@@ -30,6 +30,8 @@ export const ContestPage: React.FC = () => {
   const [editedEndDate, setEditedEndDate] = useState('');
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const [referrerToDelete, setReferrerToDelete] = useState<ContestReferrer | null>(null);
 
 
 
@@ -120,6 +122,14 @@ const handleCopyReferralLink = (referrer: ContestReferrer) => {
   }
 }
 
+const handleConfirmDeleteReferrer = async () => {
+  if (contest && referrerToDelete) {
+    await deleteReferrer(contest.id, referrerToDelete.email);
+    setReferrers((prev) => prev.filter((r) => r.email !== referrerToDelete.email));
+    setReferrerToDelete(null);
+  }
+}
+
 const handleCopyReferrerSignupLink = () => {
   if (contest) {
     const link = buildReferrerSignupLink(contest.id);
@@ -165,6 +175,17 @@ const handleCopyReferrerSignupLink = () => {
     {
       header: 'Email',
       accessor: 'email',
+    },
+    {
+      header: 'Instagram',
+      accessor: (row) =>
+        row.instagramHandle ? (
+          <a href={`https://instagram.com/${row.instagramHandle}`} target="_blank" rel="noreferrer">
+            @{row.instagramHandle}
+          </a>
+        ) : (
+          '—'
+        ),
     },
     {
       header: 'Referrals',
@@ -229,9 +250,14 @@ const handleCopyReferrerSignupLink = () => {
             columns={referrerColumns}
             data={referrers}
             actions={(row) => (
-              <Button onClick={() => handleCopyReferralLink(row)}>
-                Copy Referral Link
-              </Button>
+              <>
+                <Button onClick={() => handleCopyReferralLink(row)}>
+                  Copy Referral Link
+                </Button>
+                <Button variant="danger" onClick={() => setReferrerToDelete(row)}>
+                  Delete
+                </Button>
+              </>
             )}
             emptyMessage="No referrers have signed up yet."
           />
@@ -328,7 +354,22 @@ const handleCopyReferrerSignupLink = () => {
                 </p>
               )}
             </Modal>
-     
+
+      <Modal
+        isOpen={referrerToDelete !== null}
+        onClose={() => setReferrerToDelete(null)}
+        title="Delete Referrer"
+        onConfirm={handleConfirmDeleteReferrer}
+        confirmText="Delete"
+        confirmVariant="danger"
+      >
+        {referrerToDelete && (
+          <p>
+            Are you sure you want to delete <strong>{referrerToDelete.name}</strong> ({referrerToDelete.email}) as a referrer? This action cannot be undone.
+          </p>
+        )}
+      </Modal>
+
     </div>
   );
 };

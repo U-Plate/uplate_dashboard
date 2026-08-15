@@ -79,13 +79,21 @@ export class Restaurant {
     location: Location;
     sectionId: string;
     hidden: boolean;
+    /**
+     * Public CDN url of the restaurant's logo, or null when it has none. Set by
+     * uploading an image (`restaurantsApi.uploadLogo`), never typed in — the
+     * backend owns the key it's stored under. Carries a `?v=` stamp so a
+     * replaced logo isn't served from cache.
+     */
+    logo: string | null;
 
-    constructor({ id, name, location, sectionId, hidden }: Restaurant) {
+    constructor({ id, name, location, sectionId, hidden, logo }: Omit<Restaurant, 'logo'> & { logo?: string | null }) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.sectionId = sectionId;
         this.hidden = hidden ?? false;
+        this.logo = logo ?? null;
     }
 
 }

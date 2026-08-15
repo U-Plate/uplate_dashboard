@@ -9,15 +9,33 @@ import { restaurantsApi } from '../api/restaurants';
 
 interface RestaurantsContextType {
   restaurants: Restaurant[];
-  addRestaurant: (restaurant: Omit<Restaurant, 'id'>) => void | Promise<void>;
+  /**
+   * Returns the created restaurant, whose server-assigned id a logo upload
+   * needs — which is also why `logo` isn't part of the input: there's no id to
+   * store an image against until this resolves.
+   */
+  addRestaurant: (restaurant: Omit<Restaurant, 'id' | 'logo'>) => Promise<Restaurant>;
   updateRestaurant: (id: string, updates: Partial<Restaurant>) => void | Promise<void>;
   deleteRestaurant: (id: string) => void | Promise<void>;
   getRestaurantById: (id: string) => Restaurant | undefined;
   getRestaurantsBySection: (sectionId: string) => Restaurant[];
   moveRestaurantToSection: (restaurantId: string, newSectionId: string) => void | Promise<void>;
+  /** Publishes `file` as the restaurant's logo, replacing any existing one. */
+  uploadRestaurantLogo: (id: string, file: File) => Promise<void>;
+  /** Removes the restaurant's logo. The image is deleted, not just unlinked. */
+  removeRestaurantLogo: (id: string) => Promise<void>;
 }
 
 const RestaurantsContext = createContext<RestaurantsContextType | undefined>(undefined);
+
+/** Only used by the no-API sample mode — see `uploadRestaurantLogo` there. */
+const readAsDataUrl = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 
 const LocalRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [restaurants, setRestaurants] = useLocalStorage<Restaurant[]>(
@@ -25,9 +43,10 @@ const LocalRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children 
     getSampleRestaurants()
   );
 
-  const addRestaurant = (data: Omit<Restaurant, 'id'>) => {
+  const addRestaurant = async (data: Omit<Restaurant, 'id' | 'logo'>) => {
     const newRestaurant = new Restaurant({ id: generateId().toString(), ...data });
     setRestaurants([...restaurants, newRestaurant]);
+    return newRestaurant;
   };
 
   const updateRestaurant = (id: string, updates: Partial<Restaurant>) => {
@@ -51,6 +70,18 @@ const LocalRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children 
     updateRestaurant(restaurantId, { sectionId: newSectionId });
   };
 
+  // No bucket to upload to without the API, so the logo is inlined as a data
+  // URL. That keeps sample mode a faithful preview of the real layout — it just
+  // lives in localStorage instead of on the CDN.
+  const uploadRestaurantLogo = async (id: string, file: File) => {
+    const dataUrl = await readAsDataUrl(file);
+    updateRestaurant(id, { logo: dataUrl });
+  };
+
+  const removeRestaurantLogo = async (id: string) => {
+    updateRestaurant(id, { logo: null });
+  };
+
   return (
     <RestaurantsContext.Provider
       value={{
@@ -61,6 +92,8 @@ const LocalRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children 
         getRestaurantById,
         getRestaurantsBySection,
         moveRestaurantToSection,
+        uploadRestaurantLogo,
+        removeRestaurantLogo,
       }}
     >
       {children}
@@ -78,9 +111,10 @@ const ApiRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children })
     restaurantsApi.getAll().then(setRestaurants);
   }, []);
 
-  const addRestaurant = async (data: Omit<Restaurant, 'id'>) => {
+  const addRestaurant = async (data: Omit<Restaurant, 'id' | 'logo'>) => {
     const created = await restaurantsApi.create(data);
     setRestaurants((prev) => [...prev, created]);
+    return created;
   };
 
   const updateRestaurant = async (id: string, updates: Partial<Restaurant>) => {
@@ -103,6 +137,16 @@ const ApiRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children })
     setRestaurants((prev) => prev.map((r) => (r.id === restaurantId ? updated : r)));
   };
 
+  const uploadRestaurantLogo = async (id: string, file: File) => {
+    const updated = await restaurantsApi.uploadLogo(id, file);
+    setRestaurants((prev) => prev.map((r) => (r.id === id ? updated : r)));
+  };
+
+  const removeRestaurantLogo = async (id: string) => {
+    const updated = await restaurantsApi.deleteLogo(id);
+    setRestaurants((prev) => prev.map((r) => (r.id === id ? updated : r)));
+  };
+
   return (
     <RestaurantsContext.Provider
       value={{
@@ -113,6 +157,8 @@ const ApiRestaurantsProvider: React.FC<{ children: ReactNode }> = ({ children })
         getRestaurantById,
         getRestaurantsBySection,
         moveRestaurantToSection,
+        uploadRestaurantLogo,
+        removeRestaurantLogo,
       }}
     >
       {children}

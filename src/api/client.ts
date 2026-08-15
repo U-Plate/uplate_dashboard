@@ -22,4 +22,21 @@ export const api = {
 
   post: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "POST", body: JSON.stringify(body) }),
+
+  /**
+   * POSTs a file as the raw request body, with the file's own MIME type.
+   *
+   * Not `post` with a JSON wrapper: base64 in JSON inflates the payload by a
+   * third and the worker would have to decode it back. Not multipart either —
+   * the backend accepts both, and raw bytes are the shape with nothing in
+   * between the file and S3. `Content-Type` is set explicitly to override the
+   * `application/json` default in `request`, which the worker would otherwise
+   * store as the object's type.
+   */
+  upload: <T>(path: string, file: File) =>
+    request<T>(path, {
+      method: "POST",
+      body: file,
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+    }),
 };

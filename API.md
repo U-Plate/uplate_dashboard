@@ -96,10 +96,14 @@ List all restaurants. Supports optional query filter.
     "id": "restaurant-1",
     "name": "Campus Café",
     "section": "section-1",
-    "location": { "longitude": -122.4194, "latitude": 37.7749, "address": "400 N Mccutcheon Drive, West Lafayette, IN, 47906" }
+    "location": { "longitude": -122.4194, "latitude": 37.7749, "address": "400 N Mccutcheon Drive, West Lafayette, IN, 47906" },
+    "logo": "https://cdn.boilerbites.com/purdue/restaurants/restaurant-1.jpg?v=1755200000000"
   }
 ]
 ```
+
+`logo` is the restaurant's logo url, or `null` for the many that have none —
+see [Restaurant logos](#restaurant-logos).
 
 ### `GET /:school/restaurants/:id`
 
@@ -111,7 +115,8 @@ Get a single restaurant by ID.
   "id": "restaurant-1",
   "name": "Campus Café",
   "section": "section-1",
-  "location": { "longitude": -122.4194, "latitude": 37.7749, "address": "400 N Mccutcheon Drive, West Lafayette, IN, 47906" }
+  "location": { "longitude": -122.4194, "latitude": 37.7749, "address": "400 N Mccutcheon Drive, West Lafayette, IN, 47906" },
+  "logo": null
 }
 ```
 
@@ -173,6 +178,43 @@ Move a restaurant to a different section.
 ```
 
 **Response** `200` — full updated restaurant object
+
+## Restaurant logos
+
+The image the app shows next to a restaurant in its Retail list. It shares the
+food-photo bucket and CDN, on the fixed key
+`{school}/restaurants/{restaurantId}.jpg`, but has no review queue: whoever
+uploads it already holds the key that can delete the restaurant outright, so it
+publishes immediately.
+
+The url comes back on the restaurant's `logo` field with a `?v=` stamp, which is
+what makes a replaced logo appear at once rather than behind a cached copy of
+the old one. The dashboard drives both routes through
+`restaurantsApi.uploadLogo` / `.deleteLogo` (`src/api/restaurants.ts`), from the
+logo field on `RestaurantForm`.
+
+### `POST /:school/admin/restaurants/uploadLogo/:id?key=...`
+
+Publish a logo, replacing any existing one. The **body is the image itself** —
+raw bytes with an image `Content-Type` (what `api.upload` sends), or
+`multipart/form-data` with the file in any field. PNG, JPEG, WebP, AVIF or GIF,
+up to 5 MB.
+
+**Response** `200` — full updated restaurant object, carrying the new `logo`.
+
+`400` for an empty body, an unsupported type, or an oversized image; `404` if
+the restaurant doesn't exist; `502` if storage rejected the upload.
+
+### `POST /:school/admin/restaurants/deleteLogo/:id?key=...`
+
+Remove the logo. The image is deleted, not just unlinked.
+
+**Body**
+```json
+{ "key": "boilerfueladmin" }
+```
+
+**Response** `200` — full updated restaurant object, with `logo: null`.
 
 ### `POST /:school/admin/restaurants/:id`
 

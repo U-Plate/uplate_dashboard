@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FoodPhoto, FoodPhotoStatus } from '../constants';
 import { useFoodPhotos } from '../contexts/FoodPhotosContext';
+import { foodsApi, type FoodDetail } from '../api/foods';
 import { Modal } from '../components/Modal';
 import { formatAbsolute, formatRelative } from '../utils/formatTime';
 import './FoodPhotosPage.css';
@@ -36,15 +37,17 @@ const StatusPill: React.FC<{ status: FoodPhotoStatus }> = ({ status }) => (
 
 const PhotoCard: React.FC<{
   photo: FoodPhoto;
+  detail: FoodDetail | undefined;
   busy: boolean;
   onApprove: () => void;
   onDeny: () => void;
   onZoom: (url: string) => void;
-}> = ({ photo, busy, onApprove, onDeny, onZoom }) => {
+}> = ({ photo, detail, busy, onApprove, onDeny, onZoom }) => {
   const isPending = photo.status === FoodPhotoStatus.Pending;
   const replaces =
     isPending && photo.currentApprovedUrl ? photo.currentApprovedUrl : null;
   const src = versioned(photo.url, photo.reviewedAt);
+  const ingredients = detail?.ingredients?.trim() || null;
 
   return (
     <li className={`photo-card${busy ? ' photo-card--busy' : ''}`}>
@@ -108,6 +111,13 @@ const PhotoCard: React.FC<{
           )}
         </dl>
 
+        {ingredients && (
+          <details className="photo-card__ingredients">
+            <summary>Ingredients</summary>
+            <p>{ingredients}</p>
+          </details>
+        )}
+
         {isPending ? (
           <div className="photo-card__actions">
             <button
@@ -147,6 +157,39 @@ export const FoodPhotosPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [zoomed, setZoomed] = useState<string | null>(null);
   const [denying, setDenying] = useState<FoodPhoto | null>(null);
+
+  // A photo alone doesn't tell you whether it's the right photo — "Grilled
+  // Chicken" needs its ingredients next to it before anyone can judge the
+  // image. Details are fetched per unseen food id and cached for the session:
+  // ids are marked before the request so a failure (or a food that's left the
+  // menu) can't spin the effect, and filtering never costs a round trip.
+  const [details, setDetails] = useState<Record<string, FoodDetail>>({});
+  const requestedIds = useRef(new Set<string>());
+
+  useEffect(() => {
+    const ids = [...new Set(photos.map((p) => p.foodId))].filter(
+      (id) => !requestedIds.current.has(id),
+    );
+    if (ids.length === 0) return;
+    ids.forEach((id) => requestedIds.current.add(id));
+
+    let cancelled = false;
+    foodsApi
+      .getByIds(ids)
+      .then((items) => {
+        if (cancelled) return;
+        setDetails((prev) => {
+          const next = { ...prev };
+          for (const item of items) next[item.id] = item;
+          return next;
+        });
+      })
+      .catch((err) => console.error('Failed to load food details:', err));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [photos]);
 
   const counts = useMemo(() => {
     let pending = 0;
@@ -292,6 +335,7 @@ export const FoodPhotosPage: React.FC = () => {
               <PhotoCard
                 key={photo.id}
                 photo={photo}
+                detail={details[photo.foodId]}
                 busy={pendingAction === photo.id}
                 onApprove={() => handleApprove(photo.id)}
                 onDeny={() => setDenying(photo)}

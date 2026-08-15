@@ -5,6 +5,9 @@ import { useSections } from '../contexts/SectionsContext';
 import { useRestaurants } from '../contexts/RestaurantsContext';
 import { useFeedback } from '../contexts/FeedbackContext';
 import { useContests } from '../contexts/ContestsContext';
+import { useFoodPhotos } from '../contexts/FoodPhotosContext';
+import { useInternApplications } from '../contexts/InternApplicationsContext';
+import { FoodPhotoStatus } from '../constants';
 import { hasAdminKey, setAdminKey, clearAdminKey } from '../utils/adminKey';
 import './Dashboard.css';
 
@@ -17,7 +20,13 @@ export const Dashboard: React.FC = () => {
   const { restaurants } = useRestaurants();
   const { feedback } = useFeedback();
   const { contests } = useContests();
+  const { photos } = useFoodPhotos();
+  const { applications } = useInternApplications();
   const unhandledCount = feedback.filter((f) => !f.handled).length;
+  const pendingPhotoCount = photos.filter(
+    (p) => p.status === FoodPhotoStatus.Pending
+  ).length;
+  const unreviewedCount = applications.filter((a) => !a.reviewed).length;
   const now = Date.now();
   const activeContests = contests.filter(
     (c) =>
@@ -162,11 +171,26 @@ export const Dashboard: React.FC = () => {
           meta="Email all users"
         />
         <DashboardTile
-          name="Photo Review"
-          description="Approve pending photos straight from your storage bucket."
-          onClick={() => navigate('/photo-review')}
+          name="Food Photos"
+          description="Review photos students submitted for menu items."
+          onClick={() => navigate('/food-photos')}
           icon={<span>&#x25A3;</span>}
-          meta="Moderate uploads"
+          meta={
+            pendingPhotoCount === 0
+              ? `${photos.length} total · all reviewed`
+              : `${pendingPhotoCount} pending · ${photos.length} total`
+          }
+        />
+        <DashboardTile
+          name="Applicants"
+          description="Read and triage incoming intern applications."
+          onClick={() => navigate('/applicants')}
+          icon={<span>&#x263A;</span>}
+          meta={
+            unreviewedCount === 0
+              ? `${applications.length} total · all reviewed`
+              : `${unreviewedCount} unreviewed · ${applications.length} total`
+          }
         />
       </section>
 

@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, Contest, ContestParticipant } from '../constants';
+import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, Contest, ContestParticipant, InternApplication } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -465,6 +465,57 @@ export const getSampleFeedback = (): Feedback[] => {
   ];
 };
 
+export const getSampleInternApplications = (): InternApplication[] => {
+  const daysAgo = (n: number): string => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString();
+  };
+
+  return [
+    new InternApplication({
+      id: 'intern-1',
+      name: 'Maya Torres',
+      email: 'mtorres@purdue.edu',
+      age: 20,
+      gradYear: 2028,
+      whyThem:
+        "I run social for my sorority's philanthropy events and grew our Instagram from 200 to 2,000 followers in a semester.",
+      whatTheyWant:
+        'Real ownership over a campaign, not just scheduling posts. I want something I can point to in a portfolio.',
+      whyUplate:
+        "I already use UPlate every day in the dining hall and I've been telling my friends to download it anyway.",
+      timestampString: daysAgo(1),
+      reviewed: false,
+    }),
+    new InternApplication({
+      id: 'intern-2',
+      name: 'Deshawn Booker',
+      email: 'dbooker@purdue.edu',
+      age: 19,
+      gradYear: 2029,
+      whyThem:
+        "I've done TikTok content for a local coffee shop and understand what actually gets college students to stop scrolling.",
+      whatTheyWant: 'Experience working directly with founders at an early-stage startup.',
+      whyUplate: 'It solves a problem I have every single day and nobody else is doing it well.',
+      timestampString: daysAgo(3),
+      reviewed: true,
+    }),
+    new InternApplication({
+      id: 'intern-3',
+      name: 'Priya Menon',
+      email: 'pmenon@purdue.edu',
+      age: 21,
+      gradYear: 2027,
+      whyThem: "I'm organized, I hit deadlines, and I've led marketing for two student orgs.",
+      whatTheyWant: 'A resume-worthy project and a foot in the door with a startup team.',
+      whyUplate: "Free food-tech built by students, for students — that's exactly what I want to work on.",
+      timestampString: daysAgo(6),
+      reviewed: false,
+    }),
+  ];
+};
+
 export const getSampleContests = (): Contest[] => {
   return [
     new Contest({
@@ -566,6 +617,12 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_feedback')) {
     localStorage.setItem('uplate_feedback', JSON.stringify(getSampleFeedback()));
+  }
+  if (!localStorage.getItem('uplate_intern_applications')) {
+    localStorage.setItem(
+      'uplate_intern_applications',
+      JSON.stringify(getSampleInternApplications()),
+    );
   }
 
   if (!localStorage.getItem('uplate_contests')) {

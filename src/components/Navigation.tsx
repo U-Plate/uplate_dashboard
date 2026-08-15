@@ -1,11 +1,20 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useFeedback } from '../contexts/FeedbackContext';
+import { useFoodPhotos } from '../contexts/FoodPhotosContext';
+import { useInternApplications } from '../contexts/InternApplicationsContext';
+import { FoodPhotoStatus } from '../constants';
 import './Navigation.css';
 
 export const Navigation: React.FC = () => {
   const { feedback } = useFeedback();
   const unhandledCount = feedback.filter((f) => !f.handled).length;
+  const { applications } = useInternApplications();
+  const unreviewedCount = applications.filter((a) => !a.reviewed).length;
+  const { photos } = useFoodPhotos();
+  const pendingPhotoCount = photos.filter(
+    (p) => p.status === FoodPhotoStatus.Pending,
+  ).length;
 
   return (
     <nav className="navigation">
@@ -79,6 +88,42 @@ export const Navigation: React.FC = () => {
                   aria-label={`${unhandledCount} unhandled`}
                 >
                   {unhandledCount > 99 ? '99+' : unhandledCount}
+                </span>
+              )}
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/food-photos"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              <span>Photos</span>
+              {pendingPhotoCount > 0 && (
+                <span
+                  className="navigation__badge"
+                  aria-label={`${pendingPhotoCount} awaiting review`}
+                >
+                  {pendingPhotoCount > 99 ? '99+' : pendingPhotoCount}
+                </span>
+              )}
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/applicants"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              <span>Applicants</span>
+              {unreviewedCount > 0 && (
+                <span
+                  className="navigation__badge"
+                  aria-label={`${unreviewedCount} unreviewed`}
+                >
+                  {unreviewedCount > 99 ? '99+' : unreviewedCount}
                 </span>
               )}
             </NavLink>

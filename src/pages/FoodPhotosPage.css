@@ -1,0 +1,486 @@
+.photos-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ---- Header ---- */
+
+.photos-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.photos-page__title-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.photos-page__eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--color-primary-600);
+}
+
+.photos-page__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  line-height: 1.15;
+}
+
+.photos-page__header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.photos-page__summary {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.photos-page__summary strong {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.photos-refresh {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-primary-700);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.photos-refresh:hover:not(:disabled) {
+  background: var(--color-primary-100);
+  border-color: var(--color-primary-300);
+}
+
+.photos-refresh:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.photos-refresh:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* The consequences of each action aren't recoverable from the button labels
+   alone, so they're stated once at the top rather than repeated per card. */
+.photos-page__note {
+  margin: -0.6rem 0 0;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  max-width: 62ch;
+}
+
+/* ---- Filters ---- */
+
+.photos-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.5rem;
+  min-width: 0;
+}
+
+.photos-segmented {
+  display: inline-flex;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.2rem;
+  gap: 0.15rem;
+}
+
+.photos-segmented__btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.photos-segmented__btn:hover {
+  color: var(--color-primary-700);
+}
+
+.photos-segmented__btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.photos-segmented__btn--active,
+.photos-segmented__btn--active:hover {
+  background: var(--color-text);
+  color: var(--color-text-inverse);
+}
+
+.photos-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+}
+
+.photos-search__icon {
+  position: absolute;
+  left: 0.7rem;
+  color: var(--color-text-soft);
+  pointer-events: none;
+}
+
+.photos-search__input {
+  width: 100%;
+  padding: 0.5rem 0.85rem 0.5rem 2.1rem;
+  font-size: 0.92rem;
+  font-family: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.photos-search__input::placeholder {
+  color: var(--color-text-soft);
+}
+
+.photos-search__input:hover:not(:focus) {
+  border-color: var(--color-primary-300);
+}
+
+.photos-search__input:focus {
+  outline: none;
+  border-color: var(--color-primary-400);
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---- Grid ---- */
+
+/* Cards rather than rows: this is a look-and-judge queue, and the image has to
+   be big enough to actually tell what's on the plate. */
+.photos-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.1rem;
+}
+
+.photo-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow var(--transition), opacity var(--transition);
+}
+
+.photo-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.photo-card--busy {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.photo-card__frames {
+  display: flex;
+  background: var(--color-surface-muted);
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.photo-card__frame {
+  margin: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* When a submission would overwrite an existing photo, the two sit side by
+   side — approving is destructive to whatever is currently live. */
+.photo-card__frame--outgoing {
+  border-right: 1px solid var(--color-divider);
+  opacity: 0.75;
+}
+
+.photo-card__image-btn {
+  appearance: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: var(--color-primary-50);
+  cursor: zoom-in;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.photo-card__image-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.photo-card__image-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-card__frame figcaption {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-soft);
+  text-align: center;
+}
+
+.photo-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 0.95rem 1.05rem 1.05rem;
+  flex: 1;
+}
+
+.photo-card__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.photo-card__name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  line-height: 1.25;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.photo-card__name--missing {
+  color: var(--color-text-soft);
+  font-style: italic;
+  font-weight: 600;
+}
+
+.photo-pill {
+  flex: none;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.photo-pill--pending {
+  background: var(--color-warning-soft);
+  color: var(--color-warning-dark);
+}
+
+.photo-pill--approved {
+  background: var(--color-success-soft);
+  color: var(--color-success-dark);
+}
+
+.photo-pill--denied {
+  background: var(--color-danger-soft);
+  color: var(--color-danger-dark);
+}
+
+.photo-pill--replaced {
+  background: var(--color-surface-hover);
+  color: var(--color-text-soft);
+}
+
+.photo-card__meta {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 0.3rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.photo-card__meta > div {
+  display: contents;
+}
+
+.photo-card__meta dt {
+  color: var(--color-text-soft);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.photo-card__meta dd {
+  margin: 0;
+  color: var(--color-text-muted);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.photo-card__mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+}
+
+.photo-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.photo-action {
+  flex: 1;
+  appearance: none;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition),
+    border-color var(--transition);
+}
+
+.photo-action:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.photo-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.photo-action--approve {
+  background: var(--color-success);
+  color: var(--color-text-inverse);
+  box-shadow: 0 1px 2px rgba(31, 107, 78, 0.25);
+}
+
+.photo-action--approve:hover:not(:disabled) {
+  background: var(--color-success-dark);
+}
+
+.photo-action--deny {
+  background: var(--color-surface);
+  color: var(--color-danger-dark);
+  border-color: var(--color-danger-border);
+}
+
+.photo-action--deny:hover:not(:disabled) {
+  background: var(--color-danger-soft);
+}
+
+.photo-card__resolved {
+  margin: auto 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-soft);
+  line-height: 1.4;
+}
+
+/* ---- Empty + lightbox ---- */
+
+.photos-empty {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.photos-empty__clear {
+  appearance: none;
+  background: none;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-primary-700);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.photos-empty__clear:hover {
+  background: var(--color-primary-100);
+  border-color: var(--color-primary-300);
+}
+
+.photos-lightbox__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+@media (max-width: 700px) {
+  .photos-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .photos-search {
+    min-width: 0;
+  }
+
+  .photos-grid {
+    grid-template-columns: 1fr;
+  }
+}

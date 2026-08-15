@@ -224,3 +224,94 @@ export class Feedback {
         this.handled = handled ?? false;
     }
 }
+
+/**
+ * Lifecycle of a crowdsourced food photo. `Pending` is the review queue;
+ * `Replaced` is an approved photo that a later approval superseded — kept so
+ * the history of a food's photo reads straight rather than vanishing.
+ */
+export const FoodPhotoStatus = {
+    Pending: "pending",
+    Approved: "approved",
+    Denied: "denied",
+    Replaced: "replaced",
+} as const;
+export type FoodPhotoStatus = typeof FoodPhotoStatus[keyof typeof FoodPhotoStatus];
+
+/** One photo a student submitted for a dining hall food. */
+export class FoodPhoto {
+    id: string;
+    schoolId: string;
+    foodId: string;
+    /** Null when the food has left the menu — still reviewable. */
+    foodName: string | null;
+    url: string;
+    submittedBy: string | null;
+    /** Epoch millis. */
+    submittedAt: number;
+    status: FoodPhotoStatus;
+    reviewedAt: number | null;
+    /** The photo approving this one would overwrite, if the food has one. */
+    currentApprovedUrl: string | null;
+
+    constructor({
+        id,
+        schoolId,
+        foodId,
+        foodName,
+        url,
+        submittedBy,
+        submittedAt,
+        status,
+        reviewedAt,
+        currentApprovedUrl,
+    }: FoodPhoto) {
+        this.id = id;
+        this.schoolId = schoolId;
+        this.foodId = foodId;
+        this.foodName = foodName ?? null;
+        this.url = url;
+        this.submittedBy = submittedBy ?? null;
+        this.submittedAt = submittedAt;
+        this.status = status ?? FoodPhotoStatus.Pending;
+        this.reviewedAt = reviewedAt ?? null;
+        this.currentApprovedUrl = currentApprovedUrl ?? null;
+    }
+}
+
+export class InternApplication {
+    id: string;
+    name: string;
+    email: string;
+    age: number;
+    gradYear: number;
+    whyThem: string;
+    whatTheyWant: string;
+    whyUplate: string;
+    timestampString: string;
+    reviewed: boolean;
+
+    constructor({
+        id,
+        name,
+        email,
+        age,
+        gradYear,
+        whyThem,
+        whatTheyWant,
+        whyUplate,
+        timestampString,
+        reviewed,
+    }: InternApplication) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.gradYear = gradYear;
+        this.whyThem = whyThem;
+        this.whatTheyWant = whatTheyWant;
+        this.whyUplate = whyUplate;
+        this.timestampString = timestampString;
+        this.reviewed = reviewed ?? false;
+    }
+}

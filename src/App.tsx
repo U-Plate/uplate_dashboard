@@ -15,6 +15,8 @@ import { FoodForm } from './pages/FoodForm';
 import { MenuItemForm } from './pages/MenuItemForm';
 import { QuickMenuItemForm } from './pages/QuickMenuItemForm';
 import { FeedbackPage } from './pages/FeedbackPage';
+import { FoodPhotosPage } from './pages/FoodPhotosPage';
+import { InternApplicantsPage } from './pages/InternApplicantsPage';
 import { ContestsPage } from './pages/ContestsPage';
 import { ContestForm } from './pages/ContestForm';
 import { ContestPage } from './pages/ContestPage';
@@ -42,6 +44,8 @@ function App() {
             <Route path="restaurants/:id/menu-items/quick-add" element={<QuickMenuItemForm />} />
             <Route path="restaurants/:id/menu-items/:menuItemId/edit" element={<MenuItemForm />} />
             <Route path="feedback" element={<FeedbackPage />} />
+            <Route path="food-photos" element={<FoodPhotosPage />} />
+            <Route path="applicants" element={<InternApplicantsPage />} />
             <Route path="broadcast" element={<BroadcastPage />} />
              <Route path="contests" element={<ContestsPage />} />
              <Route path="contests/new" element={<ContestForm />} />

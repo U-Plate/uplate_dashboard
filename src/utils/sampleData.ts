@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, Contest, ContestParticipant, InternApplication } from '../constants';
+import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, SwitcherSurveyResponse, Contest, ContestParticipant, InternApplication } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -465,6 +465,74 @@ export const getSampleFeedback = (): Feedback[] => {
   ];
 };
 
+export const getSampleSurveys = (): SwitcherSurveyResponse[] => {
+  const daysAgo = (n: number): string => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString();
+  };
+
+  return [
+    new SwitcherSurveyResponse({
+      id: 'survey-1',
+      schoolId: 'purdue',
+      userId: 'sample-user-1',
+      email: 'jordan.lee@purdue.edu',
+      howHeard: 'Friends',
+      howHeardOther: null,
+      whySwitched: 'A friend showed me the macro tracking and it was way faster than MyFitnessPal for dining court food.',
+      likeBest: 'The dining hall menus already have accurate macros, no manual entry.',
+      dislike: 'Wish the retail restaurant list loaded faster.',
+      wishFeature: 'A widget for today’s macros on the home screen.',
+      willingToInterview: true,
+      appLaunches: 34,
+      macroTrackingEnabled: true,
+      foodItemsLoggedCount: 61,
+      foodsRatedCount: 12,
+      reviewed: false,
+      timestampString: daysAgo(2),
+    }),
+    new SwitcherSurveyResponse({
+      id: 'survey-2',
+      schoolId: 'purdue',
+      userId: 'sample-user-2',
+      email: null,
+      howHeard: 'Tabling Event',
+      howHeardOther: null,
+      whySwitched: 'Saw the booth outside the union and scanned the QR code.',
+      likeBest: 'Ratings from other students help me pick what to get.',
+      dislike: null,
+      wishFeature: null,
+      willingToInterview: false,
+      appLaunches: 6,
+      macroTrackingEnabled: false,
+      foodItemsLoggedCount: 4,
+      foodsRatedCount: 2,
+      reviewed: false,
+      timestampString: daysAgo(5),
+    }),
+    new SwitcherSurveyResponse({
+      id: 'survey-3',
+      schoolId: 'purdue',
+      userId: 'sample-user-3',
+      email: null,
+      howHeard: 'Instagram',
+      howHeardOther: null,
+      whySwitched: null,
+      likeBest: 'Clean UI, easy to log meals fast.',
+      dislike: 'Barcode scanner misses some items.',
+      wishFeature: 'Export my logs to a spreadsheet.',
+      willingToInterview: false,
+      appLaunches: 18,
+      macroTrackingEnabled: true,
+      foodItemsLoggedCount: 29,
+      foodsRatedCount: 5,
+      reviewed: true,
+      timestampString: daysAgo(11),
+    }),
+  ];
+};
+
 export const getSampleInternApplications = (): InternApplication[] => {
   const daysAgo = (n: number): string => {
     const d = new Date();
@@ -617,6 +685,9 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_feedback')) {
     localStorage.setItem('uplate_feedback', JSON.stringify(getSampleFeedback()));
+  }
+  if (!localStorage.getItem('uplate_switcher_surveys')) {
+    localStorage.setItem('uplate_switcher_surveys', JSON.stringify(getSampleSurveys()));
   }
   if (!localStorage.getItem('uplate_intern_applications')) {
     localStorage.setItem(

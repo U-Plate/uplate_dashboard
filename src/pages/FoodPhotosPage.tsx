@@ -20,6 +20,7 @@ const STATUS_LABEL: Record<FoodPhotoStatus, string> = {
   [FoodPhotoStatus.Approved]: 'Live',
   [FoodPhotoStatus.Denied]: 'Denied',
   [FoodPhotoStatus.Replaced]: 'Replaced',
+  [FoodPhotoStatus.Removed]: 'Removed',
 };
 
 /**
@@ -41,9 +42,11 @@ const PhotoCard: React.FC<{
   busy: boolean;
   onApprove: () => void;
   onDeny: () => void;
+  onRemove: () => void;
   onZoom: (url: string) => void;
-}> = ({ photo, detail, busy, onApprove, onDeny, onZoom }) => {
+}> = ({ photo, detail, busy, onApprove, onDeny, onRemove, onZoom }) => {
   const isPending = photo.status === FoodPhotoStatus.Pending;
+  const isApproved = photo.status === FoodPhotoStatus.Approved;
   const replaces =
     isPending && photo.currentApprovedUrl ? photo.currentApprovedUrl : null;
   const src = versioned(photo.url, photo.reviewedAt);
@@ -138,13 +141,28 @@ const PhotoCard: React.FC<{
             </button>
           </div>
         ) : (
-          <p className="photo-card__resolved">
-            {photo.status === FoodPhotoStatus.Approved &&
-              'Serving as this food’s photo in the app.'}
-            {photo.status === FoodPhotoStatus.Denied && 'Image deleted.'}
-            {photo.status === FoodPhotoStatus.Replaced &&
-              'Superseded by a newer approved photo.'}
-          </p>
+          <>
+            <p className="photo-card__resolved">
+              {isApproved && 'Serving as this food’s photo in the app.'}
+              {photo.status === FoodPhotoStatus.Denied && 'Image deleted.'}
+              {photo.status === FoodPhotoStatus.Replaced &&
+                'Superseded by a newer approved photo.'}
+              {photo.status === FoodPhotoStatus.Removed &&
+                'Removed from the app. Image deleted.'}
+            </p>
+            {isApproved && (
+              <div className="photo-card__actions">
+                <button
+                  type="button"
+                  className="photo-action photo-action--deny"
+                  onClick={onRemove}
+                  disabled={busy}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </li>
@@ -152,11 +170,12 @@ const PhotoCard: React.FC<{
 };
 
 export const FoodPhotosPage: React.FC = () => {
-  const { photos, loading, pendingAction, approve, deny, refresh } = useFoodPhotos();
+  const { photos, loading, pendingAction, approve, deny, remove, refresh } = useFoodPhotos();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(FoodPhotoStatus.Pending);
   const [search, setSearch] = useState('');
   const [zoomed, setZoomed] = useState<string | null>(null);
   const [denying, setDenying] = useState<FoodPhoto | null>(null);
+  const [removing, setRemoving] = useState<FoodPhoto | null>(null);
 
   // A photo alone doesn't tell you whether it's the right photo — "Grilled
   // Chicken" needs its ingredients next to it before anyone can judge the
@@ -240,6 +259,15 @@ export const FoodPhotosPage: React.FC = () => {
     });
   };
 
+  const confirmRemove = () => {
+    const target = removing;
+    setRemoving(null);
+    if (!target) return;
+    void remove(target.id).catch(() => {
+      /* rolled back and logged by the context */
+    });
+  };
+
   return (
     <div className="photos-page">
       <header className="photos-page__header">
@@ -266,7 +294,7 @@ export const FoodPhotosPage: React.FC = () => {
 
       <p className="photos-page__note">
         Approving publishes the photo to the food’s permanent image in the app.
-        Denying deletes the image and can’t be undone.
+        Denying and removing delete the image and can’t be undone.
       </p>
 
       <section className="photos-filters" aria-label="Filter photos">
@@ -339,6 +367,7 @@ export const FoodPhotosPage: React.FC = () => {
                 busy={pendingAction === photo.id}
                 onApprove={() => handleApprove(photo.id)}
                 onDeny={() => setDenying(photo)}
+                onRemove={() => setRemoving(photo)}
                 onZoom={setZoomed}
               />
             ))}
@@ -357,6 +386,22 @@ export const FoodPhotosPage: React.FC = () => {
         <p>
           This permanently deletes the submitted image for{' '}
           <strong>{denying?.foodName ?? denying?.foodId}</strong>. It can’t be recovered.
+        </p>
+      </Modal>
+
+      <Modal
+        isOpen={removing !== null}
+        onClose={() => setRemoving(null)}
+        title="Remove this photo?"
+        onConfirm={confirmRemove}
+        confirmText="Remove photo"
+        confirmVariant="danger"
+      >
+        <p>
+          This pulls the live photo for{' '}
+          <strong>{removing?.foodName ?? removing?.foodId}</strong> out of the
+          app and deletes the image. The food goes back to having no photo
+          until a new one is approved.
         </p>
       </Modal>
 

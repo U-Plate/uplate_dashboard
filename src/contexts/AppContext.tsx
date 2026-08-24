@@ -5,6 +5,7 @@ import { RestaurantsProvider } from './RestaurantsContext';
 import { FoodProvider } from './FoodContext';
 import { MenuItemsProvider } from './MenuItemsContext';
 import { FeedbackProvider } from './FeedbackContext';
+import { SurveyProvider } from './SurveyContext';
 import { FoodPhotosProvider } from './FoodPhotosContext';
 import { ContestsProvider } from './ContestsContext';
 import { InternApplicationsProvider } from './InternApplicationsContext';
@@ -21,9 +22,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           <MenuItemsProvider>
           <ContestsProvider>
             <FeedbackProvider>
-              <FoodPhotosProvider>
-                <InternApplicationsProvider>{children}</InternApplicationsProvider>
-              </FoodPhotosProvider>
+              <SurveyProvider>
+                <FoodPhotosProvider>
+                  <InternApplicationsProvider>{children}</InternApplicationsProvider>
+                </FoodPhotosProvider>
+              </SurveyProvider>
             </FeedbackProvider>
           </ContestsProvider>
           </MenuItemsProvider>

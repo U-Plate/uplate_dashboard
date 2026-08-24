@@ -11,6 +11,7 @@ type ApiFeedback = {
   timestampString: string;
   email: string;
   handled?: boolean;
+  deviceInfo?: string | null;
 };
 
 function fromApi(f: ApiFeedback): Feedback {
@@ -22,6 +23,7 @@ function fromApi(f: ApiFeedback): Feedback {
     timestampString: f.timestampString,
     email: f.email,
     handled: f.handled ?? false,
+    deviceInfo: f.deviceInfo ?? null,
   });
 }
 

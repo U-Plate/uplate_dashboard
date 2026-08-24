@@ -338,6 +338,11 @@
   color: var(--color-text-soft);
 }
 
+.photo-pill--removed {
+  background: var(--color-danger-soft);
+  color: var(--color-danger-dark);
+}
+
 .photo-card__meta {
   margin: 0;
   display: grid;

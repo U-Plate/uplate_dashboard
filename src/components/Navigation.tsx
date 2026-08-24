@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useFeedback } from '../contexts/FeedbackContext';
+import { useSurvey } from '../contexts/SurveyContext';
 import { useFoodPhotos } from '../contexts/FoodPhotosContext';
 import { useInternApplications } from '../contexts/InternApplicationsContext';
 import { FoodPhotoStatus } from '../constants';
@@ -9,6 +10,8 @@ import './Navigation.css';
 export const Navigation: React.FC = () => {
   const { feedback } = useFeedback();
   const unhandledCount = feedback.filter((f) => !f.handled).length;
+  const { surveys } = useSurvey();
+  const unreviewedSurveyCount = surveys.filter((s) => !s.reviewed).length;
   const { applications } = useInternApplications();
   const unreviewedCount = applications.filter((a) => !a.reviewed).length;
   const { photos } = useFoodPhotos();
@@ -88,6 +91,24 @@ export const Navigation: React.FC = () => {
                   aria-label={`${unhandledCount} unhandled`}
                 >
                   {unhandledCount > 99 ? '99+' : unhandledCount}
+                </span>
+              )}
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/survey"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              <span>Survey</span>
+              {unreviewedSurveyCount > 0 && (
+                <span
+                  className="navigation__badge"
+                  aria-label={`${unreviewedSurveyCount} unreviewed`}
+                >
+                  {unreviewedSurveyCount > 99 ? '99+' : unreviewedSurveyCount}
                 </span>
               )}
             </NavLink>

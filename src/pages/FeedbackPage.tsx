@@ -215,6 +215,12 @@ const FeedbackItem: React.FC<{
               <dt>Received</dt>
               <dd>{formatAbsolute(item.timestampString)}</dd>
             </div>
+            {item.deviceInfo && (
+              <div className="feedback-detail__meta-row">
+                <dt>Device</dt>
+                <dd>{item.deviceInfo}</dd>
+              </div>
+            )}
             <div className="feedback-detail__meta-row">
               <dt>Status</dt>
               <dd>

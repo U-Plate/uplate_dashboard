@@ -60,4 +60,16 @@ export const foodPhotosApi = {
     );
     return fromApi(data);
   },
+
+  /**
+   * POST /:school/admin/foodPhotos/remove/:id — pulls a live (approved) photo
+   * off the app and deletes the image. Only valid on an approved photo.
+   */
+  remove: async (id: string): Promise<FoodPhoto> => {
+    const data = await api.post<ApiFoodPhoto>(
+      `/${SCHOOL}/admin/foodPhotos/remove/${id}?key=${getAdminKey()}`,
+      {},
+    );
+    return fromApi(data);
+  },
 };

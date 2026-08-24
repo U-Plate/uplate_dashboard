@@ -7,10 +7,12 @@ import { foodPhotosApi } from '../api/foodPhotos';
 interface FoodPhotosContextType {
   photos: FoodPhoto[];
   loading: boolean;
-  /** Non-null while an approve/deny is in flight, so the card can disable itself. */
+  /** Non-null while an approve/deny/remove is in flight, so the card can disable itself. */
   pendingAction: string | null;
   approve: (id: string) => Promise<void>;
   deny: (id: string) => Promise<void>;
+  /** Pulls a live (approved) photo back off the app. */
+  remove: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -60,6 +62,7 @@ const LocalFoodPhotosProvider: React.FC<{ children: ReactNode }> = ({ children }
         pendingAction: null,
         approve: (id) => decide(id, FoodPhotoStatus.Approved),
         deny: (id) => decide(id, FoodPhotoStatus.Denied),
+        remove: (id) => decide(id, FoodPhotoStatus.Removed),
         refresh: async () => {},
       }}
     >
@@ -99,7 +102,9 @@ const ApiFoodPhotosProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       const updated =
         status === FoodPhotoStatus.Approved
           ? await foodPhotosApi.approve(id)
-          : await foodPhotosApi.deny(id);
+          : status === FoodPhotoStatus.Removed
+            ? await foodPhotosApi.remove(id)
+            : await foodPhotosApi.deny(id);
       // Take the server's row for the decided photo (its url changes on
       // approval — the object moves to the food's canonical key).
       setPhotos((prev) => prev.map((p) => (p.id === id ? updated : p)));
@@ -120,6 +125,7 @@ const ApiFoodPhotosProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         pendingAction,
         approve: (id) => decide(id, FoodPhotoStatus.Approved),
         deny: (id) => decide(id, FoodPhotoStatus.Denied),
+        remove: (id) => decide(id, FoodPhotoStatus.Removed),
         refresh: async () => {
           setLoading(true);
           try {

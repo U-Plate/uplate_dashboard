@@ -221,8 +221,9 @@ export class Feedback {
     timestampString: string;
     email: string;
     handled: boolean;
+    deviceInfo: string | null;
 
-    constructor({ id, schoolId, type, message, timestampString, email, handled }: Feedback) {
+    constructor({ id, schoolId, type, message, timestampString, email, handled, deviceInfo }: Feedback) {
         this.id = id;
         this.schoolId = schoolId;
         this.type = type;
@@ -230,12 +231,77 @@ export class Feedback {
         this.timestampString = timestampString;
         this.email = email;
         this.handled = handled ?? false;
+        this.deviceInfo = deviceInfo ?? null;
+    }
+}
+
+/**
+ * "Why did you switch to UPlate" onboarding survey, submitted in-app by a
+ * signed-in user. Every field but `id`/`schoolId`/`userId`/`timestampString`
+ * is optional — the survey has no required questions.
+ */
+export class SwitcherSurveyResponse {
+    id: string;
+    schoolId: string;
+    userId: string;
+    email: string | null;
+    howHeard: string | null;
+    howHeardOther: string | null;
+    whySwitched: string | null;
+    likeBest: string | null;
+    dislike: string | null;
+    wishFeature: string | null;
+    willingToInterview: boolean;
+    appLaunches: number | null;
+    macroTrackingEnabled: boolean | null;
+    foodItemsLoggedCount: number | null;
+    foodsRatedCount: number | null;
+    reviewed: boolean;
+    timestampString: string;
+
+    constructor({
+        id,
+        schoolId,
+        userId,
+        email,
+        howHeard,
+        howHeardOther,
+        whySwitched,
+        likeBest,
+        dislike,
+        wishFeature,
+        willingToInterview,
+        appLaunches,
+        macroTrackingEnabled,
+        foodItemsLoggedCount,
+        foodsRatedCount,
+        reviewed,
+        timestampString,
+    }: SwitcherSurveyResponse) {
+        this.id = id;
+        this.schoolId = schoolId;
+        this.userId = userId;
+        this.email = email ?? null;
+        this.howHeard = howHeard ?? null;
+        this.howHeardOther = howHeardOther ?? null;
+        this.whySwitched = whySwitched ?? null;
+        this.likeBest = likeBest ?? null;
+        this.dislike = dislike ?? null;
+        this.wishFeature = wishFeature ?? null;
+        this.willingToInterview = willingToInterview ?? false;
+        this.appLaunches = appLaunches ?? null;
+        this.macroTrackingEnabled = macroTrackingEnabled ?? null;
+        this.foodItemsLoggedCount = foodItemsLoggedCount ?? null;
+        this.foodsRatedCount = foodsRatedCount ?? null;
+        this.reviewed = reviewed ?? false;
+        this.timestampString = timestampString;
     }
 }
 
 /**
  * Lifecycle of a crowdsourced food photo. `Pending` is the review queue;
- * `Replaced` is an approved photo that a later approval superseded — kept so
+ * `Replaced` is an approved photo that a later approval superseded; `Removed`
+ * is an approved photo an admin pulled with no replacement queued — kept so
  * the history of a food's photo reads straight rather than vanishing.
  */
 export const FoodPhotoStatus = {
@@ -243,6 +309,7 @@ export const FoodPhotoStatus = {
     Approved: "approved",
     Denied: "denied",
     Replaced: "replaced",
+    Removed: "removed",
 } as const;
 export type FoodPhotoStatus = typeof FoodPhotoStatus[keyof typeof FoodPhotoStatus];
 

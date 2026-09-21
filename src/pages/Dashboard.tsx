@@ -182,6 +182,13 @@ export const Dashboard: React.FC = () => {
           }
         />
         <DashboardTile
+          name="Poster QR Builder"
+          description="Replace a poster QR code and download the finished artwork."
+          onClick={() => navigate('/poster-qr')}
+          icon={<span>&#x25A9;</span>}
+          meta="Runs locally in your browser"
+        />
+        <DashboardTile
           name="Applicants"
           description="Read and triage incoming intern applications."
           onClick={() => navigate('/applicants')}

@@ -151,6 +151,16 @@ export const Navigation: React.FC = () => {
           </li>
           <li className="navigation__item">
             <NavLink
+              to="/poster-qr"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              Posters
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
               to="/broadcast"
               className={({ isActive }) =>
                 `navigation__link${isActive ? ' navigation__link--active' : ''}`

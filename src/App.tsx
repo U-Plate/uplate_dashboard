@@ -23,6 +23,7 @@ import { ContestForm } from './pages/ContestForm';
 import { ContestPage } from './pages/ContestPage';
 import { BroadcastPage } from './pages/BroadcastPage';
 import { RestaurantAccountsPage } from './pages/RestaurantAccountsPage';
+import { PosterQrPage } from './pages/PosterQrPage';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
             <Route path="food-photos" element={<FoodPhotosPage />} />
             <Route path="applicants" element={<InternApplicantsPage />} />
             <Route path="broadcast" element={<BroadcastPage />} />
+            <Route path="poster-qr" element={<PosterQrPage />} />
              <Route path="contests" element={<ContestsPage />} />
              <Route path="contests/new" element={<ContestForm />} />
              <Route path="contests/:id" element={<ContestPage />} />

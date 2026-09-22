@@ -12,7 +12,7 @@ interface RestaurantsContextType {
   /**
    * Returns the created restaurant, whose server-assigned id a logo upload
    * needs — which is also why `logo` isn't part of the input: there's no id to
-   * store an image against until this resolves.
+   * store an image against until this resolves
    */
   addRestaurant: (restaurant: Omit<Restaurant, 'id' | 'logo'>) => Promise<Restaurant>;
   updateRestaurant: (id: string, updates: Partial<Restaurant>) => void | Promise<void>;

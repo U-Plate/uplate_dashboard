@@ -58,7 +58,7 @@ export const restaurantsApi = {
   },
 
   /** POST /:school/admin/restaurants/createRestaurant?key=... */
-  create: async (data: Omit<Restaurant, "id">) => {
+  create: async (data: Omit<Restaurant, "id" | "logo">) => {
     const created = await api.post<ApiRestaurant>(
       `/${SCHOOL}/admin/restaurants/createRestaurant?key=${getAdminKey()}`,
       {
@@ -101,4 +101,27 @@ export const restaurantsApi = {
       `/${SCHOOL}/admin/restaurants/deleteRestaurant/${id}?key=${getAdminKey()}`,
       {},
     ),
+
+  /**
+   * POST /:school/admin/restaurants/uploadLogo/:id?key=... — body is the image
+   * itself. Publishes immediately (no review queue: whoever holds the admin key
+   * can already delete the restaurant outright) and returns the restaurant with
+   * its new `logo` url.
+   */
+  uploadLogo: async (id: string, file: File) => {
+    const updated = await api.upload<ApiRestaurant>(
+      `/${SCHOOL}/admin/restaurants/uploadLogo/${id}?key=${getAdminKey()}`,
+      file,
+    );
+    return fromApi(updated);
+  },
+
+  /** POST /:school/admin/restaurants/deleteLogo/:id?key=... — deletes the image for good. */
+  deleteLogo: async (id: string) => {
+    const updated = await api.post<ApiRestaurant>(
+      `/${SCHOOL}/admin/restaurants/deleteLogo/${id}?key=${getAdminKey()}`,
+      {},
+    );
+    return fromApi(updated);
+  },
 };

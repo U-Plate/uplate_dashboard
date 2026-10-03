@@ -10,19 +10,23 @@ export class Location {
     }
 }
 
+export type ContestType = 'marketing' | 'referral';
+
 export class Contest {
     id: number;
     title: string;
     startDate: Date;
     endDate: Date;
     description: string;
+    type: ContestType;
 
-    constructor({ id, title, startDate, endDate, description }: Contest) {
+    constructor({ id, title, startDate, endDate, description, type }: Omit<Contest, 'type'> & { type?: ContestType }) {
         this.id = id;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+        this.type = type ?? 'marketing';
     }
 }
 
@@ -34,8 +38,9 @@ export class ContestParticipant {
     dayJoined: Date;
     school: string;
     joinState: 'JustWebsite' | 'DownloadedApp';
-    
-    constructor({ id, contestantEmail, daysUsedApp, dayJoined, school, contestId, joinState}: ContestParticipant) {  
+    referredByEmail: string | null;
+
+    constructor({ id, contestantEmail, daysUsedApp, dayJoined, school, contestId, joinState, referredByEmail}: Omit<ContestParticipant, 'referredByEmail'> & { referredByEmail?: string | null }) {
         this.id = id;
         this.contestantEmail = contestantEmail;
         this.daysUsedApp = daysUsedApp;
@@ -43,6 +48,27 @@ export class ContestParticipant {
         this.school = school;
         this.contestId = contestId;
         this.joinState = joinState;
+        this.referredByEmail = referredByEmail ?? null;
+    }
+}
+
+export class ContestReferrer {
+    id?: string;
+    contestId: number;
+    email: string;
+    name: string;
+    instagramHandle: string | null;
+    createdAt: Date;
+    referralCount: number;
+
+    constructor({ contestId, email, name, instagramHandle, createdAt, referralCount }: Omit<ContestReferrer, 'id'>) {
+        this.id = email;
+        this.contestId = contestId;
+        this.email = email;
+        this.name = name;
+        this.instagramHandle = instagramHandle ?? null;
+        this.createdAt = createdAt;
+        this.referralCount = referralCount;
     }
 }
 
@@ -53,13 +79,21 @@ export class Restaurant {
     location: Location;
     sectionId: string;
     hidden: boolean;
+    /**
+     * Public CDN url of the restaurant's logo, or null when it has none. Set by
+     * uploading an image (`restaurantsApi.uploadLogo`), never typed in — the
+     * backend owns the key it's stored under. Carries a `?v=` stamp so a
+     * replaced logo isn't served from cache.
+     */
+    logo: string | null;
 
-    constructor({ id, name, location, sectionId, hidden }: Restaurant) {
+    constructor({ id, name, location, sectionId, hidden, logo }: Omit<Restaurant, 'logo'> & { logo?: string | null }) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.sectionId = sectionId;
         this.hidden = hidden ?? false;
+        this.logo = logo ?? null;
     }
 
 }
@@ -187,8 +221,9 @@ export class Feedback {
     timestampString: string;
     email: string;
     handled: boolean;
+    deviceInfo: string | null;
 
-    constructor({ id, schoolId, type, message, timestampString, email, handled }: Feedback) {
+    constructor({ id, schoolId, type, message, timestampString, email, handled, deviceInfo }: Feedback) {
         this.id = id;
         this.schoolId = schoolId;
         this.type = type;
@@ -196,5 +231,162 @@ export class Feedback {
         this.timestampString = timestampString;
         this.email = email;
         this.handled = handled ?? false;
+        this.deviceInfo = deviceInfo ?? null;
+    }
+}
+
+/**
+ * "Why did you switch to UPlate" onboarding survey, submitted in-app by a
+ * signed-in user. Every field but `id`/`schoolId`/`userId`/`timestampString`
+ * is optional — the survey has no required questions.
+ */
+export class SwitcherSurveyResponse {
+    id: string;
+    schoolId: string;
+    userId: string;
+    email: string | null;
+    howHeard: string | null;
+    howHeardOther: string | null;
+    whySwitched: string | null;
+    likeBest: string | null;
+    dislike: string | null;
+    wishFeature: string | null;
+    willingToInterview: boolean;
+    appLaunches: number | null;
+    macroTrackingEnabled: boolean | null;
+    foodItemsLoggedCount: number | null;
+    foodsRatedCount: number | null;
+    reviewed: boolean;
+    timestampString: string;
+
+    constructor({
+        id,
+        schoolId,
+        userId,
+        email,
+        howHeard,
+        howHeardOther,
+        whySwitched,
+        likeBest,
+        dislike,
+        wishFeature,
+        willingToInterview,
+        appLaunches,
+        macroTrackingEnabled,
+        foodItemsLoggedCount,
+        foodsRatedCount,
+        reviewed,
+        timestampString,
+    }: SwitcherSurveyResponse) {
+        this.id = id;
+        this.schoolId = schoolId;
+        this.userId = userId;
+        this.email = email ?? null;
+        this.howHeard = howHeard ?? null;
+        this.howHeardOther = howHeardOther ?? null;
+        this.whySwitched = whySwitched ?? null;
+        this.likeBest = likeBest ?? null;
+        this.dislike = dislike ?? null;
+        this.wishFeature = wishFeature ?? null;
+        this.willingToInterview = willingToInterview ?? false;
+        this.appLaunches = appLaunches ?? null;
+        this.macroTrackingEnabled = macroTrackingEnabled ?? null;
+        this.foodItemsLoggedCount = foodItemsLoggedCount ?? null;
+        this.foodsRatedCount = foodsRatedCount ?? null;
+        this.reviewed = reviewed ?? false;
+        this.timestampString = timestampString;
+    }
+}
+
+/**
+ * Lifecycle of a crowdsourced food photo. `Pending` is the review queue;
+ * `Replaced` is an approved photo that a later approval superseded; `Removed`
+ * is an approved photo an admin pulled with no replacement queued — kept so
+ * the history of a food's photo reads straight rather than vanishing.
+ */
+export const FoodPhotoStatus = {
+    Pending: "pending",
+    Approved: "approved",
+    Denied: "denied",
+    Replaced: "replaced",
+    Removed: "removed",
+} as const;
+export type FoodPhotoStatus = typeof FoodPhotoStatus[keyof typeof FoodPhotoStatus];
+
+/** One photo a student submitted for a dining hall food. */
+export class FoodPhoto {
+    id: string;
+    schoolId: string;
+    foodId: string;
+    /** Null when the food has left the menu — still reviewable. */
+    foodName: string | null;
+    url: string;
+    submittedBy: string | null;
+    /** Epoch millis. */
+    submittedAt: number;
+    status: FoodPhotoStatus;
+    reviewedAt: number | null;
+    /** The photo approving this one would overwrite, if the food has one. */
+    currentApprovedUrl: string | null;
+
+    constructor({
+        id,
+        schoolId,
+        foodId,
+        foodName,
+        url,
+        submittedBy,
+        submittedAt,
+        status,
+        reviewedAt,
+        currentApprovedUrl,
+    }: FoodPhoto) {
+        this.id = id;
+        this.schoolId = schoolId;
+        this.foodId = foodId;
+        this.foodName = foodName ?? null;
+        this.url = url;
+        this.submittedBy = submittedBy ?? null;
+        this.submittedAt = submittedAt;
+        this.status = status ?? FoodPhotoStatus.Pending;
+        this.reviewedAt = reviewedAt ?? null;
+        this.currentApprovedUrl = currentApprovedUrl ?? null;
+    }
+}
+
+export class InternApplication {
+    id: string;
+    name: string;
+    email: string;
+    age: number;
+    gradYear: number;
+    whyThem: string;
+    whatTheyWant: string;
+    whyUplate: string;
+    timestampString: string;
+    reviewed: boolean;
+
+    constructor({
+        id,
+        name,
+        email,
+        age,
+        gradYear,
+        whyThem,
+        whatTheyWant,
+        whyUplate,
+        timestampString,
+        reviewed,
+    }: InternApplication) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.gradYear = gradYear;
+        this.whyThem = whyThem;
+        this.whatTheyWant = whatTheyWant;
+        this.whyUplate = whyUplate;
+        this.timestampString = timestampString;
+        this.reviewed = reviewed ?? false;
     }
 }

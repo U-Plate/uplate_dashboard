@@ -30,6 +30,63 @@
   gap: 1rem;
 }
 
+.logo-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.logo-field__preview {
+  flex: 0 0 auto;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--color-surface-muted, rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.logo-field__image {
+  width: 100%;
+  height: 100%;
+  /* `contain`, not `cover`: a logo cropped to fill its frame loses the wordmark
+     that makes it recognizable. The app's row draws it cropped, but whoever is
+     publishing it needs to see the whole image. */
+  object-fit: contain;
+}
+
+.logo-field__placeholder {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.logo-field__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* The real input is driven by the styled buttons above it. */
+.logo-field__input {
+  display: none;
+}
+
+.logo-field__buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.logo-field__hint {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
 .restaurant-form__actions {
   display: flex;
   gap: 0.75rem;

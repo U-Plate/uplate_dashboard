@@ -4,17 +4,19 @@ import type { Column } from '../components/DataTable';
 import { DataTable } from '../components/DataTable';
 import { Button } from '../components/Button';
 
-import {  Contest, ContestParticipant } from '../constants';
+import {  Contest, ContestParticipant, ContestReferrer } from '../constants';
 import './ContestPage.css';
 import { useContests } from '../contexts/ContestsContext';
 import { Modal } from '../components/Modal';
 import { Input } from '../components/Input';
+import { buildContestLink, buildReferrerSignupLink } from '../utils/contestLinks';
 
 export const ContestPage: React.FC = () => {
   const navigate = useNavigate();
-  const { getParticipants, getContestById, updateContest, deleteContest } = useContests();
+  const { getParticipants, getReferrers, getContestById, updateContest, deleteContest, deleteReferrer } = useContests();
   const { id } = useParams<{ id: string }>();
   const [participants, setParticipants] = useState<ContestParticipant[]>([]);
+  const [referrers, setReferrers] = useState<ContestReferrer[]>([]);
   const [winnerModalOpen, setWinnerModalOpen] = useState(false);
   const [minimumAppUsage, setMinimumAppUsage] = useState(0); // State to track minimum app usage for winner selection
   const [fromSchool, setFromSchool] = useState(''); // State to track school filter for winner selection
@@ -29,6 +31,8 @@ export const ContestPage: React.FC = () => {
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  const [referrerToDelete, setReferrerToDelete] = useState<ContestReferrer | null>(null);
+
 
 
   useEffect(() => {
@@ -40,12 +44,16 @@ export const ContestPage: React.FC = () => {
           setParticipants(data);
           const contestData = getContestById(parseInt(id));
           setContest(contestData);
+          if (contestData?.type === 'referral') {
+            const refs = await getReferrers(parseInt(id));
+            setReferrers(refs);
+          }
         }
       }
     };
 
     fetchParticipants();
-  }, [id, getParticipants, getContestById]);
+  }, [id, getParticipants, getReferrers, getContestById]);
 
   
   const handleSelectWinner = () => {
@@ -98,13 +106,39 @@ const handleConfirmDelete = () => {
 
 const handleCopyLink = () => {
   if (contest) {
-    const link = `https://contest.u-plate.com/${contest.id}`;
+    const link = buildContestLink(contest.id);
     navigator.clipboard.writeText(link)
       .then(() => alert('Contest link copied to clipboard!'))
       .catch(() => alert('Failed to copy link. Please try again.'));
   }
 }
-  
+
+const handleCopyReferralLink = (referrer: ContestReferrer) => {
+  if (contest) {
+    const link = buildContestLink(contest.id, referrer.email, referrer.name);
+    navigator.clipboard.writeText(link)
+      .then(() => alert('Referral link copied to clipboard!'))
+      .catch(() => alert('Failed to copy link. Please try again.'));
+  }
+}
+
+const handleConfirmDeleteReferrer = async () => {
+  if (contest && referrerToDelete) {
+    await deleteReferrer(contest.id, referrerToDelete.email);
+    setReferrers((prev) => prev.filter((r) => r.email !== referrerToDelete.email));
+    setReferrerToDelete(null);
+  }
+}
+
+const handleCopyReferrerSignupLink = () => {
+  if (contest) {
+    const link = buildReferrerSignupLink(contest.id);
+    navigator.clipboard.writeText(link)
+      .then(() => alert('Referrer join link copied to clipboard!'))
+      .catch(() => alert('Failed to copy link. Please try again.'));
+  }
+}
+
 
   const columns: Column<ContestParticipant>[] = [
     {
@@ -126,8 +160,41 @@ const handleCopyLink = () => {
     {
       header: 'School',
       accessor: 'school',
-    }
-    
+    },
+    ...(contest?.type === 'referral' ? [{
+      header: 'Referred By',
+      accessor: (row: ContestParticipant) => row.referredByEmail ?? '—',
+    }] : []),
+  ];
+
+  const referrerColumns: Column<ContestReferrer>[] = [
+    {
+      header: 'Name',
+      accessor: 'name',
+    },
+    {
+      header: 'Email',
+      accessor: 'email',
+    },
+    {
+      header: 'Instagram',
+      accessor: (row) =>
+        row.instagramHandle ? (
+          <a href={`https://instagram.com/${row.instagramHandle}`} target="_blank" rel="noreferrer">
+            @{row.instagramHandle}
+          </a>
+        ) : (
+          '—'
+        ),
+    },
+    {
+      header: 'Referrals',
+      accessor: 'referralCount',
+    },
+    {
+      header: 'Joined',
+      accessor: (row) => new Date(row.createdAt).toLocaleDateString(),
+    },
   ];
 
   return (
@@ -149,6 +216,9 @@ const handleCopyLink = () => {
         <div className="contest-page__header-actions">
           
           <Button onClick={handleCopyLink}>Copy Join Link</Button>
+          {contest?.type === 'referral' && (
+            <Button onClick={handleCopyReferrerSignupLink}>Copy Referrer Join Link</Button>
+          )}
           <Button onClick={() => setWinnerModalOpen(true)}>Select Winner</Button>
           <Button onClick={() => {
             setEditedTitle(contest?.title || '');
@@ -164,11 +234,37 @@ const handleCopyLink = () => {
       <DataTable
         columns={columns}
         data={participants}
-       
+
         emptyMessage="No contest found. Create your first restaurant to get started."
       />
 
-     
+      {contest?.type === 'referral' && (
+        <div className="contest-page__referrers">
+          <div className="contest-page__heading">
+            <h2 className="contest-page__section-title">Referrers</h2>
+            <p className="contest-page__subtitle">
+              Everyone signed up to refer others, and how many referrals they've generated.
+            </p>
+          </div>
+          <DataTable
+            columns={referrerColumns}
+            data={referrers}
+            actions={(row) => (
+              <>
+                <Button onClick={() => handleCopyReferralLink(row)}>
+                  Copy Referral Link
+                </Button>
+                <Button variant="danger" onClick={() => setReferrerToDelete(row)}>
+                  Delete
+                </Button>
+              </>
+            )}
+            emptyMessage="No referrers have signed up yet."
+          />
+        </div>
+      )}
+
+
       <Modal
         isOpen={winnerModalOpen}
         onClose={() => setWinnerModalOpen(false)}
@@ -258,7 +354,22 @@ const handleCopyLink = () => {
                 </p>
               )}
             </Modal>
-     
+
+      <Modal
+        isOpen={referrerToDelete !== null}
+        onClose={() => setReferrerToDelete(null)}
+        title="Delete Referrer"
+        onConfirm={handleConfirmDeleteReferrer}
+        confirmText="Delete"
+        confirmVariant="danger"
+      >
+        {referrerToDelete && (
+          <p>
+            Are you sure you want to delete <strong>{referrerToDelete.name}</strong> ({referrerToDelete.email}) as a referrer? This action cannot be undone.
+          </p>
+        )}
+      </Modal>
+
     </div>
   );
 };

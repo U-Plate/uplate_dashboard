@@ -209,6 +209,9 @@ export const RestaurantDetailPage: React.FC = () => {
       </div>
 
       <div className="restaurant-detail__info">
+        {restaurant.logo && (
+          <img className="restaurant-detail__logo" src={restaurant.logo} alt="" />
+        )}
         <h1 className="restaurant-detail__name">{restaurant.name}</h1>
         <div className="restaurant-detail__meta">
           <span className="restaurant-detail__section">

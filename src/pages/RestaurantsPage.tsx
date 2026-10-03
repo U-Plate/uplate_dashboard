@@ -62,6 +62,16 @@ export const RestaurantsPage: React.FC = () => {
 
   const columns: Column<Restaurant>[] = [
     {
+      header: 'Logo',
+      width: '72px',
+      accessor: (row) =>
+        row.logo ? (
+          <img className="restaurants-page__logo" src={row.logo} alt="" loading="lazy" />
+        ) : (
+          <span className="restaurants-page__logo restaurants-page__logo--empty">—</span>
+        ),
+    },
+    {
       header: 'Name',
       accessor: 'name',
     },

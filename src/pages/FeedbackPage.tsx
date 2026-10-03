@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Feedback, FeedbackType } from '../constants';
 import { useFeedback } from '../contexts/FeedbackContext';
+import { formatAbsolute, formatRelative } from '../utils/formatTime';
 import './FeedbackPage.css';
 
 type StatusFilter = 'unhandled' | 'handled' | 'all';
@@ -120,33 +121,6 @@ const TypePill: React.FC<{ type: FeedbackType }> = ({ type }) => (
   </span>
 );
 
-const formatRelative = (iso: string): string => {
-  const t = Date.parse(iso);
-  if (Number.isNaN(t)) return iso;
-  const diffMs = Date.now() - t;
-  const minutes = Math.round(diffMs / 60_000);
-  const hours = Math.round(diffMs / 3_600_000);
-  const days = Math.round(diffMs / 86_400_000);
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
-  if (days < 30) return `${Math.round(days / 7)}w ago`;
-  return new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-};
-
-const formatAbsolute = (iso: string): string => {
-  const t = Date.parse(iso);
-  if (Number.isNaN(t)) return iso;
-  return new Date(t).toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-};
-
 const FeedbackItem: React.FC<{
   item: Feedback;
   expanded: boolean;
@@ -241,6 +215,12 @@ const FeedbackItem: React.FC<{
               <dt>Received</dt>
               <dd>{formatAbsolute(item.timestampString)}</dd>
             </div>
+            {item.deviceInfo && (
+              <div className="feedback-detail__meta-row">
+                <dt>Device</dt>
+                <dd>{item.deviceInfo}</dd>
+              </div>
+            )}
             <div className="feedback-detail__meta-row">
               <dt>Status</dt>
               <dd>

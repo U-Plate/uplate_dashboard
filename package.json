@@ -9,11 +9,13 @@
     "lint": "eslint .",
     "test": "node --test tests/*.test.mjs",
     "preview": "vite preview",
-    "deploy": "vite build && echo 'dashboard.u-plate.com' > ./dist/CNAME && gh-pages -d dist"
+    "deploy": "vite build && echo 'dashboard.u-plate.com' > ./dist/CNAME && (gh-pages -d dist || (echo 'Initial publish failed; retrying in 15s due to possible transient GitHub Pages API errors...' && sleep 15 && gh-pages -d dist))"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
+    "jszip": "^3.10.2",
     "leaflet": "^1.9.4",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-leaflet": "^5.0.0",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",

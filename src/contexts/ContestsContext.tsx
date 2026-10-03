@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { Contest, ContestParticipant } from '../constants';
+import { Contest, ContestParticipant, ContestReferrer } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { generateId } from '../utils/idGenerator';
 import { getSampleContestParticipants, getSampleContests } from '../utils/sampleData';
@@ -15,6 +15,8 @@ interface ContestsContextType {
   deleteContest: (id: number) => void | Promise<void>;
   getContestById: (id: number) => Contest | undefined;
   getParticipants: (contestId: number) => Promise<ContestParticipant[]>;
+  getReferrers: (contestId: number) => Promise<ContestReferrer[]>;
+  deleteReferrer: (contestId: number, email: string) => void | Promise<void>;
 
 }
 
@@ -50,6 +52,12 @@ const LocalContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return participants.filter((p) => p.contestId === contestId);
   }
 
+  const getReferrers = async (): Promise<ContestReferrer[]> => {
+    return [];
+  }
+
+  const deleteReferrer = async () => {};
+
 
   return (
     <ContestsContext.Provider
@@ -60,6 +68,8 @@ const LocalContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         deleteContest,
         getContestById,
         getParticipants,
+        getReferrers,
+        deleteReferrer,
 
       }}
     >
@@ -97,7 +107,15 @@ const ApiContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return contests.find((r) => r.id === id); };
 
   const getParticipants = async (contestId: number) => {
-    return await contestsApi.getParticipants(contestId);  
+    return await contestsApi.getParticipants(contestId);
+  }
+
+  const getReferrers = async (contestId: number) => {
+    return await contestsApi.getReferrers(contestId);
+  }
+
+  const deleteReferrer = async (contestId: number, email: string) => {
+    await contestsApi.deleteReferrer(contestId, email);
   }
 
   return (
@@ -109,6 +127,8 @@ const ApiContestsProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         deleteContest,
         getContestById,
         getParticipants,
+        getReferrers,
+        deleteReferrer,
       }}
     >
       {children}

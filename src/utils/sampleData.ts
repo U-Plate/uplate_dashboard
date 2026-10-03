@@ -1,4 +1,4 @@
-import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, Contest, ContestParticipant } from '../constants';
+import { Section, Restaurant, Location, Food, MenuItem, Feedback, FeedbackType, SwitcherSurveyResponse, Contest, ContestParticipant, InternApplication } from '../constants';
 
 export const getSampleSections = (): Section[] => {
   return [
@@ -465,6 +465,125 @@ export const getSampleFeedback = (): Feedback[] => {
   ];
 };
 
+export const getSampleSurveys = (): SwitcherSurveyResponse[] => {
+  const daysAgo = (n: number): string => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString();
+  };
+
+  return [
+    new SwitcherSurveyResponse({
+      id: 'survey-1',
+      schoolId: 'purdue',
+      userId: 'sample-user-1',
+      email: 'jordan.lee@purdue.edu',
+      howHeard: 'Friends',
+      howHeardOther: null,
+      whySwitched: 'A friend showed me the macro tracking and it was way faster than MyFitnessPal for dining court food.',
+      likeBest: 'The dining hall menus already have accurate macros, no manual entry.',
+      dislike: 'Wish the retail restaurant list loaded faster.',
+      wishFeature: 'A widget for today’s macros on the home screen.',
+      willingToInterview: true,
+      appLaunches: 34,
+      macroTrackingEnabled: true,
+      foodItemsLoggedCount: 61,
+      foodsRatedCount: 12,
+      reviewed: false,
+      timestampString: daysAgo(2),
+    }),
+    new SwitcherSurveyResponse({
+      id: 'survey-2',
+      schoolId: 'purdue',
+      userId: 'sample-user-2',
+      email: null,
+      howHeard: 'Tabling Event',
+      howHeardOther: null,
+      whySwitched: 'Saw the booth outside the union and scanned the QR code.',
+      likeBest: 'Ratings from other students help me pick what to get.',
+      dislike: null,
+      wishFeature: null,
+      willingToInterview: false,
+      appLaunches: 6,
+      macroTrackingEnabled: false,
+      foodItemsLoggedCount: 4,
+      foodsRatedCount: 2,
+      reviewed: false,
+      timestampString: daysAgo(5),
+    }),
+    new SwitcherSurveyResponse({
+      id: 'survey-3',
+      schoolId: 'purdue',
+      userId: 'sample-user-3',
+      email: null,
+      howHeard: 'Instagram',
+      howHeardOther: null,
+      whySwitched: null,
+      likeBest: 'Clean UI, easy to log meals fast.',
+      dislike: 'Barcode scanner misses some items.',
+      wishFeature: 'Export my logs to a spreadsheet.',
+      willingToInterview: false,
+      appLaunches: 18,
+      macroTrackingEnabled: true,
+      foodItemsLoggedCount: 29,
+      foodsRatedCount: 5,
+      reviewed: true,
+      timestampString: daysAgo(11),
+    }),
+  ];
+};
+
+export const getSampleInternApplications = (): InternApplication[] => {
+  const daysAgo = (n: number): string => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString();
+  };
+
+  return [
+    new InternApplication({
+      id: 'intern-1',
+      name: 'Maya Torres',
+      email: 'mtorres@purdue.edu',
+      age: 20,
+      gradYear: 2028,
+      whyThem:
+        "I run social for my sorority's philanthropy events and grew our Instagram from 200 to 2,000 followers in a semester.",
+      whatTheyWant:
+        'Real ownership over a campaign, not just scheduling posts. I want something I can point to in a portfolio.',
+      whyUplate:
+        "I already use UPlate every day in the dining hall and I've been telling my friends to download it anyway.",
+      timestampString: daysAgo(1),
+      reviewed: false,
+    }),
+    new InternApplication({
+      id: 'intern-2',
+      name: 'Deshawn Booker',
+      email: 'dbooker@purdue.edu',
+      age: 19,
+      gradYear: 2029,
+      whyThem:
+        "I've done TikTok content for a local coffee shop and understand what actually gets college students to stop scrolling.",
+      whatTheyWant: 'Experience working directly with founders at an early-stage startup.',
+      whyUplate: 'It solves a problem I have every single day and nobody else is doing it well.',
+      timestampString: daysAgo(3),
+      reviewed: true,
+    }),
+    new InternApplication({
+      id: 'intern-3',
+      name: 'Priya Menon',
+      email: 'pmenon@purdue.edu',
+      age: 21,
+      gradYear: 2027,
+      whyThem: "I'm organized, I hit deadlines, and I've led marketing for two student orgs.",
+      whatTheyWant: 'A resume-worthy project and a foot in the door with a startup team.',
+      whyUplate: "Free food-tech built by students, for students — that's exactly what I want to work on.",
+      timestampString: daysAgo(6),
+      reviewed: false,
+    }),
+  ];
+};
+
 export const getSampleContests = (): Contest[] => {
   return [
     new Contest({
@@ -566,6 +685,15 @@ export const initializeSampleData = (): void => {
   }
   if (!localStorage.getItem('uplate_feedback')) {
     localStorage.setItem('uplate_feedback', JSON.stringify(getSampleFeedback()));
+  }
+  if (!localStorage.getItem('uplate_switcher_surveys')) {
+    localStorage.setItem('uplate_switcher_surveys', JSON.stringify(getSampleSurveys()));
+  }
+  if (!localStorage.getItem('uplate_intern_applications')) {
+    localStorage.setItem(
+      'uplate_intern_applications',
+      JSON.stringify(getSampleInternApplications()),
+    );
   }
 
   if (!localStorage.getItem('uplate_contests')) {

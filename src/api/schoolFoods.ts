@@ -43,7 +43,8 @@ export interface SchoolFood extends Partial<Record<Exclude<SchoolNutritionKey, '
 export const schoolFoodsApi = {
   search: async (query: string): Promise<SchoolFood[]> => {
     const data = await api.get<{ status: boolean; results: SchoolFood[] }>(
-      `/${SCHOOL}/foods/search?q=${encodeURIComponent(query)}`,
+      `/${SCHOOL}/foods/search?q=${encodeURIComponent(query)}&bypassCache=true`,
+      { cache: 'no-store' },
     );
     return data.results;
   },
@@ -51,6 +52,7 @@ export const schoolFoodsApi = {
   getById: async (id: string): Promise<SchoolFood> => {
     const foods = await api.get<SchoolFood[]>(
       `/${SCHOOL}?foodIds=${encodeURIComponent(id)}&bypassCache=true`,
+      { cache: 'no-store' },
     );
     const food = foods.find((item) => item.id === id && item.school === SCHOOL);
     if (!food) throw new Error('Food not found in this school catalog.');

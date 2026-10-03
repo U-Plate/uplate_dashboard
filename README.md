@@ -80,6 +80,8 @@ are configured in `src/config.ts`.
 
 Search the school catalog by the beginning of a food name (up to 20 results),
 or look up an exact food ID. Edit the desired fields and select **Save override**.
+Opening a search result fetches its details again with `bypassCache=true`;
+food lookups also use `cache: 'no-store'` to bypass the browser cache.
 Only changed values are sent. Nutrients accept nonnegative numbers or `-1` for
 unknown. Labels use a JSON array of strings, such as `["Vegan"]`.
 

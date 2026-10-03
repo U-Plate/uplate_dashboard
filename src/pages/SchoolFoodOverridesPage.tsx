@@ -35,6 +35,26 @@ export const SchoolFoodOverridesPage = () => {
     setMultiplierError('');
   };
 
+  const loadFoodForEditing = async (id: string) => {
+    if (busy) return;
+    setBusy(true);
+    setError('');
+    setMessage('');
+    setFood(null);
+    setDraft(null);
+    setOriginal(null);
+    try {
+      // Search results may be older than the catalog when the user selects one.
+      const fresh = await schoolFoodsApi.getById(id);
+      selectFood(fresh);
+      setResults((prev) => prev.map((item) => item.id === id ? fresh : item));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not load fresh food details.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const applyMultiplier = () => {
     if (!draft || busy) return;
     setMessage('');
@@ -148,7 +168,7 @@ export const SchoolFoodOverridesPage = () => {
       {searched && results.length === 0 && <p role="status">No foods found. Try another name or a food ID.</p>}
       {results.length > 0 && <div className="school-overrides__results" aria-label="Matching foods">
         <p>Up to 20 matches. Choose a food, or narrow your search.</p>
-        {results.map((item) => <Button key={item.id} variant="secondary" disabled={busy} onClick={() => selectFood(item)}>
+        {results.map((item) => <Button key={item.id} variant="secondary" disabled={busy} onClick={() => loadFoodForEditing(item.id)}>
           {item.name} · {item.id}{item.isOverridden === 1 ? ' · Overridden' : ''}
         </Button>)}
       </div>}

@@ -106,14 +106,31 @@ test('empty patches and failed migrations never submit overrides', async () => {
 });
 
 test('lookup bypasses cache and rejects foods outside the requested school', async () => {
-  globalThis.fetch = async (url) => {
+  globalThis.fetch = async (url, options) => {
     assert.equal(new URL(url).searchParams.get('bypassCache'), 'true');
     assert.equal(new URL(url).searchParams.get('foodIds'), food.id);
+    assert.equal(options.cache, 'no-store');
     return Response.json([food]);
   };
   assert.deepEqual(await schoolFoodsApi.getById(food.id), food);
   globalThis.fetch = async () => Response.json([{ ...food, school: 'other' }]);
   await assert.rejects(schoolFoodsApi.getById(food.id), /not found/);
+});
+
+test('search and subsequent editor lookups bypass cache and retrieve updated nutrients each time', async () => {
+  let lookups = 0;
+  globalThis.fetch = async (url, options) => {
+    assert.equal(new URL(url).searchParams.get('bypassCache'), 'true');
+    assert.equal(options.cache, 'no-store');
+    if (new URL(url).pathname.endsWith('/foods/search')) {
+      return Response.json({ status: true, results: [food] });
+    }
+    return Response.json([{ ...food, calories: 200 + lookups++ }]);
+  };
+  const [result] = await schoolFoodsApi.search('Rice');
+  assert.equal(result.calories, 100);
+  assert.equal((await schoolFoodsApi.getById(result.id)).calories, 200);
+  assert.equal((await schoolFoodsApi.getById(result.id)).calories, 201);
 });
 
 test('authorization and save errors propagate to the caller', async () => {

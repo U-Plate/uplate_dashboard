@@ -8,8 +8,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");
+    const displayPath = path.replace(/([?&]key=)[^&]*/g, "$1[redacted]");
     throw new Error(
-      `API ${options?.method ?? "GET"} ${path} failed (${res.status}): ${body}`,
+      `API ${options?.method ?? "GET"} ${displayPath} failed (${res.status}): ${body}`,
     );
   }
 

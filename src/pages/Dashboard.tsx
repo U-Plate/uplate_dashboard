@@ -126,6 +126,13 @@ export const Dashboard: React.FC = () => {
           meta={`${restaurants.length} total`}
         />
         <DashboardTile
+          name="School Food Overrides"
+          description="Correct shared school catalog foods and protect edits from future scrapes."
+          onClick={() => navigate('/school-food-overrides')}
+          icon={<span>&#x270E;</span>}
+          meta="Nutrition & food details"
+        />
+        <DashboardTile
           name="Restaurant Accounts"
           description="Manage partner login accounts and their access codes."
           onClick={() => navigate('/restaurant-accounts')}

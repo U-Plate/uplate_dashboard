@@ -1,0 +1,25 @@
+.school-overrides__fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.school-overrides__fieldset > .form-field__input {
+  margin-bottom: 1rem;
+}
+
+.school-overrides__results {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.school-overrides > .food-form__form + .food-form__form {
+  margin-top: 1.5rem;
+}
+
+.school-overrides .form-field__input {
+  box-sizing: border-box;
+  width: 100%;
+}

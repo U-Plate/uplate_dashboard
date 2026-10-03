@@ -5,24 +5,58 @@ import { createServer } from 'vite';
 let server;
 let buildPatch;
 let toDraft;
+let multiplyNutrition;
 let schoolFoodsApi;
 const originalFetch = globalThis.fetch;
 const originalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
 
 before(async () => {
   server = await createServer({ configFile: false, root: process.cwd(), optimizeDeps: { noDiscovery: true, include: [] }, server: { middlewareMode: true, hmr: false, ws: false } });
-  ({ buildPatch, toDraft } = await server.ssrLoadModule('/src/utils/schoolFoodOverrides.ts'));
+  ({ buildPatch, toDraft, multiplyNutrition } = await server.ssrLoadModule('/src/utils/schoolFoodOverrides.ts'));
   ({ schoolFoodsApi } = await server.ssrLoadModule('/src/api/schoolFoods.ts'));
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => 'admin&key' } });
 });
 after(async () => {
   globalThis.fetch = originalFetch;
-  if (originalStorage === undefined) delete Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  if (originalStorage === undefined) delete globalThis.localStorage;
   else Object.defineProperty(globalThis, 'localStorage', originalStorage);
   await server?.close();
 });
 
 const food = { id: 'food-1', school: 'purdue', name: 'Rice', calories: 100, protein: 2, fat: 3, labels: '["Vegan"]', is_favoritable: 1 };
+
+test('multiplier scales every nutrient and preserves food details, unknowns and missing values', () => {
+  const original = toDraft({ ...food, servingSize: '100g', sugar: -1 });
+  const current = { ...original, servingSize: '50g', protein: '4', sodium: '0', carbs: '0.1' };
+  const scaled = multiplyNutrition(current, '0.5');
+  assert.equal(scaled.calories, '50');
+  assert.equal(scaled.protein, '2');
+  assert.equal(scaled.totalFat, '1.5');
+  assert.equal(scaled.sugar, '-1');
+  assert.equal(scaled.iron, '');
+  assert.equal(scaled.sodium, '0');
+  assert.equal(scaled.servingSize, '50g');
+  assert.equal(scaled.labels, original.labels);
+  assert.equal(scaled.isFavoritable, original.isFavoritable);
+  assert.equal(current.calories, '100');
+  assert.equal(multiplyNutrition(current, '3').carbs, '0.3');
+  assert.deepEqual(buildPatch(scaled, original), { calories: 50, carbs: 0.05, totalFat: 1.5, sodium: 0, servingSize: '50g' });
+  const numericKeys = Object.keys(original).filter((key) => !['name', 'servingSize', 'ingredients', 'labels', 'isFavoritable'].includes(key));
+  const allNutrients = { ...original, ...Object.fromEntries(numericKeys.map((key) => [key, '8'])) };
+  const doubled = multiplyNutrition(allNutrients, '2');
+  for (const key of numericKeys) assert.equal(doubled[key], '16');
+});
+
+test('multiplier rejects invalid factors and nutrients without modifying the draft', () => {
+  const original = toDraft(food);
+  for (const factor of ['', ' ', '-1', 'NaN', 'Infinity']) {
+    assert.throws(() => multiplyNutrition(original, factor), /nonnegative multiplier/);
+  }
+  assert.throws(() => multiplyNutrition({ ...original, protein: '-2' }, '2'), /Check Protein/);
+  assert.throws(() => multiplyNutrition({ ...original, calories: '1e308' }, '2'), /too large/);
+  assert.equal(original.calories, '100');
+  assert.equal(multiplyNutrition(original, '0').calories, '0');
+});
 
 test('unchanged and missing fields are omitted; fat writes as totalFat', () => {
   const original = toDraft(food);

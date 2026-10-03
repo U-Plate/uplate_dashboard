@@ -20,6 +20,30 @@ export function toDraft(food: SchoolFood): Draft {
   } as Draft;
 }
 
+/** Scale the current nutrients without changing unknowns or food details. */
+export function multiplyNutrition(draft: Draft, multiplier: string): Draft {
+  const factor = Number(multiplier);
+  if (!multiplier.trim() || !Number.isFinite(factor) || factor < 0) {
+    throw new Error('Enter a nonnegative multiplier, such as 0.5 or 2.');
+  }
+  const scaled = { ...draft };
+  for (const key of Object.keys(schoolNutritionFields) as SchoolNutritionKey[]) {
+    if (!draft[key].trim()) continue;
+    const value = Number(draft[key]);
+    if (value === -1) continue;
+    if (!Number.isFinite(value) || value < 0) {
+      throw new Error(`Check ${schoolNutritionFields[key]} before applying the multiplier.`);
+    }
+    const result = value * factor;
+    if (!Number.isFinite(result)) {
+      throw new Error(`The multiplier makes ${schoolNutritionFields[key]} too large.`);
+    }
+    // Avoid floating-point artifacts such as 0.1 × 3 = 0.30000000000000004.
+    scaled[key] = String(Number(result.toPrecision(12)));
+  }
+  return scaled;
+}
+
 export function buildPatch(draft: Draft, original: Draft): SchoolFoodPatch {
   const patch: SchoolFoodPatch = {};
   for (const key of Object.keys(schoolNutritionFields) as SchoolNutritionKey[]) {
@@ -50,4 +74,3 @@ export function buildPatch(draft: Draft, original: Draft): SchoolFoodPatch {
   }
   return patch;
 }
-

@@ -23,3 +23,37 @@
   box-sizing: border-box;
   width: 100%;
 }
+
+.school-overrides__serving-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.school-overrides__multiplier-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.school-overrides__multiplier-controls input {
+  flex: 1;
+  min-width: 0;
+}
+
+.school-overrides__multiplier-controls button {
+  flex-shrink: 0;
+}
+
+.school-overrides__hint {
+  margin: 0 0 1.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 768px) {
+  .school-overrides__serving-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

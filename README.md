@@ -83,6 +83,12 @@ or look up an exact food ID. Edit the desired fields and select **Save override*
 Only changed values are sent. Nutrients accept nonnegative numbers or `-1` for
 unknown. Labels use a JSON array of strings, such as `["Vegan"]`.
 
+For serving size corrections, use the **Nutrient multiplier** beside Serving
+Size: enter `2` to double or `0.5` to halve the current nutrients, then select
+**Apply multiplier**. Unknown (`-1`) and empty nutrients stay unchanged. Edit
+the serving size text separately, review the scaled values, and save. Applying
+a multiplier only updates the draft; **Discard changes** restores saved values.
+
 Before each save, the dashboard runs the authenticated, idempotent
 `GET /:school/ensureSchema` migration. It then posts a flat patch to
 `/:school/foods/overrideFood` (`totalFat` on writes, `fat` on reads) and reloads

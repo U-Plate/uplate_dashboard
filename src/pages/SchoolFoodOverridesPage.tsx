@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import { SCHOOL } from '../config';
 import { schoolFoodsApi, schoolNutritionFields } from '../api/schoolFoods';
 import type { SchoolFood, SchoolFoodPatch, SchoolNutritionKey } from '../api/schoolFoods';
-import { toDraft, buildPatch } from '../utils/schoolFoodOverrides';
+import { toDraft, buildPatch, multiplyNutrition } from '../utils/schoolFoodOverrides';
 import type { Draft } from '../utils/schoolFoodOverrides';
 import { Button } from '../components/Button';
 import '../components/FormField.css';
@@ -21,6 +21,8 @@ export const SchoolFoodOverridesPage = () => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [multiplier, setMultiplier] = useState('1');
+  const [multiplierError, setMultiplierError] = useState('');
 
   const selectFood = (selected: SchoolFood) => {
     const values = toDraft(selected);
@@ -29,6 +31,22 @@ export const SchoolFoodOverridesPage = () => {
     setOriginal(values);
     setError('');
     setMessage('');
+    setMultiplier('1');
+    setMultiplierError('');
+  };
+
+  const applyMultiplier = () => {
+    if (!draft || busy) return;
+    setMessage('');
+    try {
+      setDraft(multiplyNutrition(draft, multiplier));
+      setMultiplierError('');
+      setError('');
+      setMessage(`Nutrients multiplied by ${Number(multiplier)}. Review the serving size and nutrients, then save the override.`);
+      setMultiplier('1');
+    } catch (err) {
+      setMultiplierError(err instanceof Error ? err.message : 'Could not apply the multiplier.');
+    }
   };
 
   const search = async (event: FormEvent) => {
@@ -142,7 +160,21 @@ export const SchoolFoodOverridesPage = () => {
           <div className="food-form__section">
             <h3 className="food-form__section-title">Basic Information</h3>
             {field('name', 'Food Name', 'text')}
-            {field('servingSize', 'Serving Size', 'text')}
+            <div className="school-overrides__serving-row">
+              {field('servingSize', 'Serving Size', 'text')}
+              <div className="form-field">
+                <label className="form-field__label" htmlFor="override-multiplier">Nutrient multiplier</label>
+                <div className="school-overrides__multiplier-controls">
+                  <input id="override-multiplier" className="form-field__input" type="number" min="0" step="any"
+                    value={multiplier} aria-invalid={!!multiplierError}
+                    aria-describedby={multiplierError ? 'override-multiplier-error override-multiplier-hint' : 'override-multiplier-hint'}
+                    onChange={(e) => { setMultiplier(e.target.value); setMultiplierError(''); }} />
+                  <Button disabled={busy} variant="secondary" onClick={applyMultiplier}>Apply multiplier</Button>
+                </div>
+                {multiplierError && <span id="override-multiplier-error" className="form-field__error" role="alert">{multiplierError}</span>}
+              </div>
+            </div>
+            <p id="override-multiplier-hint" className="school-overrides__hint">Update the serving size text, then use 2 to double nutrients or 0.5 to halve them. Applies to current nutrient values; unknown (-1) and empty values stay unchanged.</p>
             {field('ingredients', 'Ingredients', 'textarea')}
             {field('labels', 'Labels (JSON array)', 'text')}
             <label className="form-field__label" htmlFor="override-favoritable">Can be favorited</label>
@@ -156,7 +188,7 @@ export const SchoolFoodOverridesPage = () => {
             {(Object.keys(schoolNutritionFields) as SchoolNutritionKey[]).map((key) => field(key, schoolNutritionFields[key], 'number'))}
           </div>
           <div className="food-form__actions">
-            <Button variant="secondary" disabled={busy} onClick={() => { setDraft(original); setError(''); setMessage(''); }}>Discard changes</Button>
+            <Button variant="secondary" disabled={busy} onClick={() => { setDraft(original); setError(''); setMessage(''); setMultiplier('1'); setMultiplierError(''); }}>Discard changes</Button>
             <Button type="submit" disabled={busy}>{busy ? 'Saving…' : 'Save override'}</Button>
           </div>
         </fieldset>

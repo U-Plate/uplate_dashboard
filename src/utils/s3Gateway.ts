@@ -41,7 +41,13 @@ export interface PendingObject {
 
 /** A folder/ID group that contains pending photos and/or a published image. */
 export interface PendingGroup {
+  /** Bare food id, used for API lookups and display (the `school/` prefix is stripped). */
   id: string;
+  /**
+   * Full folder path that holds this group's objects, e.g. `purdue/food_123`.
+   * Object keys (published/pending) are built from this, not from `id`.
+   */
+  prefix: string;
   pending: PendingObject[];
   /** The currently published image for this id, if one exists. */
   published: PendingObject | null;
@@ -99,10 +105,23 @@ function buildObjectUrl(config: S3Config, key: string): string {
   return `https://${config.bucketName}.s3.${config.region || 'us-east-1'}.amazonaws.com/${encodedKey}`;
 }
 
-/** Extract the root folder/ID prefix from an object key, e.g. `user_456/x.jpg` -> `user_456`. */
-function rootPrefix(key: string): string {
-  const idx = key.indexOf('/');
+/**
+ * The folder path that holds an object, i.e. the key without its filename.
+ * Food photos now live under `<school>/<foodId>/...`, so this returns the full
+ * `<school>/<foodId>` path. (For legacy un-prefixed keys it returns `<foodId>`.)
+ */
+function folderPrefix(key: string): string {
+  const idx = key.lastIndexOf('/');
   return idx === -1 ? key : key.slice(0, idx);
+}
+
+/**
+ * The bare food id is the last segment of the folder path, dropping the
+ * leading `school/` prefix, e.g. `purdue/food_123` -> `food_123`.
+ */
+function foodIdFromPrefix(prefix: string): string {
+  const idx = prefix.lastIndexOf('/');
+  return idx === -1 ? prefix : prefix.slice(idx + 1);
 }
 
 /** Fixed, extension-stable name every approved image is published under. */
@@ -156,9 +175,9 @@ export async function scanPendingGroups(config: S3Config): Promise<PendingGroup[
       if (!key) continue;
 
       if (isPending(key)) {
-        groupFor(rootPrefix(key)).pending.push(toObject(item, key));
+        groupFor(folderPrefix(key)).pending.push(toObject(item, key));
       } else if (isPublished(key)) {
-        groupFor(rootPrefix(key)).published = toObject(item, key);
+        groupFor(folderPrefix(key)).published = toObject(item, key);
       }
     }
 
@@ -166,8 +185,9 @@ export async function scanPendingGroups(config: S3Config): Promise<PendingGroup[
   } while (continuationToken);
 
   return Array.from(groups.entries())
-    .map(([id, { pending, published }]) => ({
-      id,
+    .map(([prefix, { pending, published }]) => ({
+      id: foodIdFromPrefix(prefix),
+      prefix,
       pending: pending.sort((a, b) => a.fileName.localeCompare(b.fileName)),
       published,
     }))
@@ -210,7 +230,7 @@ export async function approvePhoto(
   const client = createClient(config);
   // Always publish under a single, extension-stable name so Cloudflare's image
   // resizer can address it uniformly regardless of the source format.
-  const publishedKey = `${group.id}/${PUBLISHED_FILE}`;
+  const publishedKey = `${group.prefix}/${PUBLISHED_FILE}`;
 
   await client.send(
     new CopyObjectCommand({

@@ -24,6 +24,9 @@ import { ContestPage } from './pages/ContestPage';
 import { BroadcastPage } from './pages/BroadcastPage';
 import { RestaurantAccountsPage } from './pages/RestaurantAccountsPage';
 import { PosterQrPage } from './pages/PosterQrPage';
+import { SchoolwideCompetitionsPage } from './pages/SchoolwideCompetitionsPage';
+import { SchoolwideCompetitionForm } from './pages/SchoolwideCompetitionForm';
+import { SchoolwideCompetitionPage } from './pages/SchoolwideCompetitionPage';
 
 function App() {
   return (
@@ -54,6 +57,10 @@ function App() {
              <Route path="contests" element={<ContestsPage />} />
              <Route path="contests/new" element={<ContestForm />} />
              <Route path="contests/:id" element={<ContestPage />} />
+             <Route path="school-competitions" element={<SchoolwideCompetitionsPage />} />
+             <Route path="school-competitions/new" element={<SchoolwideCompetitionForm />} />
+             <Route path="school-competitions/:id/edit" element={<SchoolwideCompetitionForm />} />
+             <Route path="school-competitions/:id" element={<SchoolwideCompetitionPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

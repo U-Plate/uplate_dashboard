@@ -1,0 +1,669 @@
+.schoolwide-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.schoolwide-page--form {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.schoolwide-page--detail {
+  gap: 1.25rem;
+}
+
+.schoolwide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.schoolwide-header h1 {
+  margin: 0.15rem 0 0.4rem;
+  color: var(--color-text);
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.schoolwide-header p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.schoolwide-eyebrow {
+  margin: 0;
+  color: var(--color-primary-700);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.schoolwide-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.schoolwide-optional {
+  margin-left: 0.35rem;
+  color: var(--color-text-soft);
+  font-size: 0.76rem;
+  font-weight: 500;
+}
+
+.schoolwide-logo-field {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.schoolwide-logo-field__preview {
+  display: grid;
+  place-items: center;
+  width: 5rem;
+  height: 5rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-soft);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.schoolwide-logo-field__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.schoolwide-logo-field__content {
+  min-width: 0;
+}
+
+.schoolwide-logo-field__input {
+  display: none;
+}
+
+.schoolwide-logo-field__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.schoolwide-logo-field__content p {
+  margin: 0.55rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.schoolwide-list-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.schoolwide-list-identity img,
+.schoolwide-list-identity > span {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-size: 0.82rem;
+  font-weight: 800;
+  object-fit: contain;
+}
+
+.schoolwide-date-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.schoolwide-note {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-50);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.schoolwide-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.schoolwide-alert {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger-dark);
+}
+
+.schoolwide-success {
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-success-soft);
+  color: var(--color-success-dark);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.schoolwide-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.schoolwide-back-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 0.45rem;
+  padding: 0.25rem 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: color var(--transition), transform var(--transition);
+}
+
+.schoolwide-back-link:hover {
+  color: var(--color-primary-700);
+  transform: translateX(-2px);
+}
+
+.schoolwide-back-link:focus-visible,
+.schoolwide-text-button:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.schoolwide-competition-hero {
+  overflow: hidden;
+  padding: 1.5rem 1.75rem 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.schoolwide-competition-hero__topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.schoolwide-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.schoolwide-status__dot {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.schoolwide-status--active {
+  background: var(--color-success-soft);
+  color: var(--color-success-dark);
+}
+
+.schoolwide-status--completed {
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.schoolwide-competition-hero__heading {
+  padding: 1.45rem 0 1.65rem;
+}
+
+.schoolwide-competition-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.schoolwide-competition-identity__logo {
+  width: 5rem;
+  height: 5rem;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-muted);
+}
+
+.schoolwide-competition-hero__heading h1 {
+  max-width: 22ch;
+  margin: 0.35rem 0 0.75rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.schoolwide-competition-hero__prize {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.schoolwide-competition-hero__prize span {
+  color: var(--color-text-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.schoolwide-overview {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 0.7fr 0.85fr 1.35fr;
+  margin: 0 -1.75rem;
+  border-top: 1px solid var(--color-divider);
+  background: var(--color-surface-muted);
+}
+
+.schoolwide-overview > div {
+  min-width: 0;
+  padding: 1rem 1.25rem 1.1rem;
+  border-left: 1px solid var(--color-divider);
+}
+
+.schoolwide-overview > div:first-child {
+  border-left: none;
+}
+
+.schoolwide-overview dt,
+.schoolwide-contact__facts dt {
+  margin-bottom: 0.32rem;
+  color: var(--color-text-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.065em;
+  text-transform: uppercase;
+}
+
+.schoolwide-overview dd,
+.schoolwide-contact__facts dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.schoolwide-overview dd small {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.schoolwide-participants-panel {
+  padding-top: 0.75rem;
+}
+
+.schoolwide-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.schoolwide-section-heading h2 {
+  margin: 0.25rem 0 0.2rem;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.schoolwide-section-heading p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.schoolwide-section-count {
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.schoolwide-page--detail .data-table {
+  border-radius: var(--radius-lg);
+}
+
+.schoolwide-page--detail .data-table__cell {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.schoolwide-page--detail .data-table__cell--header {
+  color: var(--color-text-muted);
+}
+
+.schoolwide-page--detail .data-table__cell--actions .button {
+  padding: 0.38rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+}
+
+.schoolwide-participant > strong {
+  color: var(--color-text);
+  font-weight: 650;
+}
+
+.schoolwide-handle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  color: var(--color-text-muted);
+  font-size: 0.79rem;
+}
+
+.schoolwide-privacy-label {
+  padding-left: 0.45rem;
+  border-left: 1px solid var(--color-border-strong);
+  color: var(--color-text-soft);
+  font-size: 0.72rem;
+}
+
+.schoolwide-data-value {
+  color: var(--color-text);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.schoolwide-contact {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.85fr) minmax(380px, 1.15fr);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.schoolwide-contact__person {
+  padding: 1.5rem;
+  border-right: 1px solid var(--color-divider);
+}
+
+.schoolwide-contact__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-bottom: 1.25rem;
+}
+
+.schoolwide-contact__avatar {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.schoolwide-contact__heading h2 {
+  margin: 0.15rem 0 0;
+  font-size: 1.18rem;
+  letter-spacing: -0.015em;
+}
+
+.schoolwide-contact__heading > div:last-child > span {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.schoolwide-contact__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  border-top: 1px solid var(--color-divider);
+}
+
+.schoolwide-contact__facts > div {
+  min-width: 0;
+  padding: 0.85rem 0.75rem 0.85rem 0;
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.schoolwide-contact__facts > div:nth-child(even) {
+  padding-right: 0;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--color-divider);
+}
+
+.schoolwide-contact__facts a {
+  color: var(--color-primary-700);
+  font-weight: 650;
+}
+
+.schoolwide-notify {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--color-surface-muted);
+}
+
+.schoolwide-notify h2 {
+  margin: 0.2rem 0 0.2rem;
+  font-size: 1.18rem;
+  letter-spacing: -0.015em;
+}
+
+.schoolwide-notify > div:first-child > p:last-child {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+}
+
+.schoolwide-notify__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+.schoolwide-text-button {
+  padding: 0.35rem;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+.schoolwide-text-button:hover {
+  color: var(--color-text);
+}
+
+.schoolwide-detail-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-50);
+}
+
+.schoolwide-detail-skeleton::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  content: '';
+  transform: translateX(-100%);
+  animation: schoolwide-skeleton 1.4s ease-in-out infinite;
+}
+
+.schoolwide-detail-skeleton--back {
+  width: 11rem;
+  height: 1.5rem;
+}
+
+.schoolwide-detail-skeleton--hero {
+  height: 18rem;
+}
+
+.schoolwide-detail-skeleton--table {
+  height: 17rem;
+}
+
+@keyframes schoolwide-skeleton {
+  to { transform: translateX(100%); }
+}
+
+@media (max-width: 980px) {
+  .schoolwide-overview {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .schoolwide-overview > div:nth-child(4) {
+    border-left: none;
+  }
+
+  .schoolwide-overview > div:nth-child(n + 4) {
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .schoolwide-contact {
+    grid-template-columns: 1fr;
+  }
+
+  .schoolwide-contact__person {
+    border-right: none;
+    border-bottom: 1px solid var(--color-divider);
+  }
+}
+
+@media (max-width: 760px) {
+  .schoolwide-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .schoolwide-date-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schoolwide-logo-field {
+    grid-template-columns: 1fr;
+  }
+
+  .schoolwide-competition-identity {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .schoolwide-actions {
+    flex-direction: column-reverse;
+  }
+
+  .schoolwide-competition-hero {
+    padding: 1.15rem 1.15rem 0;
+    border-radius: var(--radius-lg);
+  }
+
+  .schoolwide-competition-hero__topline {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .schoolwide-status {
+    align-self: flex-start;
+  }
+
+  .schoolwide-overview {
+    grid-template-columns: 1fr 1fr;
+    margin-right: -1.15rem;
+    margin-left: -1.15rem;
+  }
+
+  .schoolwide-overview > div,
+  .schoolwide-overview > div:nth-child(4) {
+    border-top: 1px solid var(--color-divider);
+    border-left: 1px solid var(--color-divider);
+  }
+
+  .schoolwide-overview > div:nth-child(odd) {
+    border-left: none;
+  }
+
+  .schoolwide-overview > div:first-child,
+  .schoolwide-overview > div:nth-child(2) {
+    border-top: none;
+  }
+
+  .schoolwide-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .schoolwide-contact__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .schoolwide-contact__facts > div:nth-child(even) {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .schoolwide-notify__actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+}

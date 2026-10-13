@@ -12,6 +12,30 @@ export class Location {
 
 export type ContestType = 'marketing' | 'referral';
 
+export interface SchoolwideCompetition {
+    id: string;
+    name: string;
+    prize: string;
+    logo?: string | null;
+    joinDate: number;
+    startDate: number;
+    endDate: number;
+    status: 'waitingForPlayers' | 'active' | 'completed';
+    participantCount: number;
+    leaderboardUpdatedAt: number | null;
+}
+
+export interface SchoolwideCompetitionParticipant {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+    anonymous: boolean;
+    joinedAt: number | null;
+    daysLogged: number;
+    score: number;
+}
+
 export class Contest {
     id: number;
     title: string;

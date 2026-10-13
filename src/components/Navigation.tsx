@@ -84,7 +84,7 @@ export const Navigation: React.FC = () => {
               Accounts
             </NavLink>
           </li>
-            <li className="navigation__item">
+          <li className="navigation__item">
             <NavLink
               to="/contests"
               className={({ isActive }) =>
@@ -92,6 +92,16 @@ export const Navigation: React.FC = () => {
               }
             >
               Contests
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/school-competitions"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              Campus macros
             </NavLink>
           </li>
           <li className="navigation__item">

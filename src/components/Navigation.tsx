@@ -5,6 +5,7 @@ import { useSurvey } from '../contexts/SurveyContext';
 import { useFoodPhotos } from '../contexts/FoodPhotosContext';
 import { useInternApplications } from '../contexts/InternApplicationsContext';
 import { FoodPhotoStatus } from '../constants';
+import { API_ENVIRONMENT, API_ENVIRONMENTS, switchApiEnvironment } from '../config';
 import './Navigation.css';
 
 export const Navigation: React.FC = () => {
@@ -24,6 +25,22 @@ export const Navigation: React.FC = () => {
       <div className="navigation__container">
         <div className="navigation__brand">
           <h2 className="navigation__logo">UPlate</h2>
+          <label className="navigation__environment">
+            <span>Database</span>
+            <select
+              value={API_ENVIRONMENT}
+              title={API_ENVIRONMENTS[API_ENVIRONMENT]}
+              onChange={(event) => {
+                const environment = event.target.value;
+                if (environment === 'production' || environment === 'beta') {
+                  switchApiEnvironment(environment);
+                }
+              }}
+            >
+              <option value="production">Production</option>
+              <option value="beta">Beta</option>
+            </select>
+          </label>
         </div>
         <ul className="navigation__list">
           <li className="navigation__item">

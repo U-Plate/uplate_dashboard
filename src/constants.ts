@@ -29,7 +29,6 @@ export interface SchoolwideCompetitionParticipant {
     id: string;
     name: string;
     username: string;
-    email: string;
     anonymous: boolean;
     joinedAt: number | null;
     daysLogged: number;

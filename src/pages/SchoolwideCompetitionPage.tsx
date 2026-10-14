@@ -73,7 +73,6 @@ export function SchoolwideCompetitionPage() {
         </div>
       ),
     },
-    { header: 'Email', accessor: (row) => row.email || 'Not available' },
     {
       header: 'Days logged',
       accessor: (row) => <strong className="schoolwide-data-value">{row.daysLogged.toLocaleString()}</strong>,
@@ -163,7 +162,7 @@ export function SchoolwideCompetitionPage() {
           <div>
             <p className="schoolwide-eyebrow">Roster</p>
             <h2 id="participants-heading">Participants</h2>
-            <p>Select a row to review contact details or send a notification.</p>
+            <p>Select a participant to review their activity or send a device notification.</p>
           </div>
           <span className="schoolwide-section-count">{participants.length.toLocaleString()} total</span>
         </div>
@@ -176,7 +175,7 @@ export function SchoolwideCompetitionPage() {
               variant="secondary"
               onClick={() => { setSelected(row); setStatus('idle'); }}
             >
-              Contact
+              Notify
             </Button>
           )}
           emptyMessage="No one has joined this competition yet."
@@ -197,10 +196,6 @@ export function SchoolwideCompetitionPage() {
               </div>
             </div>
             <dl className="schoolwide-contact__facts">
-              <div>
-                <dt>Email</dt>
-                <dd>{selected.email ? <a href={`mailto:${selected.email}`}>{selected.email}</a> : 'Unavailable'}</dd>
-              </div>
               <div>
                 <dt>Joined</dt>
                 <dd>{selected.joinedAt ? joinedFormatter.format(new Date(selected.joinedAt)) : 'Unknown'}</dd>

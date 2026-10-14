@@ -30,6 +30,9 @@ export function SchoolwideCompetitionPage() {
   const [competition, setCompetition] = useState<SchoolwideCompetition | null>(null);
   const [participants, setParticipants] = useState<SchoolwideCompetitionParticipant[]>([]);
   const [selected, setSelected] = useState<SchoolwideCompetitionParticipant | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [emailStatus, setEmailStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [emailAttempt, setEmailAttempt] = useState(0);
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
@@ -43,6 +46,19 @@ export function SchoolwideCompetitionPage() {
       })
       .catch((reason) => setError(reason instanceof Error ? reason.message : 'Could not load the competition.'));
   }, [id]);
+
+  useEffect(() => {
+    if (!selected) return;
+    let cancelled = false;
+    schoolwideCompetitionsApi.getEmail(id, selected.username)
+      .then(response => {
+        if (cancelled) return;
+        setEmail(response.email);
+        setEmailStatus('loaded');
+      })
+      .catch(() => { if (!cancelled) setEmailStatus('error'); });
+    return () => { cancelled = true; };
+  }, [id, selected, emailAttempt]);
 
   async function notify(event: React.FormEvent) {
     event.preventDefault();
@@ -169,11 +185,11 @@ export function SchoolwideCompetitionPage() {
         <DataTable
           columns={columns}
           data={participants}
-          onRowClick={(row) => { setSelected(row); setStatus('idle'); }}
+          onRowClick={(row) => { setSelected(row); setStatus('idle'); setEmail(null); setEmailStatus('loading'); }}
           actions={(row) => (
             <Button
               variant="secondary"
-              onClick={() => { setSelected(row); setStatus('idle'); }}
+              onClick={() => { setSelected(row); setStatus('idle'); setEmail(null); setEmailStatus('loading'); }}
             >
               Notify
             </Button>
@@ -196,6 +212,14 @@ export function SchoolwideCompetitionPage() {
               </div>
             </div>
             <dl className="schoolwide-contact__facts">
+              <div>
+                <dt>Email</dt>
+                <dd>
+                  {emailStatus === 'loading' ? 'Looking up email…' : emailStatus === 'error' ? (
+                    <><span>Email lookup failed. </span><button type="button" className="schoolwide-text-button" onClick={() => { setEmailStatus('loading'); setEmailAttempt(value => value + 1); }}>Retry</button></>
+                  ) : email ? <a href={`mailto:${email}`}>{email}</a> : 'No email on this account'}
+                </dd>
+              </div>
               <div>
                 <dt>Joined</dt>
                 <dd>{selected.joinedAt ? joinedFormatter.format(new Date(selected.joinedAt)) : 'Unknown'}</dd>

@@ -81,6 +81,12 @@ export const schoolwideCompetitionsApi = {
     return response.competition;
   },
 
+  getEmail(id: string, username: string) {
+    return api.get<{ status: boolean; email: string | null }>(
+      path('adminGetSchoolwideEmail', `&competitionID=${encodeURIComponent(id)}&username=${encodeURIComponent(username)}`),
+    );
+  },
+
   notify(id: string, username: string, title: string, body: string) {
     return api.post<{ status: boolean }>(
       path(

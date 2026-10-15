@@ -1,6 +1,6 @@
 ---
 name: UPlate Dashboard
-description: Internal admin surface for the UPlate campus nutrition app. Manages sections, restaurants, foods, and menu items.
+description: Internal admin surface for the UPlate campus nutrition app. Manages catalog data and schoolwide programs.
 colors:
   primary-50: "#f4f8ff"
   primary-100: "#dcedff"
@@ -178,7 +178,7 @@ components:
 
 **Creative North Star: "The Operator's Console"**
 
-UPlate Dashboard is the back office for a campus nutrition app. The interface is operated by a small internal team that spends hours at a time entering and reconciling restaurant menus and roughly fifteen-field nutrition records per food. The system is therefore built like a piece of equipment, not like a product page: tight typographic hierarchy, predictable structure, visible state, with one or two committed choices that give it identity. It rewards familiarity. The tool should disappear into the task.
+UPlate Dashboard is the back office for a campus nutrition app. The interface is operated by a small internal team that enters and reconciles restaurant menus, manages detailed nutrition records, and runs schoolwide programs. The system is therefore built like a piece of equipment, not like a product page: tight typographic hierarchy, predictable structure, visible state, with one or two committed choices that give it identity. It rewards familiarity. The tool should disappear into the task.
 
 The current snapshot, captured in the frontmatter above, is the system as it exists today: a temperate pastel-blue admin shell built on Inter, with white card surfaces lifted over a soft blue gradient. Pleasant and explicitly not the destination. PRODUCT.md names "Generic SaaS blue plus soft gradient cards" as an anti-reference. The visual identity is now headed toward Linear-level composure paired with the color and motion presence of Arc and Framer dashboards. Forward visual work should bias toward stronger hue commitment, denser type, and fewer decorative surfaces than this snapshot shows.
 

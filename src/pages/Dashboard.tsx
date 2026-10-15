@@ -160,6 +160,13 @@ export const Dashboard: React.FC = () => {
           }
         />
         <DashboardTile
+          name="Campus Macro Competitions"
+          description="Run open schoolwide competitions, review nightly standings, and contact entrants."
+          onClick={() => navigate('/school-competitions')}
+          icon={<span>&#x2690;</span>}
+          meta="Open enrollment and prizes"
+        />
+        <DashboardTile
           name="Feedback"
           description="Triage incoming feedback from students and partners."
           onClick={() => navigate('/feedback')}

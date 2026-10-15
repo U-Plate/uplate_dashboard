@@ -6,13 +6,22 @@ product
 
 ## Users
 
-The UPlate team. A small internal group doing bulk catalog upkeep for the consumer-facing UPlate nutrition app: entering and editing restaurants, foods, and menu items across schools (Purdue today, multi-school in the data model). Sessions are long and repetitive: dozens of food records at a time, each carrying ~15 nutrition fields plus ingredients. The tool is gated by an admin key, used on a laptop or desktop in normal indoor lighting, often for an hour or more in one sitting.
+The UPlate team. A small internal group doing bulk catalog upkeep and campus
+operations for the consumer-facing UPlate nutrition app: entering and editing
+restaurants, foods, and menu items; running schoolwide macro competitions; and
+contacting participants about prizes. Sessions are often long and repetitive.
+The tool is gated by an admin key and primarily used on a laptop or desktop.
 
 The job to be done is *catalog throughput*: keep the consumer app fed with accurate, complete records without the dashboard becoming the bottleneck. Speed, density, and keyboard flow matter more than friendliness; clarity and composure matter more than personality.
 
 ## Product Purpose
 
-Internal admin surface for UPlate. It manages the core domain (Sections → Restaurants → Foods + Menu Items) behind the consumer nutrition app at `u-plate.com`. Every record entered here flows downstream into a student-facing experience, so the dashboard's job is to make accurate data entry fast and confident, and to make destructive operations obvious.
+Internal admin surface for UPlate. It manages the core catalog domain (Sections
+→ Restaurants → Foods + Menu Items) and time-bound campus programs behind the
+consumer nutrition app at `u-plate.com`. Every record and competition entered
+here flows downstream into a student-facing experience, so the dashboard's job
+is to make accurate operations fast and confident, and to make destructive or
+high-reach actions obvious.
 
 Success is invisible: the team should enter a full restaurant's menu without thinking about the tool itself. Failure looks like the current state, generic SaaS scaffolding the user has to push through rather than work with.
 

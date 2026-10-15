@@ -5,6 +5,7 @@ import { useSurvey } from '../contexts/SurveyContext';
 import { useFoodPhotos } from '../contexts/FoodPhotosContext';
 import { useInternApplications } from '../contexts/InternApplicationsContext';
 import { FoodPhotoStatus } from '../constants';
+import { API_ENVIRONMENT, API_ENVIRONMENTS, switchApiEnvironment } from '../config';
 import './Navigation.css';
 
 export const Navigation: React.FC = () => {
@@ -24,8 +25,25 @@ export const Navigation: React.FC = () => {
       <div className="navigation__container">
         <div className="navigation__brand">
           <h2 className="navigation__logo">UPlate</h2>
+          <label className="navigation__environment">
+            <span>Database</span>
+            <select
+              value={API_ENVIRONMENT}
+              title={API_ENVIRONMENTS[API_ENVIRONMENT]}
+              onChange={(event) => {
+                const environment = event.target.value;
+                if (environment === 'production' || environment === 'beta') {
+                  switchApiEnvironment(environment);
+                }
+              }}
+            >
+              <option value="production">Production</option>
+              <option value="beta">Beta</option>
+            </select>
+          </label>
         </div>
         <ul className="navigation__list">
+          <li className="navigation__item"><NavLink to="/user-accounts" className={({ isActive }) => `navigation__link${isActive ? ' navigation__link--active' : ''}`}>User accounts</NavLink></li>
           <li className="navigation__item">
             <NavLink
               to="/"
@@ -70,10 +88,10 @@ export const Navigation: React.FC = () => {
                 `navigation__link${isActive ? ' navigation__link--active' : ''}`
               }
             >
-              Accounts
+              Restaurant accounts
             </NavLink>
           </li>
-            <li className="navigation__item">
+          <li className="navigation__item">
             <NavLink
               to="/contests"
               className={({ isActive }) =>
@@ -81,6 +99,16 @@ export const Navigation: React.FC = () => {
               }
             >
               Contests
+            </NavLink>
+          </li>
+          <li className="navigation__item">
+            <NavLink
+              to="/school-competitions"
+              className={({ isActive }) =>
+                `navigation__link${isActive ? ' navigation__link--active' : ''}`
+              }
+            >
+              Campus macros
             </NavLink>
           </li>
           <li className="navigation__item">

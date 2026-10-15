@@ -8,8 +8,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");
+    const displayPath = path.replace(/([?&]key=)[^&]*/g, "$1[redacted]");
     throw new Error(
-      `API ${options?.method ?? "GET"} ${path} failed (${res.status}): ${body}`,
+      `API ${options?.method ?? "GET"} ${displayPath} failed (${res.status}): ${body}`,
     );
   }
 
@@ -18,7 +19,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>(path),
+  get: <T>(path: string, options?: Pick<RequestInit, "cache">) => request<T>(path, options),
 
   post: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "POST", body: JSON.stringify(body) }),

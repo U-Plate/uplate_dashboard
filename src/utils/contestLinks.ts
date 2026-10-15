@@ -1,4 +1,4 @@
-const CONTEST_BASE_URL = 'https://contest.u-plate.com/';
+const CONTEST_BASE_URL = 'https://app.u-plate.com/contest/';
 
 /** Builds a contest join link, optionally attributed to a referrer. */
 export function buildContestLink(

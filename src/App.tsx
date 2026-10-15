@@ -1,3 +1,4 @@
+import { UserAccountsPage } from './pages/UserAccountsPage';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -39,6 +40,7 @@ function App() {
             <Route path="sections/new" element={<SectionForm />} />
             <Route path="sections/:id/edit" element={<SectionForm />} />
             <Route path="restaurants" element={<RestaurantsPage />} />
+            <Route path="user-accounts" element={<UserAccountsPage />} />
             <Route path="restaurant-accounts" element={<RestaurantAccountsPage />} />
             <Route path="restaurants/new" element={<RestaurantForm />} />
             <Route path="restaurants/:id/edit" element={<RestaurantForm />} />

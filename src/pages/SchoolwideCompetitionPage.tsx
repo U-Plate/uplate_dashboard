@@ -33,6 +33,7 @@ export function SchoolwideCompetitionPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [emailStatus, setEmailStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
   const [emailAttempt, setEmailAttempt] = useState(0);
+  const [channel, setChannel] = useState<'notification' | 'email'>('email');
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
@@ -60,18 +61,35 @@ export function SchoolwideCompetitionPage() {
     return () => { cancelled = true; };
   }, [id, selected, emailAttempt]);
 
+  function selectParticipant(participant: SchoolwideCompetitionParticipant) {
+    if (status === 'sending') return;
+    setSelected(participant);
+    setStatus('idle');
+    setTitle('');
+    setMessage('');
+    setError(null);
+    setEmail(null);
+    setEmailStatus('loading');
+    setEmailAttempt(value => value + 1);
+  }
+
   async function notify(event: React.FormEvent) {
     event.preventDefault();
-    if (!selected || !title.trim() || !message.trim()) return;
+    if (!selected || status === 'sending' || !title.trim() || !message.trim()) return;
+    if (channel === 'email' && (emailStatus !== 'loaded' || !email)) return;
     setStatus('sending');
     setError(null);
     try {
-      await schoolwideCompetitionsApi.notify(id, selected.username, title.trim(), message.trim());
+      if (channel === 'email') {
+        await schoolwideCompetitionsApi.email(id, selected.username, title.trim(), message.trim());
+      } else {
+        await schoolwideCompetitionsApi.notify(id, selected.username, title.trim(), message.trim());
+      }
       setStatus('sent');
       setTitle('');
       setMessage('');
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Notification could not be sent.');
+      setError(reason instanceof Error ? reason.message : 'Message could not be sent.');
       setStatus('idle');
     }
   }
@@ -178,20 +196,21 @@ export function SchoolwideCompetitionPage() {
           <div>
             <p className="schoolwide-eyebrow">Roster</p>
             <h2 id="participants-heading">Participants</h2>
-            <p>Select a participant to review their activity or send a device notification.</p>
+            <p>Select a participant to review their activity, send an email, or notify their device.</p>
           </div>
           <span className="schoolwide-section-count">{participants.length.toLocaleString()} total</span>
         </div>
         <DataTable
           columns={columns}
           data={participants}
-          onRowClick={(row) => { setSelected(row); setStatus('idle'); setEmail(null); setEmailStatus('loading'); }}
+          onRowClick={selectParticipant}
           actions={(row) => (
             <Button
               variant="secondary"
-              onClick={() => { setSelected(row); setStatus('idle'); setEmail(null); setEmailStatus('loading'); }}
+              disabled={status === 'sending'}
+              onClick={() => selectParticipant(row)}
             >
-              Notify
+              Contact
             </Button>
           )}
           emptyMessage="No one has joined this competition yet."
@@ -236,16 +255,23 @@ export function SchoolwideCompetitionPage() {
           </aside>
           <form className="schoolwide-notify" onSubmit={notify}>
             <div>
-              <p className="schoolwide-eyebrow">Direct notification</p>
+              <p className="schoolwide-eyebrow">Contact participant</p>
               <h2>Message {selected.name}</h2>
-              <p>Send competition or prize information to this participant’s device.</p>
+              <p>{channel === 'email' ? 'Send competition or prize information to this participant’s account email, including Apple private relay addresses.' : 'Send competition or prize information to this participant’s device.'}</p>
             </div>
-            <FormField label="Notification title" type="text" value={title} onChange={(value) => { setTitle(String(value)); setStatus('idle'); }} required />
-            <FormField label="Message" type="textarea" value={message} onChange={(value) => { setMessage(String(value)); setStatus('idle'); }} required />
-            {status === 'sent' && <div className="schoolwide-success">Notification sent to {selected.name}.</div>}
+            <fieldset disabled={status === 'sending'}>
+              <legend>Send via</legend>
+              <label><input type="radio" name="contact-channel" checked={channel === 'email'} onChange={() => { setChannel('email'); setStatus('idle'); setError(null); }} /> Email</label>{' '}
+              <label><input type="radio" name="contact-channel" checked={channel === 'notification'} onChange={() => { setChannel('notification'); setStatus('idle'); setError(null); }} /> Device notification</label>
+            </fieldset>
+            <fieldset disabled={status === 'sending'}>
+              <FormField label={channel === 'email' ? 'Subject' : 'Notification title'} type="text" value={title} onChange={(value) => { setTitle(String(value)); setStatus('idle'); }} required />
+              <FormField label="Message" type="textarea" value={message} onChange={(value) => { setMessage(String(value)); setStatus('idle'); }} required />
+            </fieldset>
+            {status === 'sent' && <div className="schoolwide-success">{channel === 'email' ? 'Email submitted for delivery' : 'Notification sent'} to {selected.name}.</div>}
             <div className="schoolwide-notify__actions">
-              <button className="schoolwide-text-button" type="button" onClick={() => setSelected(null)}>Close</button>
-              <Button type="submit" disabled={status === 'sending' || !title.trim() || !message.trim()}>{status === 'sending' ? 'Sending…' : 'Send notification'}</Button>
+              <button className="schoolwide-text-button" type="button" disabled={status === 'sending'} onClick={() => setSelected(null)}>Close</button>
+              <Button type="submit" disabled={status === 'sending' || !title.trim() || !message.trim() || (channel === 'email' && (emailStatus !== 'loaded' || !email))}>{status === 'sending' ? 'Sending…' : channel === 'email' ? 'Send email' : 'Send notification'}</Button>
             </div>
           </form>
         </section>

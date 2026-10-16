@@ -87,6 +87,13 @@ export const schoolwideCompetitionsApi = {
     );
   },
 
+  email(id: string, username: string, subject: string, body: string) {
+    return api.post<{ status: boolean }>(
+      path('adminEmailSchoolwide', `&competitionID=${encodeURIComponent(id)}&username=${encodeURIComponent(username)}`),
+      { subject, body },
+    );
+  },
+
   notify(id: string, username: string, title: string, body: string) {
     return api.post<{ status: boolean }>(
       path(

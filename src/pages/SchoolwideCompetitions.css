@@ -667,3 +667,16 @@
     flex-direction: column-reverse;
   }
 }
+.schoolwide-notify fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.schoolwide-notify legend {
+  margin-bottom: 8px;
+  font-weight: 600;
+}

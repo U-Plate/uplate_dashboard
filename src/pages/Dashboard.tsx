@@ -178,6 +178,13 @@ export const Dashboard: React.FC = () => {
           }
         />
         <DashboardTile
+          name="Quotes"
+          description="Read student testimonials, ratings, and time using UPlate."
+          onClick={() => navigate('/quotes')}
+          icon={<span>&#x2605;</span>}
+          meta="quotes.u-plate.com"
+        />
+        <DashboardTile
           name="Broadcast"
           description="Compose and send an email to every UPlate user."
           onClick={() => navigate('/broadcast')}

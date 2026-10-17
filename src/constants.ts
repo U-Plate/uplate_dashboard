@@ -217,13 +217,16 @@ export class MenuItem {
     possibleFoods: MenuItemFood[];
     sizes: MenuItemSize[];
 
-    constructor({ id, name, restaurantId, foods, possibleFoods, sizes }: MenuItem) {
+    station?: string;
+
+    constructor({ id, name, restaurantId, foods, possibleFoods, sizes, station }: MenuItem) {
         this.id = id;
         this.name = name;
         this.restaurantId = restaurantId;
         this.foods = foods;
         this.possibleFoods = possibleFoods ?? [];
         this.sizes = sizes ?? [];
+        this.station = station?.trim() || "All Items";
     }
 }
 

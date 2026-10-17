@@ -4,7 +4,6 @@ import type { MenuItemFood, MenuItemSize, Food } from "../constants";
 import { api } from "./client";
 import { SCHOOL } from "../config";
 import { getAdminKey } from "../utils/adminKey";
-import { generateId } from "../utils/idGenerator";
 import type { ApiFoodPayload } from "./foods";
 import { fromApiPayload } from "./foods";
 
@@ -23,6 +22,7 @@ interface RawMenuItemSize {
 
 /** Raw shape returned by the API — foods/possibleFoods contain embedded Food objects. */
 interface RawMenuItem {
+  station?: string;
   id: string;
   name: string;
   restaurantId: string;
@@ -47,17 +47,12 @@ const serializeSizes = (sizes: MenuItemSize[]) =>
     possibleFoods: serializeFoods(s.possibleFoods ?? []),
   }));
 
-const serializeMenuItem = (data: Partial<MenuItem>) => {
-  const hasSizes = data.sizes && data.sizes.length > 0;
-
-  return {
-    ...data,
-    foods: !hasSizes && data.foods ? serializeFoods(data.foods) : [],
-    possibleFoods:
-      !hasSizes && data.possibleFoods ? serializeFoods(data.possibleFoods) : [],
-    sizes: hasSizes ? serializeSizes(data.sizes!) : [],
-  };
-};
+const serializeMenuItem = (data: Partial<MenuItem>) => ({
+  ...data,
+  ...(data.foods !== undefined ? { foods: serializeFoods(data.foods) } : {}),
+  ...(data.possibleFoods !== undefined ? { possibleFoods: serializeFoods(data.possibleFoods) } : {}),
+  ...(data.sizes !== undefined ? { sizes: serializeSizes(data.sizes) } : {}),
+});
 
 /** Convert a raw embedded food entry into a MenuItemFood. */
 function toMenuItemFood(entry: RawMenuItemFoodEntry): MenuItemFood {
@@ -85,6 +80,7 @@ export function deserializeMenuItem(raw: RawMenuItem): MenuItem {
   return new MenuItem({
     id: raw.id,
     name: raw.name,
+    station: raw.station?.trim() || "All Items",
     restaurantId: raw.restaurantId,
     foods,
     possibleFoods,
@@ -114,48 +110,46 @@ export function extractFoodsFromMenuItems(rawItems: RawMenuItem[]): Food[] {
 }
 
 export const menuItemsApi = {
-  /** GET /:school/restaurants/:restaurantId/menuItems — returns raw data for the context to resolve. */
+  /** GET /:school/restaurants/:restaurantId/menu — returns raw data for the context to resolve. */
   getByRestaurant: (restaurantId: string) =>
-    api.get<RawMenuItem[]>(`/${SCHOOL}/restaurants/${restaurantId}/menu`),
+    api.get<RawMenuItem[]>(`/${SCHOOL}/restaurants/${restaurantId}/menu`, { cache: "no-store" }),
 
-  /** GET /:school/restaurants/:restaurantId/menuItems/:menuItemId */
+  /** GET /:school/restaurants/:restaurantId/menu/:menuItemId */
   getById: (restaurantId: string, menuItemId: string) =>
     api.get<RawMenuItem>(
       `/${SCHOOL}/restaurants/${restaurantId}/menu/${menuItemId}`,
+      { cache: "no-store" },
     ),
 
-  /** POST /:school/admin/restaurants/:restaurantId/newMenuItem?key=... */
+  /** POST /:school/admin/:restaurantId/menu?key=... */
   create: async (
     restaurantId: string,
     data: Omit<MenuItem, "id" | "restaurantId">,
   ): Promise<MenuItem> => {
-    const menuItemId = generateId();
-    await api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/newMenuItem?key=${getAdminKey()}`,
-      { ...serializeMenuItem(data), id: menuItemId },
+    const result = await api.post<{ status: boolean; id: string }>(
+      `/${SCHOOL}/admin/${restaurantId}/menu?key=${getAdminKey()}`,
+      serializeMenuItem(data),
     );
-    return { id: menuItemId, restaurantId, ...data } as MenuItem;
+    return { id: result.id, restaurantId, ...data } as MenuItem;
   },
 
-  /** POST /:school/admin/restaurants/:restaurantId/updateMenuItem/:menuItemId?key=... */
+  /** PUT /:school/admin/:restaurantId/menu/:menuItemId?key=... */
   update: (restaurantId: string, menuItemId: string, data: Partial<MenuItem>) =>
-    api.post<RawMenuItem>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/updateMenuItem/${menuItemId}?key=${getAdminKey()}`,
+    api.put<{ status: boolean }>(
+      `/${SCHOOL}/admin/${restaurantId}/menu/${menuItemId}?key=${getAdminKey()}`,
       serializeMenuItem(data),
-    ),
+    ).then(() => menuItemsApi.getById(restaurantId, menuItemId)),
 
-  /** POST /:school/admin/restaurants/:restaurantId/deleteMenuItem/:menuItemId?key=... */
+  /** DELETE /:school/admin/:restaurantId/menu/:menuItemId?key=... */
   delete: (restaurantId: string, menuItemId: string) =>
-    api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteMenuItem/${menuItemId}?key=${getAdminKey()}`,
-      {},
+    api.delete<{ status: boolean }>(
+      `/${SCHOOL}/admin/${restaurantId}/menu/${menuItemId}?key=${getAdminKey()}`,
     ),
 
-  /** POST /:school/admin/restaurants/:restaurantId/deleteAllMenuItems?key=... */
+  /** DELETE /:school/admin/:restaurantId/menu/all?key=... */
   deleteAll: (restaurantId: string) =>
-    api.post<{ status: boolean }>(
-      `/${SCHOOL}/admin/restaurants/${restaurantId}/deleteAllMenuItems?key=${getAdminKey()}`,
-      {},
+    api.delete<{ status: boolean }>(
+      `/${SCHOOL}/admin/${restaurantId}/menu/all?key=${getAdminKey()}`,
     ),
 
   /** Exported for the context to use when resolving menu items. */

@@ -48,6 +48,7 @@ export const MenuItemForm: React.FC = () => {
   const restaurantFoods = restaurantId ? getFoodsByRestaurant(restaurantId) : [];
 
   const [name, setName] = useState('');
+  const [station, setStation] = useState('All Items');
   const [useSizes, setUseSizes] = useState(false);
   const [foods, setFoods] = useState<FoodSelection[]>([]);
   const [possibleFoods, setPossibleFoods] = useState<FoodSelection[]>([]);
@@ -65,6 +66,7 @@ export const MenuItemForm: React.FC = () => {
       const item = getMenuItemById(menuItemId);
       if (item) {
         setName(item.name);
+        setStation(item.station?.trim() || 'All Items');
         if (item.sizes && item.sizes.length > 0) {
           setUseSizes(true);
           setSizes(
@@ -246,6 +248,7 @@ export const MenuItemForm: React.FC = () => {
 
       const data = {
         name: name.trim(),
+        station: station.trim() || 'All Items',
         restaurantId: restaurantId || '',
         foods: [],
         possibleFoods: [],
@@ -260,6 +263,7 @@ export const MenuItemForm: React.FC = () => {
     } else {
       const data = {
         name: name.trim(),
+        station: station.trim() || 'All Items',
         restaurantId: restaurantId || '',
         foods: toMenuItemFoods(foods, restaurantFoods),
         possibleFoods: toMenuItemFoods(possibleFoods, restaurantFoods),
@@ -360,6 +364,16 @@ export const MenuItemForm: React.FC = () => {
       </div>
 
       <form className="menu-item-form__form" onSubmit={handleSubmit}>
+        <FormField
+          label="Menu Section"
+          type="text"
+          value={station}
+          onChange={(value) => setStation(String(value))}
+          placeholder="All Items"
+        />
+        <p title="Items with the same section name appear together, like dining hall stations.">
+          Use the same section name to group items in the app. Leave All Items for an unsplit menu.
+        </p>
         <FormField
           label="Menu Item Name"
           type="text"

@@ -45,3 +45,26 @@ test('creation uses server IDs and carries sections to the backend', async () =>
   assert.match(call.url, /\/admin\/cafe\/menu\?key=/);
   assert.equal(JSON.parse(call.body).station, 'Drinks');
 });
+
+
+test('retail photos deserialize independently of ingredients and sizes', () => {
+  const url = 'https://cdn.example/purdue/retail/cafe/latte.jpg?v=1';
+  assert.equal(menuItemsApi.deserializeMenuItem({ ...item, imageUrl: url }).imageUrl, url);
+  assert.equal(menuItemsApi.deserializeMenuItem(item).imageUrl, null);
+});
+
+test('admin photo publishing sends raw bytes and removal updates the item', async () => {
+  const calls = [];
+  const file = new File([new Uint8Array([255, 216, 255])], 'photo.jpg', { type: 'image/jpeg' });
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, ...options });
+    return Response.json({ ...item, imageUrl: options.method === 'DELETE' ? null : 'https://cdn.example/latte.jpg?v=2' });
+  };
+  const uploaded = await menuItemsApi.uploadPhoto('cafe', 'latte', file);
+  assert.equal(uploaded.imageUrl, 'https://cdn.example/latte.jpg?v=2');
+  assert.equal(calls[0].body, file);
+  assert.equal(calls[0].headers['Content-Type'], 'image/jpeg');
+  assert.match(calls[0].url, /\/admin\/cafe\/menu\/latte\/photo\?key=/);
+  assert.equal((await menuItemsApi.removePhoto('cafe', 'latte')).imageUrl, null);
+  assert.equal(calls[1].method, 'DELETE');
+});

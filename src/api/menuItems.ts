@@ -22,6 +22,7 @@ interface RawMenuItemSize {
 
 /** Raw shape returned by the API — foods/possibleFoods contain embedded Food objects. */
 interface RawMenuItem {
+  imageUrl?: string | null;
   station?: string;
   id: string;
   name: string;
@@ -78,6 +79,7 @@ export function deserializeMenuItem(raw: RawMenuItem): MenuItem {
   const possibleFoods: MenuItemFood[] = (raw.possibleFoods ?? []).map(toMenuItemFood);
 
   return new MenuItem({
+    imageUrl: raw.imageUrl || null,
     id: raw.id,
     name: raw.name,
     station: raw.station?.trim() || "All Items",
@@ -139,6 +141,17 @@ export const menuItemsApi = {
       `/${SCHOOL}/admin/${restaurantId}/menu/${menuItemId}?key=${getAdminKey()}`,
       serializeMenuItem(data),
     ).then(() => menuItemsApi.getById(restaurantId, menuItemId)),
+
+  uploadPhoto: async (restaurantId: string, menuItemId: string, file: File) =>
+    deserializeMenuItem(await api.upload<RawMenuItem>(
+      `/${SCHOOL}/admin/${restaurantId}/menu/${menuItemId}/photo?key=${getAdminKey()}`,
+      file,
+    )),
+
+  removePhoto: async (restaurantId: string, menuItemId: string) =>
+    deserializeMenuItem(await api.delete<RawMenuItem>(
+      `/${SCHOOL}/admin/${restaurantId}/menu/${menuItemId}/photo?key=${getAdminKey()}`,
+    )),
 
   /** DELETE /:school/admin/:restaurantId/menu/:menuItemId?key=... */
   delete: (restaurantId: string, menuItemId: string) =>

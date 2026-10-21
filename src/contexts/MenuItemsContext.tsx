@@ -9,7 +9,9 @@ import { menuItemsApi } from '../api/menuItems';
 
 interface MenuItemsContextType {
   menuItems: MenuItem[];
-  addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => void | Promise<void>;
+  addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => Promise<MenuItem>;
+  uploadMenuItemPhoto: (restaurantId: string, id: string, file: File) => Promise<void>;
+  removeMenuItemPhoto: (restaurantId: string, id: string) => Promise<void>;
   updateMenuItem: (id: string, updates: Partial<MenuItem>) => void | Promise<void>;
   deleteMenuItem: (id: string) => void | Promise<void>;
   deleteAllMenuItems: (restaurantId: string) => void | Promise<void>;
@@ -25,15 +27,29 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
     getSampleMenuItems()
   );
 
-  const addMenuItem = (data: Omit<MenuItem, 'id'>) => {
+  const addMenuItem = async (data: Omit<MenuItem, 'id'>) => {
     const newItem = new MenuItem({ id: String(generateId()), ...data });
-    setMenuItems([...menuItems, newItem]);
+    setMenuItems((prev) => [...prev, newItem]);
+    return newItem;
   };
 
   const updateMenuItem = (id: string, updates: Partial<MenuItem>) => {
-    setMenuItems(
-      menuItems.map((m) => (m.id === id ? new MenuItem({ ...m, ...updates }) : m))
+    setMenuItems((prev) =>
+      prev.map((m) => (m.id === id ? new MenuItem({ ...m, ...updates }) : m))
     );
+  };
+
+  const uploadMenuItemPhoto = async (_restaurantId: string, id: string, file: File) => {
+    const imageUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error('Could not read that photo.'));
+      reader.readAsDataURL(file);
+    });
+    updateMenuItem(id, { imageUrl });
+  };
+  const removeMenuItemPhoto = async (_restaurantId: string, id: string) => {
+    updateMenuItem(id, { imageUrl: null });
   };
 
   const deleteMenuItem = (id: string) => {
@@ -54,6 +70,8 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
       value={{
         menuItems,
         addMenuItem,
+        uploadMenuItemPhoto,
+        removeMenuItemPhoto,
         updateMenuItem,
         deleteMenuItem,
         deleteAllMenuItems,
@@ -82,18 +100,26 @@ const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const addMenuItem = async (data: Omit<MenuItem, 'id'>) => {
     const { restaurantId, ...rest } = data;
-    await menuItemsApi.create(restaurantId, rest);
-    // Refetch so local state has the server-assigned ID, not the client-generated one.
-    fetchedRestaurants.current.delete(restaurantId);
-    await fetchMenuItemsForRestaurant(restaurantId);
+    const created = new MenuItem(await menuItemsApi.create(restaurantId, rest));
+    setMenuItems((prev) => [...prev, created]);
+    return created;
   };
 
   const updateMenuItem = async (id: string, updates: Partial<MenuItem>) => {
     const existing = menuItems.find((m) => m.id === id);
-    if (!existing) return;
+    if (!existing) throw new Error('Menu item is still loading. Try again.');
     const raw = await menuItemsApi.update(existing.restaurantId, id, updates);
     const updated = menuItemsApi.deserializeMenuItem(raw);
     setMenuItems((prev) => prev.map((m) => (m.id === id ? updated : m)));
+  };
+
+  const uploadMenuItemPhoto = async (restaurantId: string, id: string, file: File) => {
+    const updated = await menuItemsApi.uploadPhoto(restaurantId, id, file);
+    setMenuItems((prev) => prev.map((m) => m.id === id ? updated : m));
+  };
+  const removeMenuItemPhoto = async (restaurantId: string, id: string) => {
+    const updated = await menuItemsApi.removePhoto(restaurantId, id);
+    setMenuItems((prev) => prev.map((m) => m.id === id ? updated : m));
   };
 
   const deleteMenuItem = async (id: string) => {
@@ -128,6 +154,8 @@ const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       value={{
         menuItems,
         addMenuItem,
+        uploadMenuItemPhoto,
+        removeMenuItemPhoto,
         updateMenuItem,
         deleteMenuItem,
         deleteAllMenuItems,

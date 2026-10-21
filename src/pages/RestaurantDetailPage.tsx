@@ -339,6 +339,7 @@ export const RestaurantDetailPage: React.FC = () => {
               return (
                 <div key={menuItem.id} className="restaurant-detail__menu-card">
                   <div className="restaurant-detail__menu-card-header">
+                    {menuItem.imageUrl && <img className="restaurant-detail__menu-photo" src={menuItem.imageUrl} alt={`${menuItem.name} photo`} loading="lazy" />}
                     <div className="restaurant-detail__menu-card-info">
                       <h3 className="restaurant-detail__menu-card-name">{menuItem.name}</h3>
                       <div className="restaurant-detail__menu-card-nutrition">

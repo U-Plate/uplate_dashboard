@@ -141,21 +141,30 @@ export const RestaurantForm: React.FC = () => {
   }>({});
 
   const isEditMode = !!id;
+  const initializedRestaurantId = useRef<string | null>(null);
 
   useEffect(() => {
     if (isEditMode && id) {
+      if (initializedRestaurantId.current === id) return;
       const restaurant = getRestaurantById(id);
       if (restaurant) {
+        initializedRestaurantId.current = id;
         setName(restaurant.name);
         setSectionId(restaurant.sectionId);
         setLocation(restaurant.location);
         setHidden(restaurant.hidden);
         setCurrentLogo(restaurant.logo);
       }
-    } else if (sections.length > 0 && !sectionId) {
-      setSectionId(sections[0].id);
+    } else {
+      initializedRestaurantId.current = null;
     }
-  }, [id, isEditMode, getRestaurantById, sections, sectionId]);
+  }, [id, isEditMode, getRestaurantById]);
+
+  useEffect(() => {
+    if (!isEditMode && sections.length > 0) {
+      setSectionId((current) => current || sections[0].id);
+    }
+  }, [isEditMode, sections]);
 
   const validate = (): boolean => {
     const newErrors: {

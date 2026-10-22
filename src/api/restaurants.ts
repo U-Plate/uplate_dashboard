@@ -37,6 +37,7 @@ export const restaurantsApi = {
   getAll: async () => {
     const data = await api.get<ApiRestaurant[]>(
       `/${SCHOOL}/restaurants?key=${getAdminKey()}`,
+      { cache: "no-store" },
     );
     return data.map(fromApi);
   },
@@ -45,6 +46,7 @@ export const restaurantsApi = {
   getById: async (id: string) => {
     const data = await api.get<ApiRestaurant>(
       `/${SCHOOL}/restaurants/${id}?key=${getAdminKey()}`,
+      { cache: "no-store" },
     );
     return fromApi(data);
   },
@@ -52,7 +54,8 @@ export const restaurantsApi = {
   /** GET /:school/restaurants?sectionId=:sectionId */
   getBySection: async (sectionId: string) => {
     const data = await api.get<ApiRestaurant[]>(
-      `/${SCHOOL}/restaurants?sectionId=${sectionId}`,
+      `/${SCHOOL}/restaurants?sectionId=${sectionId}&key=${getAdminKey()}`,
+      { cache: "no-store" },
     );
     return data.map(fromApi);
   },

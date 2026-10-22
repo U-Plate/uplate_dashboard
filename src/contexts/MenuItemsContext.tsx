@@ -6,11 +6,12 @@ import { generateId } from '../utils/idGenerator';
 import { getSampleMenuItems } from '../utils/sampleData';
 import { USE_API } from '../config';
 import { menuItemsApi } from '../api/menuItems';
-import { useFoods } from './FoodContext';
 
 interface MenuItemsContextType {
   menuItems: MenuItem[];
-  addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => void | Promise<void>;
+  addMenuItem: (menuItem: Omit<MenuItem, 'id'>) => Promise<MenuItem>;
+  uploadMenuItemPhoto: (restaurantId: string, id: string, file: File) => Promise<void>;
+  removeMenuItemPhoto: (restaurantId: string, id: string) => Promise<void>;
   updateMenuItem: (id: string, updates: Partial<MenuItem>) => void | Promise<void>;
   deleteMenuItem: (id: string) => void | Promise<void>;
   deleteAllMenuItems: (restaurantId: string) => void | Promise<void>;
@@ -26,15 +27,29 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
     getSampleMenuItems()
   );
 
-  const addMenuItem = (data: Omit<MenuItem, 'id'>) => {
-    const newItem = new MenuItem({ id: generateId(), ...data });
-    setMenuItems([...menuItems, newItem]);
+  const addMenuItem = async (data: Omit<MenuItem, 'id'>) => {
+    const newItem = new MenuItem({ id: String(generateId()), ...data });
+    setMenuItems((prev) => [...prev, newItem]);
+    return newItem;
   };
 
   const updateMenuItem = (id: string, updates: Partial<MenuItem>) => {
-    setMenuItems(
-      menuItems.map((m) => (m.id === id ? new MenuItem({ ...m, ...updates }) : m))
+    setMenuItems((prev) =>
+      prev.map((m) => (m.id === id ? new MenuItem({ ...m, ...updates }) : m))
     );
+  };
+
+  const uploadMenuItemPhoto = async (_restaurantId: string, id: string, file: File) => {
+    const imageUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error('Could not read that photo.'));
+      reader.readAsDataURL(file);
+    });
+    updateMenuItem(id, { imageUrl });
+  };
+  const removeMenuItemPhoto = async (_restaurantId: string, id: string) => {
+    updateMenuItem(id, { imageUrl: null });
   };
 
   const deleteMenuItem = (id: string) => {
@@ -55,6 +70,8 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
       value={{
         menuItems,
         addMenuItem,
+        uploadMenuItemPhoto,
+        removeMenuItemPhoto,
         updateMenuItem,
         deleteMenuItem,
         deleteAllMenuItems,
@@ -70,49 +87,39 @@ const LocalMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children })
 const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const fetchedRestaurants = useRef<Set<string>>(new Set());
-  const { foods, ensureFoodsLoaded } = useFoods();
-
-  /** Build a foodId → Food lookup map, ensuring foods are loaded first. */
-  const buildFoodMap = useCallback(async (restaurantId: string): Promise<Map<string, Food>> => {
-    const restaurantFoods = await ensureFoodsLoaded(restaurantId);
-    const map = new Map<string, Food>();
-    for (const f of restaurantFoods) {
-      map.set(f.id, f);
-    }
-    // Also include all already-known foods in case of cross-restaurant references
-    for (const f of foods) {
-      if (!map.has(f.id)) map.set(f.id, f);
-    }
-    return map;
-  }, [foods, ensureFoodsLoaded]);
-
   const fetchMenuItemsForRestaurant = useCallback(async (restaurantId: string) => {
     if (fetchedRestaurants.current.has(restaurantId)) return;
     fetchedRestaurants.current.add(restaurantId);
     const rawItems = await menuItemsApi.getByRestaurant(restaurantId);
-    const foodMap = await buildFoodMap(restaurantId);
-    const resolved = rawItems.map((raw) => menuItemsApi.deserializeMenuItem(raw, foodMap));
+    const resolved = rawItems.map((raw) => menuItemsApi.deserializeMenuItem(raw));
     setMenuItems((prev) => [
       ...prev.filter((m) => m.restaurantId !== restaurantId),
       ...resolved,
     ]);
-  }, [buildFoodMap]);
+  }, []);
 
   const addMenuItem = async (data: Omit<MenuItem, 'id'>) => {
     const { restaurantId, ...rest } = data;
-    await menuItemsApi.create(restaurantId, rest);
-    // Refetch so local state has the server-assigned ID, not the client-generated one.
-    fetchedRestaurants.current.delete(restaurantId);
-    await fetchMenuItemsForRestaurant(restaurantId);
+    const created = new MenuItem(await menuItemsApi.create(restaurantId, rest));
+    setMenuItems((prev) => [...prev, created]);
+    return created;
   };
 
   const updateMenuItem = async (id: string, updates: Partial<MenuItem>) => {
     const existing = menuItems.find((m) => m.id === id);
-    if (!existing) return;
+    if (!existing) throw new Error('Menu item is still loading. Try again.');
     const raw = await menuItemsApi.update(existing.restaurantId, id, updates);
-    const foodMap = await buildFoodMap(existing.restaurantId);
-    const updated = menuItemsApi.deserializeMenuItem(raw, foodMap);
+    const updated = menuItemsApi.deserializeMenuItem(raw);
     setMenuItems((prev) => prev.map((m) => (m.id === id ? updated : m)));
+  };
+
+  const uploadMenuItemPhoto = async (restaurantId: string, id: string, file: File) => {
+    const updated = await menuItemsApi.uploadPhoto(restaurantId, id, file);
+    setMenuItems((prev) => prev.map((m) => m.id === id ? updated : m));
+  };
+  const removeMenuItemPhoto = async (restaurantId: string, id: string) => {
+    const updated = await menuItemsApi.removePhoto(restaurantId, id);
+    setMenuItems((prev) => prev.map((m) => m.id === id ? updated : m));
   };
 
   const deleteMenuItem = async (id: string) => {
@@ -147,6 +154,8 @@ const ApiMenuItemsProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       value={{
         menuItems,
         addMenuItem,
+        uploadMenuItemPhoto,
+        removeMenuItemPhoto,
         updateMenuItem,
         deleteMenuItem,
         deleteAllMenuItems,

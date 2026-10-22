@@ -98,6 +98,7 @@ export const QuickMenuItemForm: React.FC = () => {
   const restaurantFoods = restaurantId ? getFoodsByRestaurant(restaurantId) : [];
 
   const [name, setName] = useState('');
+  const [station, setStation] = useState('All Items');
   const [sizes, setSizes] = useState<SizeEntry[]>([{ name: '', defaults: '', addons: '' }]);
   const [errors, setErrors] = useState<{ name?: string }>({});
 
@@ -161,6 +162,7 @@ export const QuickMenuItemForm: React.FC = () => {
 
     addMenuItem({
       name: name.trim(),
+      station: station.trim() || 'All Items',
       restaurantId: restaurantId || '',
       foods: [],
       possibleFoods: [],
@@ -264,6 +266,16 @@ export const QuickMenuItemForm: React.FC = () => {
       </div>
 
       <form className="quick-menu-form__form" onSubmit={handleSubmit}>
+        <FormField
+          label="Menu Section"
+          type="text"
+          value={station}
+          onChange={(value) => setStation(String(value))}
+          placeholder="All Items"
+        />
+        <p title="Items with the same section name appear together, like dining hall stations.">
+          Use the same section name to group items in the app. Leave All Items for an unsplit menu.
+        </p>
         <FormField
           label="Menu Item Name"
           type="text"

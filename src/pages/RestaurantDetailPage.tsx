@@ -327,7 +327,10 @@ export const RestaurantDetailPage: React.FC = () => {
           </div>
         ) : (
           <div className="restaurant-detail__menu-items">
-            {restaurantMenuItems.map((menuItem) => {
+            {Array.from(new Set(restaurantMenuItems.map((item) => item.station?.trim() || 'All Items'))).map((station) => (
+              <React.Fragment key={station}>
+                <h3>{station}</h3>
+                {restaurantMenuItems.filter((item) => (item.station?.trim() || 'All Items') === station).map((menuItem) => {
               const withSizes = hasSizes(menuItem);
               const primaryFoods = withSizes ? menuItem.sizes[0].foods : menuItem.foods;
               const totals = getNutritionTotals(primaryFoods);
@@ -336,6 +339,7 @@ export const RestaurantDetailPage: React.FC = () => {
               return (
                 <div key={menuItem.id} className="restaurant-detail__menu-card">
                   <div className="restaurant-detail__menu-card-header">
+                    {menuItem.imageUrl && <img className="restaurant-detail__menu-photo" src={menuItem.imageUrl} alt={`${menuItem.name} photo`} loading="lazy" />}
                     <div className="restaurant-detail__menu-card-info">
                       <h3 className="restaurant-detail__menu-card-name">{menuItem.name}</h3>
                       <div className="restaurant-detail__menu-card-nutrition">
@@ -469,7 +473,9 @@ export const RestaurantDetailPage: React.FC = () => {
                   )}
                 </div>
               );
-            })}
+                })}
+              </React.Fragment>
+            ))}
           </div>
         )}
       </div>

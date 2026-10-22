@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMenuItems } from '../contexts/MenuItemsContext';
 import { useFoods } from '../contexts/FoodContext';
 import { useRestaurants } from '../contexts/RestaurantsContext';
-import type { MenuItemFood, MenuItemSize } from '../constants';
+import type { MenuItemFood } from '../constants';
 import { Food } from '../constants';
 import { FormField } from '../components/FormField';
 import { Button } from '../components/Button';
 import './MenuItemForm.css';
+import { RetailPhotoField } from '../components/RetailPhotoField';
+import { prepareRetailPhoto, retailPhotoError } from '../utils/retailPhotos';
 
 interface FoodSelection {
   foodId: string;
@@ -40,7 +42,8 @@ export const MenuItemForm: React.FC = () => {
     id: string;
     menuItemId: string;
   }>();
-  const { addMenuItem, updateMenuItem, getMenuItemById } = useMenuItems();
+  const { addMenuItem, updateMenuItem, getMenuItemById, getMenuItemsByRestaurant, uploadMenuItemPhoto, removeMenuItemPhoto } = useMenuItems();
+  if (restaurantId) getMenuItemsByRestaurant(restaurantId);
   const { getFoodsByRestaurant } = useFoods();
   const { getRestaurantById } = useRestaurants();
 
@@ -48,11 +51,18 @@ export const MenuItemForm: React.FC = () => {
   const restaurantFoods = restaurantId ? getFoodsByRestaurant(restaurantId) : [];
 
   const [name, setName] = useState('');
+  const [station, setStation] = useState('All Items');
   const [useSizes, setUseSizes] = useState(false);
   const [foods, setFoods] = useState<FoodSelection[]>([]);
   const [possibleFoods, setPossibleFoods] = useState<FoodSelection[]>([]);
   const [sizes, setSizes] = useState<SizeFormData[]>([]);
-  const [errors, setErrors] = useState<{ name?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; photo?: string; save?: string }>({});
+  const [currentPhoto, setCurrentPhoto] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoRemoved, setPhotoRemoved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const savedId = useRef(menuItemId);
+  const initializedId = useRef<string | null>(null);
   const [foodSearch, setFoodSearch] = useState('');
   const [possibleFoodSearch, setPossibleFoodSearch] = useState('');
   const [sizeFoodSearches, setSizeFoodSearches] = useState<Record<number, string>>({});
@@ -63,8 +73,11 @@ export const MenuItemForm: React.FC = () => {
   useEffect(() => {
     if (isEditMode && menuItemId) {
       const item = getMenuItemById(menuItemId);
-      if (item) {
+      if (item && initializedId.current !== menuItemId) {
+        initializedId.current = menuItemId;
+        setCurrentPhoto(item.imageUrl || null);
         setName(item.name);
+        setStation(item.station?.trim() || 'All Items');
         if (item.sizes && item.sizes.length > 0) {
           setUseSizes(true);
           setSizes(
@@ -225,55 +238,48 @@ export const MenuItemForm: React.FC = () => {
   };
 
   const validate = (): boolean => {
-    const newErrors: { name?: string } = {};
+    const newErrors: { name?: string; photo?: string } = {};
+    if (photoFile) newErrors.photo = retailPhotoError(photoFile) ?? undefined;
     if (!name.trim()) {
       newErrors.name = 'Menu item name is required';
     }
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return !Object.values(newErrors).some(Boolean);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-
-    if (useSizes) {
-      const sizeData: MenuItemSize[] = sizes.map((s) => ({
-        name: s.name,
-        foods: toMenuItemFoods(s.foods, restaurantFoods),
-        possibleFoods: toMenuItemFoods(s.possibleFoods, restaurantFoods),
-      }));
-
+    if (saving || !validate() || !restaurantId) return;
+    setSaving(true);
+    let catalogSaved = false;
+    try {
+      // Decode and resize before creating the item: an invalid image must not
+      // leave a half-created catalog record behind.
+      const upload = photoFile ? await prepareRetailPhoto(photoFile) : null;
       const data = {
         name: name.trim(),
-        restaurantId: restaurantId || '',
-        foods: [],
-        possibleFoods: [],
-        sizes: sizeData,
+        station: station.trim() || 'All Items',
+        restaurantId,
+        foods: useSizes ? [] : toMenuItemFoods(foods, restaurantFoods),
+        possibleFoods: useSizes ? [] : toMenuItemFoods(possibleFoods, restaurantFoods),
+        sizes: useSizes ? sizes.map((size) => ({
+          name: size.name,
+          foods: toMenuItemFoods(size.foods, restaurantFoods),
+          possibleFoods: toMenuItemFoods(size.possibleFoods, restaurantFoods),
+        })) : [],
       };
-
-      if (isEditMode && menuItemId) {
-        await updateMenuItem(menuItemId, data);
-      } else {
-        await addMenuItem(data);
-      }
-    } else {
-      const data = {
-        name: name.trim(),
-        restaurantId: restaurantId || '',
-        foods: toMenuItemFoods(foods, restaurantFoods),
-        possibleFoods: toMenuItemFoods(possibleFoods, restaurantFoods),
-        sizes: [],
-      };
-
-      if (isEditMode && menuItemId) {
-        await updateMenuItem(menuItemId, data);
-      } else {
-        await addMenuItem(data);
-      }
+      if (savedId.current) await updateMenuItem(savedId.current, data);
+      else savedId.current = (await addMenuItem(data)).id;
+      catalogSaved = true;
+      if (upload) await uploadMenuItemPhoto(restaurantId, savedId.current, upload);
+      else if (photoRemoved && currentPhoto) await removeMenuItemPhoto(restaurantId, savedId.current);
+      navigate(`/restaurants/${restaurantId}`);
+    } catch (error) {
+      const message = error instanceof Error && !error.message.startsWith('API ') ? error.message : '';
+      setErrors({ save: `${catalogSaved ? 'Menu item saved, but the photo change failed. Save again to retry.' : 'Could not save this menu item. Please try again.'}${message ? ` ${message}` : ''}` });
+    } finally {
+      setSaving(false);
     }
-
-    navigate(`/restaurants/${restaurantId}`);
   };
 
   const goBack = () => navigate(`/restaurants/${restaurantId}`);
@@ -359,7 +365,18 @@ export const MenuItemForm: React.FC = () => {
         )}
       </div>
 
-      <form className="menu-item-form__form" onSubmit={handleSubmit}>
+      <form className="menu-item-form__form" onSubmit={handleSubmit} aria-busy={saving}>
+        <fieldset disabled={saving} className="menu-item-form__fields">
+        <FormField
+          label="Menu Section"
+          type="text"
+          value={station}
+          onChange={(value) => setStation(String(value))}
+          placeholder="All Items"
+        />
+        <p title="Items with the same section name appear together, like dining hall stations.">
+          Use the same section name to group items in the app. Leave All Items for an unsplit menu.
+        </p>
         <FormField
           label="Menu Item Name"
           type="text"
@@ -369,6 +386,10 @@ export const MenuItemForm: React.FC = () => {
           required
           placeholder="e.g., Healthy Lunch Combo"
         />
+
+        <RetailPhotoField currentUrl={currentPhoto} file={photoFile} removed={photoRemoved}
+          onFile={(file) => { setPhotoFile(file); setErrors((previous) => ({ ...previous, photo: file ? retailPhotoError(file) ?? undefined : undefined })); }}
+          onRemoved={setPhotoRemoved} error={errors.photo} disabled={saving} />
 
         <div className="menu-item-form__sizes-toggle">
           <label className="menu-item-form__sizes-toggle-label">
@@ -552,14 +573,16 @@ export const MenuItemForm: React.FC = () => {
           </div>
         </div>
 
+        {errors.save && <div className="form-field__error" role="alert">{errors.save}</div>}
         <div className="menu-item-form__actions">
           <Button type="button" variant="secondary" onClick={goBack}>
             Cancel
           </Button>
           <Button type="submit">
-            {isEditMode ? 'Update Menu Item' : 'Create Menu Item'}
+            {saving ? 'Saving…' : isEditMode ? 'Update Menu Item' : 'Create Menu Item'}
           </Button>
         </div>
+        </fieldset>
       </form>
     </div>
   );

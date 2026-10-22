@@ -11,10 +11,10 @@ const originalFetch = globalThis.fetch;
 const originalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
 
 before(async () => {
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => 'admin&key' } });
   server = await createServer({ configFile: false, root: process.cwd(), optimizeDeps: { noDiscovery: true, include: [] }, server: { middlewareMode: true, hmr: false, ws: false } });
   ({ buildPatch, toDraft, multiplyNutrition } = await server.ssrLoadModule('/src/utils/schoolFoodOverrides.ts'));
   ({ schoolFoodsApi } = await server.ssrLoadModule('/src/api/schoolFoods.ts'));
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: () => 'admin&key' } });
 });
 after(async () => {
   globalThis.fetch = originalFetch;

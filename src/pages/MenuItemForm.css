@@ -320,3 +320,5 @@
     flex-direction: column-reverse;
   }
 }
+
+.menu-item-form__fields { border: 0; padding: 0; margin: 0; min-width: 0; }

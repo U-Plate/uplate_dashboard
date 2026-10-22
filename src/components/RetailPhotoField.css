@@ -1,0 +1,9 @@
+.retail-photo-field { display: flex; align-items: center; gap: 1.25rem; margin-block: .65rem 1.5rem; }
+.retail-photo-field__preview { width: 152px; aspect-ratio: 1 / .65; flex-shrink: 0; border-radius: 0 0 50% 50% / 0 0 77% 77%; overflow: hidden; background: var(--color-surface-muted); color: var(--color-text-muted); display: grid; place-items: center; border: 1px solid var(--color-border); font-size: .88rem; }
+.retail-photo-field__preview img { width: 100%; height: 100%; object-fit: cover; }
+.retail-photo-field__controls { min-width: 0; }
+.retail-photo-field__buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+.retail-photo-field__hint { margin: .5rem 0 0; font-size: .85rem; color: var(--color-text-muted); overflow-wrap: anywhere; }
+.retail-photo-field__input { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
+.retail-photo-field:focus-within .retail-photo-field__preview { box-shadow: var(--shadow-focus); }
+@media (max-width: 540px) { .retail-photo-field { align-items: flex-start; flex-direction: column; } }

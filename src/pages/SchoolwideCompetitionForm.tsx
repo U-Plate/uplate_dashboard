@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { schoolwideCompetitionsApi } from '../api/schoolwideCompetitions';
+import type { SchoolwideScoringType } from '../constants';
 import { Button } from '../components/Button';
 import { FormField } from '../components/FormField';
 import './SchoolwideCompetitions.css';
@@ -101,6 +102,7 @@ export function SchoolwideCompetitionForm() {
   const [persistedId, setPersistedId] = useState<string | null>(id ?? null);
   const isEditing = Boolean(persistedId);
   const [name, setName] = useState('');
+  const [scoringType, setScoringType] = useState<SchoolwideScoringType>('macros');
   const [prize, setPrize] = useState('');
   const [joinDate, setJoinDate] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -119,6 +121,7 @@ export function SchoolwideCompetitionForm() {
       .then(({ competition }) => {
         if (!active) return;
         setName(competition.name);
+        setScoringType(competition.scoringType ?? 'macros');
         setPrize(competition.prize);
         setJoinDate(dateInputValue(competition.joinDate));
         setStartDate(dateInputValue(competition.startDate));
@@ -161,6 +164,7 @@ export function SchoolwideCompetitionForm() {
     try {
       const input = {
         name: name.trim(),
+        scoringType,
         prize: prize.trim(),
         joinDate: join,
         startDate: start,
@@ -190,12 +194,20 @@ export function SchoolwideCompetitionForm() {
     <div className="schoolwide-page schoolwide-page--form">
       <header className="schoolwide-header">
         <div>
-          <p className="schoolwide-eyebrow">Campus macros</p>
+          <p className="schoolwide-eyebrow">Campus competitions</p>
           <h1>{isEditing ? 'Edit schoolwide competition' : 'Create a schoolwide competition'}</h1>
           <p>{isEditing ? 'Update the competition details and enrollment window.' : 'Students can join from the opening date through the final day.'}</p>
         </div>
       </header>
       <form className="schoolwide-form" onSubmit={submit} noValidate>
+        <div className="form-field">
+          <label className="form-field__label" htmlFor="scoring-type">Competition type</label>
+          <select id="scoring-type" className="form-field__input" value={scoringType} disabled={isEditing || saving} onChange={(event) => setScoringType(event.target.value as SchoolwideScoringType)} aria-describedby="scoring-help">
+            <option value="macros">Macro goals</option>
+            <option value="approvedPhotos">Approved dining hall photos</option>
+          </select>
+          <p id="scoring-help">{isEditing ? 'The scoring type is fixed after creation. ' : ''}{scoringType === 'approvedPhotos' ? 'Students photograph dining hall foods without photos. One point when an approved photo fills an empty slot. The slot must be empty at submission and approval; replacements earn no new points. Photos must be submitted and approved during the scoring window. Tied leaders share first place.' : 'Students earn points by logging meals and meeting their macro goals.'}</p>
+        </div>
         <FormField label="Competition name" type="text" value={name} onChange={(value) => setName(String(value))} required />
         <FormField label="Prize" type="textarea" value={prize} onChange={(value) => setPrize(String(value))} required placeholder="What the winner receives" />
         <CompetitionLogoField
@@ -211,7 +223,7 @@ export function SchoolwideCompetitionForm() {
           <FormField label="Start date" type="date" value={startDate} onChange={(value) => setStartDate(String(value))} required />
           <FormField label="End date" type="date" value={endDate} onChange={(value) => setEndDate(String(value))} required />
         </div>
-        <div className="schoolwide-note">Standings refresh once each day at 9:00 PM campus time. Scores use the same macro scoring as friend competitions.</div>
+        <div className="schoolwide-note">Standings refresh once each day at 9:00 PM campus time. {scoringType === 'approvedPhotos' ? 'Only admin-approved dining hall photos earn points. Pending and denied photos do not count.' : 'Scores use the same macro scoring as friend competitions.'}</div>
         {error && <div className="schoolwide-alert" role="alert">{error}</div>}
         <div className="schoolwide-actions">
           <Button type="button" variant="secondary" onClick={() => navigate(persistedId ? `/school-competitions/${persistedId}` : '/school-competitions')} disabled={saving}>Cancel</Button>

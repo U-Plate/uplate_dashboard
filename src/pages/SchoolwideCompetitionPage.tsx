@@ -94,6 +94,9 @@ export function SchoolwideCompetitionPage() {
     }
   }
 
+  const isPhotoCompetition = competition?.scoringType === 'approvedPhotos';
+  const activityCount = (participant: SchoolwideCompetitionParticipant) => isPhotoCompetition ? participant.approvedPhotos ?? participant.score : participant.daysLogged;
+
   const columns: Column<SchoolwideCompetitionParticipant>[] = [
     {
       header: 'Participant',
@@ -108,8 +111,8 @@ export function SchoolwideCompetitionPage() {
       ),
     },
     {
-      header: 'Days logged',
-      accessor: (row) => <strong className="schoolwide-data-value">{row.daysLogged.toLocaleString()}</strong>,
+      header: isPhotoCompetition ? 'Approved photos' : 'Days logged',
+      accessor: (row) => <strong className="schoolwide-data-value">{activityCount(row).toLocaleString()}</strong>,
     },
     { header: 'Joined', accessor: (row) => row.joinedAt ? joinedFormatter.format(new Date(row.joinedAt)) : 'Unknown' },
     { header: 'Score', accessor: (row) => <strong className="schoolwide-data-value">{row.score.toFixed(0)}</strong> },
@@ -136,7 +139,7 @@ export function SchoolwideCompetitionPage() {
     );
   }
 
-  const loggingParticipants = participants.filter((participant) => participant.daysLogged > 0).length;
+  const loggingParticipants = participants.filter((participant) => activityCount(participant) > 0).length;
   const competitionWindow = `${dateFormatter.format(new Date(competition.startDate))} – ${dateFormatter.format(new Date(competition.endDate))}`;
 
   return (
@@ -162,7 +165,7 @@ export function SchoolwideCompetitionPage() {
             />
           )}
           <div className="schoolwide-competition-hero__heading">
-            <p className="schoolwide-eyebrow">Campus macro competition</p>
+            <p className="schoolwide-eyebrow">{isPhotoCompetition ? 'Campus photo competition' : 'Campus macro competition'}</p>
             <h1>{competition.name}</h1>
             <p className="schoolwide-competition-hero__prize"><span>Prize</span>{competition.prize}</p>
           </div>
@@ -181,7 +184,7 @@ export function SchoolwideCompetitionPage() {
             <dd>{competition.participantCount.toLocaleString()}</dd>
           </div>
           <div>
-            <dt>Logging meals</dt>
+            <dt>{isPhotoCompetition ? 'Contributing photos' : 'Logging meals'}</dt>
             <dd>{loggingParticipants.toLocaleString()} <small>of {competition.participantCount.toLocaleString()}</small></dd>
           </div>
           <div>
@@ -190,6 +193,13 @@ export function SchoolwideCompetitionPage() {
           </div>
         </dl>
       </header>
+
+      {isPhotoCompetition && (
+        <div className="schoolwide-note">
+          One point for filling an empty dining hall food photo slot during the competition. The slot must be empty at submission and approval. Replacements earn no new points; original contributors keep theirs. Tied leaders share first place. Standings refresh at 9 PM campus time.
+          {' '}<button type="button" className="schoolwide-text-button" onClick={() => navigate('/food-photos')}>Review food photos →</button>
+        </div>
+      )}
 
       <section className="schoolwide-participants-panel" aria-labelledby="participants-heading">
         <div className="schoolwide-section-heading">
@@ -244,8 +254,8 @@ export function SchoolwideCompetitionPage() {
                 <dd>{selected.joinedAt ? joinedFormatter.format(new Date(selected.joinedAt)) : 'Unknown'}</dd>
               </div>
               <div>
-                <dt>Meal logging</dt>
-                <dd>{selected.daysLogged} {selected.daysLogged === 1 ? 'day' : 'days'}</dd>
+                <dt>{isPhotoCompetition ? 'Approved photos' : 'Meal logging'}</dt>
+                <dd>{activityCount(selected)} {isPhotoCompetition ? 'approved' : selected.daysLogged === 1 ? 'day' : 'days'}</dd>
               </div>
               <div>
                 <dt>Leaderboard identity</dt>

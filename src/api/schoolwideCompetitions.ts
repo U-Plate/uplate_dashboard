@@ -1,6 +1,7 @@
 import type {
   SchoolwideCompetition,
   SchoolwideCompetitionParticipant,
+  SchoolwideScoringType,
 } from '../constants';
 import { SCHOOL } from '../config';
 import { getAdminKey } from '../utils/adminKey';
@@ -39,6 +40,7 @@ export const schoolwideCompetitionsApi = {
 
   async create(input: {
     name: string;
+    scoringType: SchoolwideScoringType;
     prize: string;
     joinDate: number;
     startDate: number;
@@ -53,6 +55,7 @@ export const schoolwideCompetitionsApi = {
 
   async update(id: string, input: {
     name: string;
+    scoringType: SchoolwideScoringType;
     prize: string;
     joinDate: number;
     startDate: number;

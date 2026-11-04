@@ -12,11 +12,14 @@ export class Location {
 
 export type ContestType = 'marketing' | 'referral';
 
+export type SchoolwideScoringType = 'macros' | 'approvedPhotos';
+
 export interface SchoolwideCompetition {
     id: string;
     name: string;
     prize: string;
     logo?: string | null;
+    scoringType?: SchoolwideScoringType;
     joinDate: number;
     startDate: number;
     endDate: number;
@@ -32,6 +35,7 @@ export interface SchoolwideCompetitionParticipant {
     anonymous: boolean;
     joinedAt: number | null;
     daysLogged: number;
+    approvedPhotos?: number;
     score: number;
 }
 

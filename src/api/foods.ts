@@ -111,7 +111,7 @@ export const foodsApi = {
     restaurantId: string,
     data: Omit<Food, "id" | "restaurantId">,
   ): Promise<Food> => {
-    const foodId = generateId();
+    const foodId = String(generateId());
     await api.post<{ status: boolean }>(
       `/${SCHOOL}/admin/restaurants/${restaurantId}/newFood/${foodId}?key=${getAdminKey()}`,
       toApiPayload(data),

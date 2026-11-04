@@ -357,6 +357,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(1),
       email: 'jordan.lee@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-2',
@@ -367,6 +368,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(2),
       email: 'priya.shah@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-3',
@@ -376,6 +378,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(3),
       email: 'mhassan@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-4',
@@ -386,6 +389,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(4),
       email: 'rivera.a@purdue.edu',
       handled: true,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-5',
@@ -396,6 +400,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(5),
       email: 'tnguyen@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-6',
@@ -406,6 +411,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(7),
       email: 'kchen@purdue.edu',
       handled: true,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-7',
@@ -415,6 +421,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(9),
       email: 'student-anon@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-8',
@@ -424,6 +431,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(12),
       email: 'lwilliams@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-9',
@@ -433,6 +441,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(14),
       email: 'omar.kim@purdue.edu',
       handled: true,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-10',
@@ -442,6 +451,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(16),
       email: 'sjohnson@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-11',
@@ -452,6 +462,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(20),
       email: 'evan.park@purdue.edu',
       handled: false,
+      deviceInfo: null,
     }),
     new Feedback({
       id: 'feedback-12',
@@ -461,6 +472,7 @@ export const getSampleFeedback = (): Feedback[] => {
       timestampString: daysAgo(28),
       email: 'jaylenfoster@purdue.edu',
       handled: true,
+      deviceInfo: null,
     }),
   ];
 };
@@ -619,6 +631,7 @@ export const getSampleContestParticipants = (): ContestParticipant[] => {
       id: 1,
       contestId: 1,
       contestantEmail: 'nkemm@gmail.com',
+      joinState: 'DownloadedApp',
       daysUsedApp: 5,
       dayJoined: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       school: 'purdue',
@@ -627,6 +640,7 @@ export const getSampleContestParticipants = (): ContestParticipant[] => {
       id: 2,
       contestId: 1,
       contestantEmail: 'bill@gmail.com',
+      joinState: 'DownloadedApp',
       daysUsedApp: 3,
       dayJoined: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
       school: 'purdue',
@@ -635,6 +649,7 @@ export const getSampleContestParticipants = (): ContestParticipant[] => {
       id: 3,
       contestId: 2,
       contestantEmail: 'sam@gmail.com',
+      joinState: 'DownloadedApp',
       daysUsedApp: 1,
       dayJoined: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
       school: 'purdue',
@@ -643,6 +658,7 @@ export const getSampleContestParticipants = (): ContestParticipant[] => {
       id: 4,
       contestId: 2,
       contestantEmail: 'sma@gmail.com',
+      joinState: 'DownloadedApp',
       daysUsedApp: 0,
       dayJoined: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
       school: 'purdue',
@@ -651,6 +667,7 @@ export const getSampleContestParticipants = (): ContestParticipant[] => {
       id: 5,
       contestId: 3,
       contestantEmail: 'kill@gmail.com',
+      joinState: 'DownloadedApp',
       daysUsedApp: 2,
       dayJoined: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       school: 'purdue',
@@ -659,6 +676,7 @@ export const getSampleContestParticipants = (): ContestParticipant[] => {
       id: 6,
       contestId: 3,
       contestantEmail: 'bob@gmail.com',
+      joinState: 'DownloadedApp',
       daysUsedApp: 4,
       dayJoined: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       school: 'purdue',

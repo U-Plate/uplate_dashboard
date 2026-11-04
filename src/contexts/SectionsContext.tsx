@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { Section } from '../constants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -24,7 +24,7 @@ const LocalSectionsProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   );
 
   const addSection = (sectionData: Omit<Section, 'id'>) => {
-    const newSection = new Section({ id: generateId(), ...sectionData });
+    const newSection = new Section({ id: String(generateId()), ...sectionData });
     setSections([...sections, newSection]);
   };
 

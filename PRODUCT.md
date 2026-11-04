@@ -8,7 +8,7 @@ product
 
 The UPlate team. A small internal group doing bulk catalog upkeep and campus
 operations for the consumer-facing UPlate nutrition app: entering and editing
-restaurants, foods, and menu items; running schoolwide macro competitions; and
+restaurants, foods, and menu items; running schoolwide macro and photo competitions; and
 contacting participants about prizes. Sessions are often long and repetitive.
 The tool is gated by an admin key and primarily used on a laptop or desktop.
 

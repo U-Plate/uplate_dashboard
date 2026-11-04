@@ -34,12 +34,12 @@ const LocalFoodProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   const addFood = (foodData: Omit<Food, "id">) => {
-    const newFood = new Food({ id: generateId(), ...foodData });
+    const newFood = new Food({ id: String(generateId()), ...foodData });
     setFoods([...foods, newFood]);
   };
 
   const addFoods = async (foodsData: Omit<Food, "id">[]) => {
-    const newFoods = foodsData.map((fd) => new Food({ id: generateId(), ...fd }));
+    const newFoods = foodsData.map((fd) => new Food({ id: String(generateId()), ...fd }));
     setFoods([...foods, ...newFoods]);
   };
 

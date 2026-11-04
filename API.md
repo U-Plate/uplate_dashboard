@@ -514,3 +514,29 @@ Delete a menu item.
 | foodId   | string | yes (food ID) |
 | quantity | number | yes      |
 | size     | string | no — present when this entry represents a size variant (e.g., `"Small"`, `"Large"`) |
+
+
+### Schoolwide photo competitions
+
+Schoolwide create/update inputs and all competition reads support `scoringType`:
+`macros` (the default for legacy records) or `approvedPhotos`. The create form
+selects the type; it cannot change after creation. Schedule, enrollment, privacy,
+prizes, logos, contact actions, and nightly standings use the existing flow.
+
+Photo competitors earn one point per distinct dining hall food per account.
+Both submission and admin approval must fall within the scoring window. Pending,
+denied, removed, unattributed, and other-school photos do not count. Replaced
+photos retain credit. Ties share a rank. Final standings freeze at the deadline;
+there is no review grace period. In the roster, `approvedPhotos` is the count in
+the latest standings snapshot, also returned as `score`; it replaces Days logged
+for photo contests. The detail page links to the existing Photos review queue.
+
+Deploy the backend approval-time schema migration before using this feature.
+
+
+Photo eligibility additionally requires an empty approved-photo slot at both
+submission and approval. When multiple submissions compete for an empty slot,
+the first approved earns the point. Replacements do not earn new points;
+previously earned credit survives replacement. The backend persists this in
+`fills_empty_slot`; legacy submissions default to ineligible. Use the updated
+schema initializer when upgrading an already-migrated feature database.

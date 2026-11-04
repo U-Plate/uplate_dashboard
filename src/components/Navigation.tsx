@@ -108,7 +108,7 @@ export const Navigation: React.FC = () => {
                 `navigation__link${isActive ? ' navigation__link--active' : ''}`
               }
             >
-              Campus macros
+              Campus competitions
             </NavLink>
           </li>
           <li className="navigation__item">

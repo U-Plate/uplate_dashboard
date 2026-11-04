@@ -33,6 +33,7 @@ export function SchoolwideCompetitionsPage() {
         </div>
       ),
     },
+    { header: 'Type', accessor: (row) => row.scoringType === 'approvedPhotos' ? 'Approved photos' : 'Macro goals' },
     { header: 'Prize', accessor: 'prize' },
     { header: 'Join opens', accessor: (row) => new Date(row.joinDate).toLocaleDateString() },
     { header: 'Runs', accessor: (row) => `${new Date(row.startDate).toLocaleDateString()} to ${new Date(row.endDate).toLocaleDateString()}` },
@@ -44,7 +45,7 @@ export function SchoolwideCompetitionsPage() {
     <div className="schoolwide-page">
       <header className="schoolwide-header">
         <div>
-          <p className="schoolwide-eyebrow">Campus macros</p>
+          <p className="schoolwide-eyebrow">Campus competitions</p>
           <h1>Schoolwide competitions</h1>
           <p>Open enrollment, nightly standings, and prize communication in one place.</p>
         </div>

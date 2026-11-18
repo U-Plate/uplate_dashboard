@@ -13,6 +13,7 @@ import { RestaurantsPage } from './pages/RestaurantsPage';
 import { RestaurantForm } from './pages/RestaurantForm';
 import { RestaurantDetailPage } from './pages/RestaurantDetailPage';
 import { SchoolFoodOverridesPage } from './pages/SchoolFoodOverridesPage';
+import { SchoolMenusPage } from './pages/SchoolMenusPage';
 import { FoodForm } from './pages/FoodForm';
 import { MenuItemForm } from './pages/MenuItemForm';
 import { QuickMenuItemForm } from './pages/QuickMenuItemForm';
@@ -44,6 +45,7 @@ function App() {
             <Route path="restaurants" element={<RestaurantsPage />} />
             <Route path="user-accounts" element={<UserAccountsPage />} />
             <Route path="school-food-overrides" element={<SchoolFoodOverridesPage />} />
+            <Route path="school-menus" element={<SchoolMenusPage />} />
             <Route path="restaurant-accounts" element={<RestaurantAccountsPage />} />
             <Route path="restaurants/new" element={<RestaurantForm />} />
             <Route path="restaurants/:id/edit" element={<RestaurantForm />} />
